@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { pullConfigFromNotion } from '@/lib/notion-server';
 
-export const dynamic = 'force-dynamic';
+
 
 export async function POST(req: NextRequest) {
     if (process.env.NODE_ENV !== 'development') {

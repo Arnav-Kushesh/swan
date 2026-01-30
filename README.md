@@ -63,7 +63,18 @@ npm run sync
 
 # 5. Start Development
 npm run dev
+
 ```
+
+## Deployment
+
+When deploying to Netlify, Vercel, or other static hosting services, use the following build command:
+
+```bash
+npm run sync-and-build
+```
+
+This ensures that your Notion content is synced before the build process runs.
 
 ---
 

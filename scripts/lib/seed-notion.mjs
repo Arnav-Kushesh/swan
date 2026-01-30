@@ -16,7 +16,7 @@ export async function ensureSiteStructure(rootPageId, notion) {
     if (blocks.results.length > 0) {
         console.log("Root page is NOT empty. Skipping seeding to prevent data loss.");
         console.log(`ℹ️ Found ${blocks.results.length} blocks on the root page.`);
-        return;
+        process.exit(0);
     }
 
     console.log("✅ Root page is empty. Proceeding with seeding...");

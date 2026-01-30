@@ -5,7 +5,7 @@ import { getHomeData } from '@/lib/data';
 import { updateNotionConfig } from '@/lib/notion-server';
 
 // Force dynamic route since we are reading/writing files
-export const dynamic = 'force-dynamic';
+
 
 export async function GET() {
     if (process.env.NODE_ENV !== 'development') {

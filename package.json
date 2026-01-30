@@ -9,7 +9,7 @@
     "lint": "next lint",
     "sync": "node scripts/sync-notion.mjs",
     "clean": "rm -rf content data .next out",
-    "deploy": "npm run prepare && npm run sync && next build",
+    "sync-and-build": "npm run prepare && npm run sync && next build",
     "prepare": "panda codegen && node scripts/add-dummy-data.mjs"
   },
   "dependencies": {
