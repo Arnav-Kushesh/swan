@@ -1,4 +1,4 @@
-<div align="center">
+<div align="center"> 
 <br/><br/>
 <img alt="start-simple-logo" src="https://raw.githubusercontent.com/arnav-kushesh/swan/master/assets/swan.png" height="128"/>
 <h3 style="margin-top: 9px;">The Swan Template</h3>
@@ -7,7 +7,7 @@
 
 ![Static Badge](https://img.shields.io/badge/DISCORD-JOIN-blue?style=for-the-badge&logo=discord&labelColor=black&color=%235965f2&link=https://discord.gg/aAsZqZkJKW)
 
-
+</div> 
 
 # Swan
 
