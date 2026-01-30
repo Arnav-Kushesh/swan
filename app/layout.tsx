@@ -21,7 +21,7 @@ export default async function RootLayout({
     children: React.ReactNode;
 }) {
     const homeData = getHomeData();
-    const showSidebar = homeData.info?.sidebar_navigation === 'ENABLED';
+    const showSidebar = homeData.info?.sidebar_navigation === 'true';
 
     return (
         <html lang="en" suppressHydrationWarning>

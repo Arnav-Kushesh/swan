@@ -92,19 +92,17 @@ export function DevTools() {
                 body: JSON.stringify({
                     hero: { ...config.hero },
                     projects: {
-                        title: config.projects.title,
-                        show_section: ((config.projects.show_section as any) === true || config.projects.show_section === 'YES') ? 'YES' : 'NO',
-                        view_type: config.projects.view_type
+                        ...config.projects,
+                        show_section: ((config.projects.show_section as any) === true || config.projects.show_section === 'true') ? 'true' : 'false',
                     },
                     blogs: {
-                        title: config.blogs.title,
-                        show_section: ((config.blogs.show_section as any) === true || config.blogs.show_section === 'YES') ? 'YES' : 'NO',
-                        show_images: ((config.blogs.show_images as any) === true || config.blogs.show_images === 'YES') ? 'YES' : 'NO',
-                        view_type: config.blogs.view_type
+                        ...config.blogs,
+                        show_section: ((config.blogs.show_section as any) === true || config.blogs.show_section === 'true') ? 'true' : 'false',
+                        show_images: ((config.blogs.show_images as any) === true || config.blogs.show_images === 'true') ? 'true' : 'false',
                     },
                     gallery: {
-                        title: config.gallery.title,
-                        show_section: ((config.gallery.show_section as any) === true || config.gallery.show_section === 'YES') ? 'YES' : 'NO',
+                        ...config.gallery,
+                        show_section: ((config.gallery.show_section as any) === true || config.gallery.show_section === 'true') ? 'true' : 'false',
                     },
                     info: {
                         site_title: config.info.site_title,
@@ -239,8 +237,8 @@ export function DevTools() {
                                 <span className={labelStyle} style={{ marginBottom: 0 }}>Projects</span>
                                 <div className={flex({ gap: '5px' })}>
                                     <button
-                                        onClick={() => setConfig({ ...config, projects: { ...config.projects, show_section: 'YES' } })}
-                                        className={((config.projects.show_section as any) === true || config.projects.show_section === 'YES') ? activeSmallBtn : smallBtn}
+                                        onClick={() => setConfig({ ...config, projects: { ...config.projects, show_section: config.projects.show_section === 'true' ? 'false' : 'true' } })}
+                                        className={(config.projects.show_section === 'true') ? activeSmallBtn : smallBtn}
                                     >
                                         On
                                     </button>
@@ -267,8 +265,8 @@ export function DevTools() {
                                 <span className={labelStyle} style={{ marginBottom: 0 }}>Blogs</span>
                                 <div className={flex({ gap: '5px' })}>
                                     <button
-                                        onClick={() => setConfig({ ...config, blogs: { ...config.blogs, show_section: 'YES' } })}
-                                        className={((config.blogs.show_section as any) === true || config.blogs.show_section === 'YES') ? activeSmallBtn : smallBtn}
+                                        onClick={() => setConfig({ ...config, blogs: { ...config.blogs, show_section: config.blogs.show_section === 'true' ? 'false' : 'true' } })}
+                                        className={(config.blogs.show_section === 'true') ? activeSmallBtn : smallBtn}
                                     >
                                         On
                                     </button>
@@ -291,14 +289,14 @@ export function DevTools() {
                                 <span className={css({ fontSize: '0.85rem', color: 'text.secondary' })}>Show Images:</span>
                                 <div className={flex({ gap: '5px' })}>
                                     <button
-                                        onClick={() => setConfig({ ...config, blogs: { ...config.blogs, show_images: true } })}
-                                        className={(config.blogs.show_images === true || config.blogs.show_images === 'YES') ? activeSmallBtn : smallBtn}
+                                        onClick={() => setConfig({ ...config, blogs: { ...config.blogs, show_images: config.blogs.show_images === 'true' ? 'false' : 'true' } })}
+                                        className={(config.blogs.show_images === 'true') ? activeSmallBtn : smallBtn}
                                     >
                                         Yes
                                     </button>
                                     <button
-                                        onClick={() => setConfig({ ...config, blogs: { ...config.blogs, show_images: false } })}
-                                        className={(config.blogs.show_images === false || config.blogs.show_images === 'NO' || !config.blogs.show_images) ? activeSmallBtn : smallBtn}
+                                        onClick={() => setConfig({ ...config, blogs: { ...config.blogs, show_images: 'false' } })}
+                                        className={(config.blogs.show_images === 'false') ? activeSmallBtn : smallBtn}
                                     >
                                         No
                                     </button>
@@ -312,14 +310,14 @@ export function DevTools() {
                                 <span className={labelStyle} style={{ marginBottom: 0 }}>Gallery</span>
                                 <div className={flex({ gap: '5px' })}>
                                     <button
-                                        onClick={() => setConfig({ ...config, gallery: { ...config.gallery, show_section: 'YES' } })}
-                                        className={((config.gallery.show_section as any) === true || config.gallery.show_section === 'YES') ? activeSmallBtn : smallBtn}
+                                        onClick={() => setConfig({ ...config, gallery: { ...config.gallery, show_section: config.gallery.show_section === 'true' ? 'false' : 'true' } })}
+                                        className={(config.gallery?.show_section === 'true') ? activeSmallBtn : smallBtn}
                                     >
                                         On
                                     </button>
                                     <button
-                                        onClick={() => setConfig({ ...config, gallery: { ...config.gallery, show_section: 'NO' } })}
-                                        className={((config.gallery.show_section as any) === false || config.gallery.show_section === 'NO') ? activeSmallBtn : smallBtn}
+                                        onClick={() => setConfig({ ...config, gallery: { ...config.gallery, show_section: 'false' } })}
+                                        className={(config.gallery.show_section === 'false') ? activeSmallBtn : smallBtn}
                                     >
                                         Off
                                     </button>
@@ -351,14 +349,14 @@ export function DevTools() {
                         <label className={labelStyle}>Sidebar Navigation</label>
                         <div className={flex({ gap: '10px' })}>
                             <button
-                                onClick={() => setConfig({ ...config, info: { ...config.info, sidebar_navigation: 'ENABLED' } })}
-                                className={config.info.sidebar_navigation === 'ENABLED' ? activeBtnStyle : btnStyle}
+                                onClick={() => setConfig({ ...config, info: { ...config.info, sidebar_navigation: 'true' } })}
+                                className={config.info.sidebar_navigation === 'true' ? activeBtnStyle : btnStyle}
                             >
                                 Enabled
                             </button>
                             <button
-                                onClick={() => setConfig({ ...config, info: { ...config.info, sidebar_navigation: 'DISABLED' } })}
-                                className={config.info.sidebar_navigation !== 'ENABLED' ? activeBtnStyle : btnStyle}
+                                onClick={() => setConfig({ ...config, info: { ...config.info, sidebar_navigation: 'false' } })}
+                                className={config.info.sidebar_navigation === 'false' ? activeBtnStyle : btnStyle}
                             >
                                 Disabled
                             </button>

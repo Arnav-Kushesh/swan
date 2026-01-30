@@ -264,7 +264,7 @@ export async function updateNotionConfig(config: PartialConfig) {
             if (configDataSourceId) {
                 if (config.info.site_title) promises.push(updateConfigValueWithSourceId(configDataSourceId, 'site_title', config.info.site_title));
                 if (config.info.default_theme) promises.push(updateConfigValueWithSourceId(configDataSourceId, 'default_theme', config.info.default_theme));
-                if (config.info.sidebar_navigation) promises.push(updateConfigValueWithSourceId(configDataSourceId, 'sidebar_navigation', config.info.sidebar_navigation));
+                if (config.info.sidebar_navigation !== undefined) promises.push(updateConfigValueWithSourceId(configDataSourceId, 'sidebar_navigation', String(config.info.sidebar_navigation)));
             }
         }
 
@@ -297,7 +297,7 @@ export async function updateNotionConfig(config: PartialConfig) {
                     if (projDataSourceId) {
                         const p = config.projects;
                         if (p.title) promises.push(updateConfigValueWithSourceId(projDataSourceId, 'title', p.title));
-                        if (p.show_section) promises.push(updateConfigValueWithSourceId(projDataSourceId, 'show_section', (p.show_section as any) === 'YES' || (p.show_section as any) === true ? 'YES' : 'NO'));
+                        if (p.show_section !== undefined) promises.push(updateConfigValueWithSourceId(projDataSourceId, 'show_section', String(p.show_section)));
                         if (p.view_type) promises.push(updateConfigValueWithSourceId(projDataSourceId, 'view_type', p.view_type));
                     }
                 }
@@ -311,9 +311,9 @@ export async function updateNotionConfig(config: PartialConfig) {
                     if (blogsDataSourceId) {
                         const b = config.blogs;
                         if (b.title) promises.push(updateConfigValueWithSourceId(blogsDataSourceId, 'title', b.title));
-                        if (b.show_section) promises.push(updateConfigValueWithSourceId(blogsDataSourceId, 'show_section', (b.show_section as any) === 'YES' || (b.show_section as any) === true ? 'YES' : 'NO'));
+                        if (b.show_section !== undefined) promises.push(updateConfigValueWithSourceId(blogsDataSourceId, 'show_section', String(b.show_section)));
                         if (b.view_type) promises.push(updateConfigValueWithSourceId(blogsDataSourceId, 'view_type', b.view_type));
-                        if (b.show_images !== undefined) promises.push(updateConfigValueWithSourceId(blogsDataSourceId, 'show_images', (b.show_images as any) === 'YES' || (b.show_images as any) === true ? 'YES' : 'NO'));
+                        if (b.show_images !== undefined) promises.push(updateConfigValueWithSourceId(blogsDataSourceId, 'show_images', String(b.show_images)));
                     }
                 }
             }
@@ -326,7 +326,7 @@ export async function updateNotionConfig(config: PartialConfig) {
                     if (galleryDataSourceId) {
                         const g = config.gallery;
                         if (g.title) promises.push(updateConfigValueWithSourceId(galleryDataSourceId, 'title', g.title));
-                        if (g.show_section) promises.push(updateConfigValueWithSourceId(galleryDataSourceId, 'show_section', (g.show_section as any) === 'YES' || (g.show_section as any) === true ? 'YES' : 'NO'));
+                        if (g.show_section !== undefined) promises.push(updateConfigValueWithSourceId(galleryDataSourceId, 'show_section', String(g.show_section)));
                     }
                 }
             }

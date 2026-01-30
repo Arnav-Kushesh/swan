@@ -4,7 +4,7 @@ export const dummySiteInfo = [
   { field: 'favicon', value: 'https://example.com/favicon.ico' },
   { field: 'keywords', value: 'portfolio, notion, nextjs' },
   { field: 'og_image', value: 'https://example.com/og-image.png' },
-  { field: 'sidebar_navigation', value: 'DISABLED' },
+  { field: 'sidebar_navigation', value: 'false' },
 ];
 
 
@@ -21,19 +21,19 @@ export const dummyHero = [
 
 export const dummyProjectConfig = [
   { field: 'title', value: 'My Projects' },
-  { field: 'show_section', value: 'YES' },
+  { field: 'show_section', value: 'true' },
   { field: 'view_type', value: 'Grid' },
 ];
 
 export const dummyBlogConfig = [
   { field: 'title', value: 'Latest Writings' },
-  { field: 'show_section', value: 'YES' },
+  { field: 'show_section', value: 'true' },
   { field: 'view_type', value: 'List' },
 ];
 
 export const dummyGalleryConfig = [
   { field: 'title', value: 'Gallery' },
-  { field: 'show_section', value: 'YES' },
+  { field: 'show_section', value: 'true' },
 ];
 
 export const dummyProjects = {
