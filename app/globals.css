@@ -1,0 +1,10 @@
+@layer reset, base, tokens, recipes, utilities;
+
+:root {
+    --font-inter: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--colors-bg-primary);
+    color: var(--colors-text-primary);
+}
