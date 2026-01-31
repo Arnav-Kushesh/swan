@@ -69,6 +69,8 @@ npm run dev
 
 ## Deployment
 
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/Arnav-Kushesh/swan) &nbsp; [![Deploy to Vercel](https://img.shields.io/badge/Deploy_to-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/new/clone?repository-url=https://github.com/Arnav-Kushesh/swan)
+
 When deploying to Netlify, Vercel, or other static hosting services, use the following build command:
 
 ```bash

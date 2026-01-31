@@ -20,13 +20,13 @@ export default function Home() {
 
             {/* Gallery Section */}
             {homeData.gallery?.show_section === 'true' && (
-                <div id="gallery" className={container({ py: '40px' })}>
+                <div id="gallery" className={container({ py: '60px' })}>
                     <GalleryList items={galleryItems} title={homeData.gallery?.title || "Gallery"} />
                 </div>
             )}
 
             {homeData.projects.show_section === 'true' && (
-                <div id="projects" className={container({ py: '40px' })}>
+                <div id="projects" className={container({ py: '60px' })}>
                     <ProjectList
                         projects={projects}
                         title={homeData.projects.title || "Projects"}
@@ -36,7 +36,7 @@ export default function Home() {
             )}
 
             {homeData.blogs.show_section !== 'false' && (
-                <div id="blogs" className={container({ py: '40px' })}>
+                <div id="blogs" className={container({ py: '60px' })}>
                     <BlogList
                         blogs={blogs}
                         title={homeData.blogs.title}
