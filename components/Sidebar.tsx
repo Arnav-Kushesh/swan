@@ -3,8 +3,96 @@ import { css } from '@/styled-system/css';
 import { flex, stack } from '@/styled-system/patterns';
 import { ThemeToggle } from './ThemeToggle';
 import { getHomeData, getPages } from '@/lib/data';
-import { FaGithub, FaLinkedin, FaTwitter, FaInstagram, FaYoutube, FaFacebook, FaTwitch, FaEnvelope } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaTwitter, FaYoutube, FaFacebook, FaTwitch, FaEnvelope } from 'react-icons/fa';
 import { RiInstagramFill } from 'react-icons/ri';
+
+const sidebarStyle = stack({
+    pos: 'fixed',
+    top: '20px',
+    left: '20px',
+    h: 'calc(100vh - 40px)',
+    w: '260px',
+    bg: { base: 'white', _dark: '#121212' },
+    p: '24px',
+    borderRadius: '12px',
+    border: '1px solid',
+    borderColor: { base: 'rgba(0,0,0,0.12)', _dark: 'rgba(255,255,255,0.12)' },
+    justify: 'space-between',
+    overflowY: 'auto',
+    zIndex: 50,
+});
+
+const contentStackStyle = stack({ gap: '32px' });
+
+const profileSectionStyle = stack({ gap: '16px', align: 'center' });
+
+const profileImageContainerStyle = css({
+    width: '100px',
+    height: '100px',
+    borderRadius: 'full',
+    overflow: 'hidden',
+    border: '2px solid token(colors.border.primary)',
+});
+
+const profileImageStyle = css({
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+});
+
+const textStackStyle = stack({ gap: '4px', align: 'center', textAlign: 'center' });
+
+const titleStyle = css({ fontSize: '1.1rem', fontWeight: 'bold', color: 'text.primary', mb: '4px' });
+
+const taglineStyle = css({ fontSize: '0.85rem', color: 'text.secondary', lineHeight: '1.4' });
+
+const socialContainerStyle = flex({ gap: '12px', justify: 'center', wrap: 'wrap', mt: '20px' });
+
+const iconStyle = css({
+    color: 'text.secondary',
+    transition: 'color 0.2s',
+    cursor: 'pointer',
+    _hover: {
+        color: 'primary',
+    },
+});
+
+const dividerStyle = css({ h: '1px', bg: 'border.primary', w: '100%' });
+
+const navStackStyle = stack({ gap: '12px' });
+
+const navHomeLinkStyle = css({
+    fontSize: '0.95rem',
+    fontWeight: '500',
+    color: 'text.primary',
+    p: '8px',
+    borderRadius: '6px',
+    _hover: { bg: 'bg.tertiary' }
+});
+
+const navLinkStyle = css({
+    fontSize: '0.95rem',
+    color: 'text.secondary',
+    fontWeight: '500',
+    p: '8px',
+    pl: "15px",
+    borderRadius: '6px',
+    transition: 'all 0.2s',
+    _hover: {
+        color: 'text.primary',
+        bg: 'bg.tertiary'
+    },
+});
+
+const footerStyle = flex({
+    gap: '20px',
+    align: 'center',
+    mt: 'auto',
+    pt: '20px',
+    borderTop: '1px solid',
+    borderColor: { base: 'rgba(0,0,0,0.06)', _dark: 'rgba(255,255,255,0.12)' },
+    flexShrink: 0
+});
 
 export async function Sidebar() {
     const homeData = getHomeData();
@@ -13,61 +101,34 @@ export async function Sidebar() {
     const hero = homeData.hero;
 
     return (
-        <aside
-            className={stack({
-                pos: 'fixed',
-                top: '20px',
-                left: '20px',
-                h: 'calc(100vh - 40px)',
-                w: '260px',
-                bg: { base: 'white', _dark: '#121212' }, // Brighter/Elevated
-                p: '24px',
-                borderRadius: '12px',
-                border: '1px solid',
-                borderColor: { base: 'rgba(0,0,0,0.12)', _dark: 'rgba(255,255,255,0.12)' },
-                justify: 'space-between',
-                overflowY: 'auto',
-                zIndex: 50,
-            })}
-        >
-            <div className={stack({ gap: '32px' })}>
+        <aside className={sidebarStyle}>
+            <div className={contentStackStyle}>
                 {/* Hero / Profile Section */}
-                <div className={stack({ gap: '16px', align: 'center' })}>
+                <div className={profileSectionStyle}>
                     {hero.profile_image && (
-                        <div
-                            className={css({
-                                width: '100px',
-                                height: '100px',
-                                borderRadius: 'full',
-                                overflow: 'hidden',
-                                border: '2px solid token(colors.border.primary)',
-                            })}
-                        >
+                        <div className={profileImageContainerStyle}>
                             <img
                                 src={hero.profile_image}
                                 alt="Profile"
-                                className={css({
-                                    width: '100%',
-                                    height: '100%',
-                                    objectFit: 'cover',
-                                })}
+                                className={profileImageStyle}
                             />
                         </div>
                     )}
 
-                    <div className={stack({ gap: '4px', align: 'center', textAlign: 'center' })}>
-                        <h2 className={css({ fontSize: '1.1rem', fontWeight: 'bold', color: 'text.primary' })}>
+                    <div className={textStackStyle}>
+                        <h2 className={titleStyle}>
                             {siteTitle}
                         </h2>
                         {hero.tagline && (
-                            <p className={css({ fontSize: '0.85rem', color: 'text.secondary', lineHeight: '1.4' })}>
+                            <p className={taglineStyle}>
                                 {hero.tagline}
                             </p>
                         )}
                     </div>
 
+
                     {/* Social Icons (Compact) */}
-                    <div className={flex({ gap: '12px', justify: 'center', wrap: 'wrap' })}>
+                    <div className={socialContainerStyle}>
                         {hero.twitter && (
                             <a href={hero.twitter} target="_blank" rel="noreferrer" className={iconStyle}>
                                 <FaTwitter size={18} />
@@ -111,19 +172,12 @@ export async function Sidebar() {
                     </div>
                 </div>
 
-                <div className={css({ h: '1px', bg: 'border.primary', w: '100%' })} />
+                <div className={dividerStyle} />
 
-                <nav className={stack({ gap: '12px' })}>
+                <nav className={navStackStyle}>
                     <Link
                         href="/"
-                        className={css({
-                            fontSize: '0.95rem',
-                            fontWeight: '500',
-                            color: 'text.primary',
-                            p: '8px',
-                            borderRadius: '6px',
-                            _hover: { bg: 'bg.tertiary' }
-                        })}
+                        className={navLinkStyle}
                     >
                         Home
                     </Link>
@@ -131,18 +185,7 @@ export async function Sidebar() {
                         <Link
                             key={page.slug}
                             href={`/${page.slug}`}
-                            className={css({
-                                fontSize: '0.95rem',
-                                color: 'text.secondary',
-                                fontWeight: '500',
-                                p: '8px',
-                                borderRadius: '6px',
-                                transition: 'all 0.2s',
-                                _hover: {
-                                    color: 'text.primary',
-                                    bg: 'bg.tertiary'
-                                },
-                            })}
+                            className={navLinkStyle}
                         >
                             {page.title}
                         </Link>
@@ -150,18 +193,9 @@ export async function Sidebar() {
                 </nav>
             </div>
 
-            <div className={flex({ gap: '20px', align: 'center', mt: 'auto', pt: '20px', borderTop: '1px solid', borderColor: { base: 'rgba(0,0,0,0.06)', _dark: 'rgba(255,255,255,0.12)' }, flexShrink: 0 })}>
+            <div className={footerStyle}>
                 <ThemeToggle />
             </div>
         </aside>
     );
 }
-
-const iconStyle = css({
-    color: 'text.secondary',
-    transition: 'color 0.2s',
-    cursor: 'pointer',
-    _hover: {
-        color: 'primary',
-    },
-});

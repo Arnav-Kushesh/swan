@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "sync": "node scripts/sync-notion.mjs",
+    "sync": "npm run clean && node scripts/sync-notion.mjs",
     "clean": "rm -rf content data .next out",
     "sync-and-build": "npm run prepare && npm run sync && next build",
     "prepare": "panda codegen && node scripts/add-dummy-data.mjs"
@@ -24,6 +24,7 @@
     "react-dom": "^19.2.4",
     "react-icons": "^5.5.0",
     "remark": "^15.0.1",
+    "remark-gfm": "^4.0.1",
     "remark-html": "^16.0.1",
     "remark-parse": "^11.0.0",
     "unified": "^11.0.5"

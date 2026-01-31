@@ -204,25 +204,58 @@ async function syncHomePage() {
 
     const sections = {};
 
-    // Hero
-    const heroDbId = await findInlineDbOnPage(homePageId, "Hero Settings");
-    sections.hero = await fetchConfigKV(heroDbId, 'hero');
+    // Fetch all children ONCE to determine order and IDs
+    const homeChildrenBlocks = await fetchAllChildren(homePageId);
 
-    // Projects Config
-    const projConfigDbId = await findInlineDbOnPage(homePageId, "Projects Settings");
-    sections.projects = await fetchConfigKV(projConfigDbId, 'proj-config');
+    const findDbInBlocks = (title) => homeChildrenBlocks.find(b =>
+        b.type === 'child_database' && b.child_database.title === title
+    );
 
-    // Blogs Config
-    const blogsConfigDbId = await findInlineDbOnPage(homePageId, "Blogs Settings");
-    sections.blogs = await fetchConfigKV(blogsConfigDbId, 'blog-config');
+    const heroDb = findDbInBlocks("Hero Settings");
+    const projDb = findDbInBlocks("Projects Settings");
+    const blogsDb = findDbInBlocks("Blogs Settings");
+    const galleryDb = findDbInBlocks("Gallery Settings");
 
-    // Gallery Settings
-    const galleryConfigDbId = await findInlineDbOnPage(homePageId, "Gallery Settings");
-    if (galleryConfigDbId) {
-        sections.gallery = await fetchConfigKV(galleryConfigDbId, 'gallery-config');
-    } else {
-        sections.gallery = { show_section: 'NO', title: 'Gallery' }; // Default fallback
+    // Determine Order based on block position
+    const sectionOrder = [];
+    const validSections = [
+        { key: 'projects', id: projDb?.id },
+        { key: 'blogs', id: blogsDb?.id },
+        { key: 'gallery', id: galleryDb?.id }
+    ];
+
+    // Create a map of ID -> Section Key
+    const idToSection = {};
+    validSections.forEach(s => { if (s.id) idToSection[s.id] = s.key; });
+
+    // Iterate blocks to preserve order
+    for (const block of homeChildrenBlocks) {
+        if (block.id && idToSection[block.id]) {
+            sectionOrder.push(idToSection[block.id]);
+        }
     }
+
+    // Fallback: If for some reason scanning failed but we found DBs (shouldn't happen), push them
+    validSections.forEach(s => {
+        if (s.id && !sectionOrder.includes(s.key)) {
+            sectionOrder.push(s.key);
+        }
+    });
+
+    console.log("   > Detected Section Order:", sectionOrder);
+
+    sections.hero = await fetchConfigKV(heroDb?.id, 'hero');
+    sections.projects = await fetchConfigKV(projDb?.id, 'proj-config');
+    sections.blogs = await fetchConfigKV(blogsDb?.id, 'blog-config');
+
+    if (galleryDb) {
+        sections.gallery = await fetchConfigKV(galleryDb.id, 'gallery-config');
+    } else {
+        sections.gallery = { show_section: 'NO', title: 'Gallery' };
+    }
+
+    // Save order
+    sections.section_order = sectionOrder;
 
     await ensureDir('data');
     await fs.writeFile('data/home.json', JSON.stringify(sections, null, 2));

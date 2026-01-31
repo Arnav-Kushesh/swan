@@ -25,6 +25,7 @@ Swan is a powerful static portfolio website generator that uses Notion as your h
     -   **Blog**: Write posts in Notion with separate "Show Images" toggle for list views.
     -   **Gallery**: A dedicated section for visual assets.
 -   **Social Media Ready**: First-class support for Twitter, GitHub, LinkedIn, Instagram, YouTube, Facebook, Twitch, and Email.
+-   **Dynamic Layout**: Reorder the "Projects", "Blog", and "Gallery" sections on your site simply by ensuring the order of their inline databases in Notion matches your desired layout.
 -   **Zero-Config Image Optimization**: Images from Notion are automatically optimized and served efficiently.
 -   **One-Click Deployment**: Pre-configured for seamless deployment to Vercel and Netlify.
 
@@ -96,6 +97,7 @@ The **ROOT_PAGE_ID** page will contain the following structure after running `np
     -   **Hero Settings**: Profile bio and layout.
         -   Supported Socials: `twitter`, `github`, `linkedin`, `email`, `instagram`, `youtube`, `facebook`, `twitch`.
     -   **Section Settings**: Toggle visibility of Projects/Blogs/Gallery.
+        -   **Ordering**: The vertical order of the *Projects*, *Blogs*, and *Gallery* sections on the website is determined by the order of their corresponding Inline Databases on this page. Drag and drop them to reorder.
     -   **Blogs Settings**: Configure View Type (List/Card) and toggle `show_images`.
 3.  **Projects** (Database): Kanban board for your portfolio items.
     -   Properties: `Project Name`, `Status`, `Description`, `Tools` (formerly Tech), `Link`, `Thumbnail`.

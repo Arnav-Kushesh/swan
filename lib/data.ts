@@ -51,6 +51,7 @@ export interface HomeData {
         show_section: string;
     };
     info: InfoConfig;
+    section_order?: string[];
 }
 
 export interface Post {

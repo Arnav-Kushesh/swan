@@ -1,17 +1,17 @@
 {
   "hero": {
     "long_bio": "This is a longer bio paragraph about yourself.",
-    "linkedin": "https://linkedin.com",
-    "tagline": "Welcome to my portfolio based on Notion.",
+    "linkedin": "https://linkedin.com/in/arnav-kushesh",
+    "tagline": "Programming . Art . Game Dev",
     "profile_image": "/images/hero-profile-image.jpg",
-    "location": "San Francisco, CA",
-    "instagram": "https://instagram.com",
-    "facebook": "https://facebook.com",
-    "email": "hello@example.com",
-    "twitter": "https://twitter.com",
-    "youtube": "https://youtube.com",
-    "github": "https://github.com",
-    "twitch": "https://twitch.tv"
+    "location": "India",
+    "instagram": "https://instagram.com/arnav_kushesh",
+    "facebook": "",
+    "email": "arnavkushesh@gmail.com",
+    "twitter": "https://twitter.com/arnav-kushesh",
+    "youtube": "https://youtube.com/arnav_kushesh",
+    "github": "https://github.com/arnav-kushesh",
+    "twitch": ""
   },
   "projects": {
     "title": "My Projects",
@@ -27,5 +27,10 @@
   "gallery": {
     "show_section": "true",
     "title": "Gallery"
-  }
+  },
+  "section_order": [
+    "projects",
+    "blogs",
+    "gallery"
+  ]
 }
