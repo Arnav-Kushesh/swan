@@ -20,6 +20,7 @@
 # production
 /build
 /notion_state
+/public/images
 
 # misc
 .DS_Store
