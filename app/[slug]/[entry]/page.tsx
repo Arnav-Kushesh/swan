@@ -1,7 +1,9 @@
 
-import { getPosts, getPost } from '../../../lib/data';
+import { getPosts, getPost, getAuthor } from '../../../lib/data';
 import { processMarkdown } from '../../../lib/markdown';
 import { postContentStyle } from '../../../components/shared/post-styles';
+import { AuthorInfo } from '../../../components/AuthorInfo';
+import { MessageAuthor } from '../../../components/MessageAuthor';
 import { notFound } from 'next/navigation';
 import { css } from '../../../styled-system/css';
 import { format } from 'date-fns';
@@ -20,12 +22,10 @@ export async function generateStaticParams() {
 
     const params = [];
     for (const collection of collections) {
-        if (collection === 'navbarPages') continue; // specialized
+        if (collection === 'navbarPages') continue;
 
         const posts = getPosts(collection);
         for (const post of posts) {
-            // slug param = collection name
-            // entry param = post slug
             params.push({ slug: collection, entry: post.slug });
         }
     }
@@ -54,6 +54,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
     }
 
     const content = await processMarkdown(post.content);
+    const author = post.author_username ? getAuthor(post.author_username) : null;
 
     return (
         <article className={css({ maxWidth: '800px', margin: '0 auto', padding: '40px 20px' })}>
@@ -69,9 +70,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
                 )}
 
                 {post.tags && post.tags.length > 0 && (
-                    <div className={css({ display: 'flex', gap: '2', justifyContent: 'center', flexWrap: 'wrap' })}>
+                    <div className={css({ display: 'flex', gap: '2', justifyContent: 'center', flexWrap: 'wrap', mb: '4' })}>
                         {Array.isArray(post.tags) ? post.tags.map(tag => (
-                            <span key={tag} className={css({
+                            <span key={typeof tag === 'string' ? tag : (tag as any).name} className={css({
                                 bg: 'bg.subtle',
                                 px: '2',
                                 py: '1',
@@ -85,9 +86,32 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
                         )}
                     </div>
                 )}
+
+                {/* Author Info */}
+                {post.author_username && (
+                    <div className={css({ display: 'flex', justifyContent: 'center' })}>
+                        <AuthorInfo authorUsername={post.author_username} />
+                    </div>
+                )}
             </header>
 
-            {post.cover?.image && (
+            {/* Video Embed or Cover Image */}
+            {post.video_embed_link ? (
+                <div className={css({
+                    marginBottom: '8',
+                    borderRadius: 'xl',
+                    overflow: 'hidden',
+                    aspectRatio: '16/9',
+                })}>
+                    <iframe
+                        src={post.video_embed_link}
+                        title={post.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className={css({ width: '100%', height: '100%', border: 'none' })}
+                    />
+                </div>
+            ) : post.cover?.image ? (
                 <div className={css({ marginBottom: '8', borderRadius: 'xl', overflow: 'hidden' })}>
                     <img
                         src={post.cover.image}
@@ -95,17 +119,14 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
                         className={css({ width: '100%', height: 'auto', objectFit: 'cover' })}
                     />
                 </div>
-            )}
-
-
-
+            ) : null}
 
             <div
                 className={postContentStyle}
                 dangerouslySetInnerHTML={{ __html: content }}
             />
 
-            {/* Render Link at bottom */}
+            {/* External Link */}
             {post.link && (
                 <div className={css({ marginTop: '40px', textAlign: 'center', borderTop: '1px solid token(colors.border.subtle)', paddingTop: '40px' })}>
                     <a href={post.link} target="_blank" rel="noopener noreferrer"
@@ -123,6 +144,15 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
                         Visit Project
                     </a>
                 </div>
+            )}
+
+            {/* Message Author */}
+            {author && author.email && (
+                <MessageAuthor
+                    authorEmail={author.email}
+                    pageTitle={post.title}
+                    authorName={author.name}
+                />
             )}
         </article>
     );

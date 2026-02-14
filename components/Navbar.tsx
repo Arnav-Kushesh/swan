@@ -5,6 +5,7 @@ import { flex, container } from '@/styled-system/patterns';
 import { SettingsMenu } from './SettingsMenu';
 import { getHomeData, getNavbarPages } from '@/lib/data';
 import { SocialIcons } from './SocialIcons';
+import { SearchButton } from './SearchButton';
 
 const navbarStyle = css({
     pos: 'fixed',
@@ -12,7 +13,7 @@ const navbarStyle = css({
     left: 0,
     w: '100%',
     zIndex: 100,
-    bg: 'bg.surface',
+    bg: 'bg.primary',
     // _dark: { bg: 'rgba(18, 18, 18, 0.8)' }, // Remove transparency
     backdropFilter: 'blur(10px)',
     borderBottom: '1px solid token(colors.border.default)',
@@ -99,6 +100,8 @@ export async function Navbar() {
                     <div className={css({ display: { base: 'none', md: 'block' } })}>
                         <SocialIcons config={homeData.info} />
                     </div>
+
+                    <SearchButton />
 
                     <div className={css({ display: 'block' })}>
                         <SettingsMenu variant="vertical" />

@@ -60,6 +60,8 @@ export function InfoSection({ data }: { data: InfoSectionData }) {
                     flex: isRow ? '1' : 'initial',
                     maxWidth: isRow ? 'none' : '800px',
                     mx: isCentered ? 'auto' : '0',
+                    animation: 'fadeInUp 0.8s ease-out forwards',
+                    opacity: 0, // Start hidden for animation
                 })}>
                     <h2 className={css({
                         fontSize: { base: '2.5rem', md: '3rem', lg: '3.5rem' },

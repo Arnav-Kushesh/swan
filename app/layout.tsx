@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import './themes.css'; // Import themes
+import './themes.css';
 import { css } from '@/styled-system/css';
 
 import { Navbar } from '@/components/Navbar';
 import { Sidebar } from '@/components/Sidebar';
 import { AppLayout } from '@/components/AppLayout';
-import { getHomeData } from '@/lib/data';
+import { getHomeData, getCodeInjection, getAllPosts } from '@/lib/data';
 import { GlobalConfigProvider } from '@/components/providers/GlobalConfigProvider';
 
 
@@ -36,19 +36,36 @@ export default async function RootLayout({
     children: React.ReactNode;
 }) {
     const homeData = getHomeData();
-    const showSidebar = homeData.info?.sidebar_navigation === 'true';
-
     const defaultTheme = homeData.info?.default_color_mode || 'light';
+
+    // Code injection: get all code blocks to inject into <head>
+    const codeInjectionBlocks = getCodeInjection();
+
+    // Build search index from all posts
+    const allPosts = getAllPosts();
+    const searchIndex = allPosts.map(p => ({
+        slug: p.slug,
+        title: p.title,
+        description: p.description || '',
+        collection: p.collection || '',
+        tags: p.tags?.map(t => typeof t === 'string' ? t : (t as any).name) || [],
+    }));
 
     return (
         <html lang="en" data-theme={defaultTheme} className={defaultTheme === 'dark' ? 'dark' : ''}>
             <head>
                 {homeData.info?.favicon && <link rel="icon" href={homeData.info.favicon} sizes="any" />}
+                {codeInjectionBlocks.map((code, index) => (
+                    <script
+                        key={`code-injection-${index}`}
+                        dangerouslySetInnerHTML={{ __html: code }}
+                    />
+                ))}
             </head>
             <body
                 className={`${inter.className} ${css({ bg: 'bg.primary', color: 'text.primary' })}`}
             >
-                <GlobalConfigProvider initialConfig={homeData}>
+                <GlobalConfigProvider initialConfig={homeData} searchIndex={searchIndex}>
                     <AppLayout
                         sidebar={<Sidebar />}
                         navbar={<Navbar />}

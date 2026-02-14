@@ -1,36 +1,12 @@
 import { MetadataRoute } from 'next';
-import { getNavbarPages, getPosts } from '@/lib/data';
+import { getNavbarPages, getAllPosts, getAuthors, getCollectionNames } from '@/lib/data';
 
 export const dynamic = 'force-static';
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
-    // 1. Static Pages
-    const pages = getNavbarPages().map((page) => ({
-        url: `${baseUrl}/${page.slug}`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly' as const,
-        priority: 0.8,
-    }));
-
-    // 2. Projects
-    const projects = getPosts('projects').map((project) => ({
-        url: `${baseUrl}/project/${project.slug}`,
-        lastModified: new Date(project.date || new Date()),
-        changeFrequency: 'weekly' as const,
-        priority: 0.7,
-    }));
-
-    // 3. Blogs
-    const blogs = getPosts('blogs').map((blog) => ({
-        url: `${baseUrl}/blog/${blog.slug}`,
-        lastModified: new Date(blog.date || new Date()),
-        changeFrequency: 'weekly' as const,
-        priority: 0.7,
-    }));
-
-    // 4. Root
+    // 1. Root
     const root = {
         url: baseUrl,
         lastModified: new Date(),
@@ -38,5 +14,37 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: 1,
     };
 
-    return [root, ...pages, ...projects, ...blogs];
+    // 2. Static Pages
+    const pages = getNavbarPages().map((page) => ({
+        url: `${baseUrl}/${page.slug}`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly' as const,
+        priority: 0.8,
+    }));
+
+    // 3. All collection posts
+    const allPosts = getAllPosts().map((post) => ({
+        url: `${baseUrl}/${post.collection}/${post.slug}`,
+        lastModified: new Date(post.date || new Date()),
+        changeFrequency: 'weekly' as const,
+        priority: 0.7,
+    }));
+
+    // 4. Author pages
+    const authors = getAuthors().map((author) => ({
+        url: `${baseUrl}/author/${author.username}`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly' as const,
+        priority: 0.6,
+    }));
+
+    // 5. RSS feeds
+    const rssFeeds = getCollectionNames().map((name) => ({
+        url: `${baseUrl}/rss/${name}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.3,
+    }));
+
+    return [root, ...pages, ...allPosts, ...authors, ...rssFeeds];
 }

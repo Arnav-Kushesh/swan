@@ -1,7 +1,15 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { HomeData } from '@/lib/data';
+
+interface SearchItem {
+    slug: string;
+    title: string;
+    description: string;
+    collection: string;
+    tags?: string[];
+}
 
 interface GlobalConfigContextType {
     config: HomeData;
@@ -10,6 +18,9 @@ interface GlobalConfigContextType {
     availableThemes: string[];
     showSidebar: boolean;
     toggleSidebar: () => void;
+    isSearchOpen: boolean;
+    toggleSearch: () => void;
+    searchIndex: SearchItem[];
 }
 
 const GlobalConfigContext = createContext<GlobalConfigContextType | undefined>(undefined);
@@ -20,20 +31,21 @@ export const THEMES = [
 
 export function GlobalConfigProvider({
     initialConfig,
+    searchIndex = [],
     children
 }: {
     initialConfig: HomeData;
+    searchIndex?: SearchItem[];
     children: React.ReactNode;
 }) {
-    // Initialize from prop, but also check localStorage on mount if we want persistence
-    // For now, simpler to start with default.
     const [colorMode, setColorMode] = useState<string>((initialConfig.info?.default_color_mode as string) || 'light');
     const [showSidebar, setShowSidebar] = useState<boolean>(initialConfig.info?.sidebar_navigation === 'true');
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     const toggleSidebar = () => setShowSidebar(prev => !prev);
+    const toggleSearch = useCallback(() => setIsSearchOpen(prev => !prev), []);
 
     useEffect(() => {
-        // Recover from local storage
         const saved = localStorage.getItem('swan-color-mode');
         if (saved && THEMES.includes(saved)) {
             setColorMode(saved);
@@ -45,9 +57,17 @@ export function GlobalConfigProvider({
         localStorage.setItem('swan-color-mode', colorMode);
     }, [colorMode]);
 
+    // Global Cmd+K / Ctrl+K shortcut for search
     useEffect(() => {
-        // Update showSidebar if initialConfig changes
-    }, [initialConfig]);
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                toggleSearch();
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [toggleSearch]);
 
     return (
         <GlobalConfigContext.Provider value={{
@@ -56,7 +76,10 @@ export function GlobalConfigProvider({
             setColorMode,
             availableThemes: THEMES,
             showSidebar,
-            toggleSidebar
+            toggleSidebar,
+            isSearchOpen,
+            toggleSearch,
+            searchIndex,
         }}>
             {children}
         </GlobalConfigContext.Provider>

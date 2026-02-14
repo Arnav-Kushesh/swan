@@ -1,127 +1,113 @@
-<div align="center"> 
-<br/><br/>
-<img alt="start-simple-logo" src="https://raw.githubusercontent.com/arnav-kushesh/swan/master/assets/swan.png" height="128"/>
-<h3 style="margin-top: 9px;">The Swan Template</h3>
+# Swan - Notion as a Website 🦢
 
-<br/>
+Swan is a powerful **Notion-to-Website** engine that turns your Notion workspace into a high-performance, static website. Built with **Next.js**, **PandaCSS**, and the **Notion API**, it offers the simplicity of a CMS with the speed of a static site.
 
-![Static Badge](https://img.shields.io/badge/DISCORD-JOIN-blue?style=for-the-badge&logo=discord&labelColor=black&color=%235965f2&link=https://discord.gg/aAsZqZkJKW)
+![Swan Demo](public/images/demo-placeholder.png)
 
-</div> 
+## ✨ Features
 
-# Swan
-
-> **S**tatic **W**ebsite **A**uthored in **N**otion (Codebase Audit & Refactored: Feb 2026)
-
-Swan is a powerful static portfolio website generator that uses Notion as your headless CMS. It combines the ease of editing in Notion with the performance and SEO benefits of a static site built with Next.js.
-
-## Features
-
--   **Dynamic Content Management**: Manage your entire site—projects, blog posts, configurations—directly in Notion.
--   **Static Site Generation (SSG)**: Fast, secure, and SEO-friendly. Content is fetched at build time.
--   **Automatic SEO**: Built-in `sitemap.xml` generation and meta tag optimization.
--   **Rich Portfolio Features**:
-    -   **Projects**: Kanban workflow (Draft -> Published) with support for tech stack tags ("Tools").
-    -   **Blog**: Write posts in Notion with separate "Show Images" toggle for list views.
-    -   **Gallery**: A dedicated section for visual assets.
-    -   **View Switcher**: Users can toggle between List, Minimal List (Text-only), Grid, and Gallery views for any section.
--   **Social Media Ready**: First-class support for Twitter, GitHub, LinkedIn, Instagram, YouTube, Facebook, Twitch, and Email.
--   **Dynamic Layout**: Reorder the "Projects", "Blog", and "Gallery" sections on your site simply by ensuring the order of their inline databases in Notion matches your desired layout.
--   **Zero-Config Image Optimization**: Images from Notion are automatically optimized and served efficiently.
--   **One-Click Deployment**: Pre-configured for seamless deployment to Vercel and Netlify.
+- **Heads-free CMS**: Manage 100% of your content (posts, pages, config) in Notion.
+- **Blazing Fast**: Static Site Generation (SSG) ensures instant page loads and perfect SEO.
+- **Global Search**: Built-in `Cmd+K` command palette to search all content.
+- **Multi-Author**: Support for multiple authors with dedicated profile pages.
+- **Rich Content**: Supports video embeds, code blocks, callouts, and more.
+- **Newsletter Ready**: Native Mailchimp integration form.
+- **Code Injection**: Add Analytics, Ads, or Scripts directly from Notion.
+- **Theming**: Toggle between Light/Dark modes and preset color themes.
+- **RSS Feeds**: Auto-generated feeds for every content collection.
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
-### 1. Create a Notion Integration
-1.  Go to [Notion My Integrations](https://www.notion.so/my-integrations).
-2.  Click **New integration**.
-3.  Name it (e.g., "Swan Portfolio").
-4.  **Copy the Internal Integration Token**.
-
-### 2. Set Up Your Content
-1.  Create a new empty page in Notion.
-2.  **Copy the Page ID** from the URL.
-3.  **Connect your Integration**: Click the `...` menu (top right) -> Connections -> Search for your integration -> Confirm.
-
-### 3. Use the Template
-Clone this repository or use the template button.
-
-### 4. Install & Run
+### 1. Clone & Install
 ```bash
-# 1. Install dependencies
+git clone https://github.com/yourusername/swan.git
+cd swan
 npm install
-
-# 2. Setup Environment
-# Create a .env.local file with:
-# NOTION_API_KEY=secret_...
-# ROOT_PAGE_ID=...
-# NEXT_PUBLIC_BASE_URL=https://your-domain.com (Optional: for sitemap generation)
-
-# 3. Seed Notion (One-time setup)
-# This creates the necessary databases in your Notion page.
-npm run prepare
-
-# 4. Sync Content
-npm run sync
-
-# 5. Start Development
-npm run dev
-
 ```
 
-## Deployment
-
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/Arnav-Kushesh/swan) &nbsp; [![Deploy to Vercel](https://img.shields.io/badge/Deploy_to-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/new/clone?repository-url=https://github.com/Arnav-Kushesh/swan)
-
-When deploying to Netlify, Vercel, or other static hosting services, use the following build command:
-
+### 2. Configure Environment
+Create a `.env.local` file in the root directory:
 ```bash
-npm run sync-and-build
+NOTION_API_KEY=secret_your_notion_integration_key
+ROOT_PAGE_ID=your_root_page_id
+```
+> **Tip**: obtain your API key from [Notion Integrations](https://www.notion.so/my-integrations) and share your root page with the integration.
+
+### 3. Seed Notion (One-time Setup)
+Run the seed script to automatically create the required database structure in your Notion page:
+```bash
+npm run seed
+```
+*This will create specific Pages and Databases (Home, Settings, Collections) in your root page.*
+
+### 4. Sync & Run
+Download content from Notion and start the dev server:
+```bash
+npm run sync  # Fetches data to notion_state/
+npm run dev   # Starts Next.js at localhost:3000
 ```
 
-This ensures that your Notion content is synced before the build process runs.
+---
+
+## 📚 Notion Structure
+
+After seeding, your Notion root page will look like this:
+
+- **🏠 Home Page**: Contains sections displayed on the landing page.
+- **⚙️ Settings**: Central configuration hub.
+  - **General Configuration**: Site title, descriptions, social links.
+  - **Configure Collections**: Toggle RSS, newsletter sections per collection.
+  - **Code**: Inject scripts into `<head>`.
+- **📚 Collections**: Parent page for content databases (Blogs, Projects, Gallery).
+- **📑 Navbar Pages**: Static pages like About, Contact.
+- **👤 Authors**: Database of site contributors.
 
 ---
 
-## Notion Structure
+## 🛠️ Project Structure
 
-The **ROOT_PAGE_ID** page will contain the following structure after running `npm run prepare`:
+```
+swan/
+├── app/                 # Next.js App Router pages
+├── components/          # React UI components
+├── lib/                 # Utilities & Data Fetching
+├── scripts/             # Node.js scripts for Notion Sync
+│   ├── lib/             # Seeding logic
+│   └── sync-notion.mjs  # Main sync script
+├── notion_state/        # Local cache of Notion content (JSON/MD)
+├── public/              # Static assets & downloaded images
+└── panda.config.mjs     # Design system configuration
+```
 
-1.  **Config** (Database): Global site settings. Values can be Text or Media (Files).
-    -   `title`: Text
-    -   `description`: Text
-    -   `favicon`: Media (Upload an image) or URL
-    -   `keywords`: Text
-    -   `og_image`: Media (Upload an image) or URL
-    -   `sidebar_navigation`: Text ('true' or 'false')
-    -   `default_color_mode`: Text ('light' or 'dark')
-    -   `logo`: Media (Upload an image) or URL
-    -   `tagline`: Text (e.g., "Software Engineer")
-    -   `social_*`: Text keys for social links (e.g., `social_github`, `social_twitter`)
-2.  **Home Page** (Page):
-    -   **Dynamic Architecture**: The Home Page is built from child databases (Sections).
-    -   **Info Sections** (Inline Database): Create databases with properties `Title`, `Description`, `Image`, `Link`, `View Type` to add content blocks (e.g., Hero, About).
-    -   **Dynamic Sections** (Inline Database): Create databases with properties `collection_name` (e.g., "Projects") and `view_type` (List, Minimal List, Card, Gallery) to embed your content collections.
-    -   **Ordering**: Reimagine your layout by simply dragging and dropping the databases on the Notion page.
-3.  **Navbar Pages** (Page): Container for sub-pages like About and Contact.
-    -   Create standard Notion pages here to have them appear as sub-pages on your site (e.g. `/about`, `/contact`).
-4.  **Projects** (Database): Kanban board for your portfolio items.
-    -   Properties: `Project Name`, `Status`, `Description`, `Slug`, `Tools` (formerly Tech), `Link`, `Thumbnail`.
-4.  **Blogs** (Database): Kanban board for your writings with `Title`, `Status`, `Description`, `Slug`, `Published Date`, and `Cover`.
-5.  **Gallery** (Database): A collection of visual assets.
-    -   Properties: `Name`, `Slug`, `Image`, `Link`.
+## 🎨 Customizing Design
+
+Swan uses **PandaCSS** for styling.
+
+- **Themes**: Edit `app/themes.css` to customize color variables for Light/Dark modes and other presets (Blue, Green, etc.).
+- **Styles**: Global styles are in `app/globals.css`.
+- **Layout**: Modify `app/layout.tsx` for site-wide structural changes.
+
+## 📦 Deployment
+
+Swan is designed for static hosting.
+
+### Vercel / Netlify
+1. Connect your GitHub repository.
+2. Set Environment Variables (`NOTION_API_KEY`, `ROOT_PAGE_ID`) in the dashboard.
+3. Set the **Build Command**:
+   ```bash
+   npm run sync-and-build
+   ```
+4. Set the **Output Directory**: `out`
 
 ---
 
-## Design Decisions
+## 🤝 Contributing
 
-### Why use SSG rather than SSR?
-Static sites offer superior performance and stability. By generating pages and optimizing images at build time, we ensure instant load times and eliminate the risk of hitting Notion's API rate limits during traffic spikes. Your site stays fast and online, regardless of Notion's status.
+Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) (coming soon).
 
-### Why use Next.js rather than Astro or Hugo?
-We chose Next.js to provide a seamless Single Page Application (SPA) experience. After the initial load, navigation is instant and smooth without full page refreshes. While Astro is excellent for static content, Next.js offers robust client-side routing and state management out of the box. We avoided Hugo to leverage the React ecosystem and TypeScript for better maintainability.
+## 📄 License
 
-### Why use PandaCSS instead of Tailwind?
-PandaCSS provides the performance of build-time CSS generation (like Tailwind) but with a much cleaner, type-safe developer experience. It keeps your markup readable by avoiding "class soup" and allows for strictly typed design tokens, making the codebase easier to maintain and scale.
+MIT © [Arnav Singh](https://github.com/arnavsingh)

@@ -8,3 +8,8 @@ body {
     background-color: var(--colors-bg-primary);
     color: var(--colors-text-primary);
 }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}

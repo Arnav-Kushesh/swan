@@ -4,6 +4,9 @@ import {
     dummyHomePageSections,
     dummyCollections,
     dummyNavbarPages,
+    dummyCollectionSettings,
+    dummyAuthors,
+    dummyCodeInjection,
 } from './dummy-data.mjs';
 
 /**
@@ -69,13 +72,31 @@ export async function seedNotion(rootPageId, notion) {
     await createCollections(collectionsPageId, notion);
 
 
-    await createConfigDB(rootPageId, notion);
+    await createAuthorDB(rootPageId, notion);
 
+    const settingsPageId = await createSettingsPage(rootPageId, notion);
 
+    // Nest under Settings
+    await createConfigDB(settingsPageId, notion);
+    await createCollectionSettingsPage(settingsPageId, notion);
+    await createCodeInjectionPage(settingsPageId, notion);
 
 
     console.log("✨ Seeding process completed successfully!");
 }
+
+async function createSettingsPage(rootPageId, notion) {
+    console.log("\n📦 Creating Page: Settings...");
+    const page = await notion.pages.create({
+        parent: { page_id: rootPageId },
+        properties: { title: { title: plainText('Settings') } },
+        icon: { type: "emoji", emoji: "⚙️" },
+    });
+    console.log(`   ✅ Settings Page created (ID: ${page.id})`);
+    return page.id;
+}
+
+
 
 // --- Helpers ---
 
@@ -159,12 +180,14 @@ function buildBlocks(contentArray) {
 
 // --- 1. Global Config ---
 
-async function createConfigDB(rootPageId, notion) {
+// --- 1. Global Config (Now General Configuration) ---
+
+async function createConfigDB(parentId, notion) {
     console.log("\n📦 Creating Database: Config...");
 
     const db = await notion.databases.create({
-        parent: { type: 'page_id', page_id: rootPageId },
-        title: plainText('Config'),
+        parent: { type: 'page_id', page_id: parentId },
+        title: plainText('General Configuration'),
         initial_data_source: {
             properties: {
                 Name: { title: {} }, // Field Name (e.g. social_twitter)
@@ -223,7 +246,9 @@ async function createCollections(parentId, notion) {
         Image: { files: {} },
         Tags: { multi_select: {} },
         Link: { url: {} },
-        Order: { number: { format: 'number' } },
+        order_priority: { number: { format: 'number' } },
+        author_username: { rich_text: {} },
+        video_embed_link: { url: {} },
         // Rich Content is just the page content
     };
 
@@ -249,7 +274,9 @@ async function createCollections(parentId, notion) {
                 Description: { rich_text: plainText(item.description) },
                 Tags: { multi_select: (item.tags || []).map(t => ({ name: t })) },
                 Link: { url: item.link || null },
-                Order: { number: item.order || 0 }
+                order_priority: { number: item.order_priority || 0 },
+                author_username: { rich_text: plainText(item.author_username || '') },
+                video_embed_link: { url: item.video_embed_link || null },
             };
 
             if (item.image) {
@@ -337,7 +364,8 @@ async function createInfoSection(notion, parentId, sectionData) {
                     { name: 'dynamic_section', color: 'orange' }
                 ]
             }
-        }
+        },
+        visibility: { checkbox: {} }
     };
 
     const db = await notion.databases.create({
@@ -355,7 +383,8 @@ async function createInfoSection(notion, parentId, sectionData) {
             description: { rich_text: plainText(item.description) },
             link: { url: item.link || null },
             view_type: { select: { name: item.view_type } },
-            section_type: { select: { name: 'info_section' } }
+            section_type: { select: { name: 'info_section' } },
+            visibility: { checkbox: sectionData.visibility === 'true' }
         };
 
         if (item.image) {
@@ -394,7 +423,8 @@ async function createDynamicSection(notion, parentId, sectionData) {
                     { name: 'dynamic_section', color: 'orange' }
                 ]
             }
-        }
+        },
+        visibility: { checkbox: {} }
     };
 
     const db = await notion.databases.create({
@@ -411,7 +441,8 @@ async function createDynamicSection(notion, parentId, sectionData) {
             collection_name: { title: plainText(item.collection_name) },
             section_title: { rich_text: plainText(item.section_title || sectionData.title) },
             view_type: { select: { name: item.view_type } },
-            section_type: { select: { name: 'dynamic_section' } }
+            section_type: { select: { name: 'dynamic_section' } },
+            visibility: { checkbox: sectionData.visibility === 'true' }
         };
 
         await notion.pages.create({
@@ -419,4 +450,123 @@ async function createDynamicSection(notion, parentId, sectionData) {
             properties: props
         });
     }
+}
+
+// --- 5. Authors Database ---
+
+async function createAuthorDB(rootPageId, notion) {
+    console.log("\n📦 Creating Database: Authors...");
+
+    const db = await notion.databases.create({
+        parent: { type: 'page_id', page_id: rootPageId },
+        title: plainText('Authors'),
+        initial_data_source: {
+            properties: {
+                name: { title: {} },
+                username: { rich_text: {} },
+                email: { email: {} },
+                description: { rich_text: {} },
+                picture: { files: {} },
+                instagram_handle: { rich_text: {} },
+                x_handle: { rich_text: {} },
+                github_handle: { rich_text: {} },
+            }
+        }
+    });
+
+    await notion.databases.update({
+        database_id: db.id,
+        icon: { type: "emoji", emoji: "👤" },
+    });
+
+    console.log(`   ✅ Authors Database created (ID: ${db.id})`);
+    console.log("   > Seeding Authors data...");
+
+    const seededUsernames = new Set();
+
+    for (const author of dummyAuthors) {
+        if (seededUsernames.has(author.username)) {
+            console.warn(`Original warning: Skipping duplicate author username: ${author.username}`);
+            continue;
+        }
+        seededUsernames.add(author.username);
+
+        const props = {
+            name: { title: plainText(author.name) },
+            username: { rich_text: plainText(author.username) },
+            email: { email: author.email },
+            description: { rich_text: plainText(author.description) },
+            instagram_handle: { rich_text: plainText(author.instagram_handle || '') },
+            x_handle: { rich_text: plainText(author.x_handle || '') },
+            github_handle: { rich_text: plainText(author.github_handle || '') },
+        };
+
+        if (author.picture) {
+            props.picture = {
+                files: [{ type: "external", name: "Picture", external: { url: author.picture } }]
+            };
+        }
+
+        await notion.pages.create({
+            parent: { database_id: db.id },
+            properties: props
+        });
+    }
+}
+
+// --- 6. Collection Settings Page ---
+
+async function createCollectionSettingsPage(parentId, notion) {
+    console.log("\n📦 Creating Page: Configure Collections...");
+    const page = await notion.pages.create({
+        parent: { page_id: parentId },
+        properties: { title: { title: plainText('Configure Collections') } },
+        icon: { type: "emoji", emoji: "🔧" },
+    });
+    console.log(`   ✅ Configure Collections Page created (ID: ${page.id})`);
+
+    // Create one inline DB per collection
+    for (const [name, settings] of Object.entries(dummyCollectionSettings)) {
+        console.log(`   > Creating Collection Settings DB: ${name}...`);
+
+        const db = await notion.databases.create({
+            parent: { type: 'page_id', page_id: page.id },
+            title: plainText(`${name} Settings`),
+            is_inline: true,
+            initial_data_source: {
+                properties: {
+                    collection_name: { title: {} },
+                    enable_rss: { checkbox: {} },
+                    show_newsletter_section: { checkbox: {} },
+                }
+            }
+        });
+
+        // Seed the settings row
+        await notion.pages.create({
+            parent: { database_id: db.id },
+            properties: {
+                collection_name: { title: plainText(settings.collection_name) },
+                enable_rss: { checkbox: settings.enable_rss === 'true' },
+                show_newsletter_section: { checkbox: settings.show_newsletter_section === 'true' },
+            }
+        });
+    }
+}
+
+// --- 7. Code Injection Page ---
+
+async function createCodeInjectionPage(parentId, notion) {
+    console.log("\n📦 Creating Page: Code Injection...");
+
+    const children = dummyCodeInjection.map(code => codeBlock(code, 'html'));
+
+    const page = await notion.pages.create({
+        parent: { page_id: parentId },
+        properties: { title: { title: plainText('Code') } },
+        icon: { type: "emoji", emoji: "🤖" },
+        children: children,
+    });
+
+    console.log(`   ✅ Code Injection Page created (ID: ${page.id})`);
 }

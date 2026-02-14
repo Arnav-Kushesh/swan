@@ -33,23 +33,8 @@ async function ensureDir(dir) {
 async function downloadImage(url, filename) {
     if (!url) return '';
     try {
-        // Let's download every time for now to ensure freshness.
-
-        // Define path for images (kept public for serving)
-        // NOTE: If we want images inside notion_state too, we'd need to copy them or serve from there.
-        // For Next.js public folder is best for static serving. Let's keep images in public/images for now
-        // as that is standard for Next.js SSG. 
-        // IF the user wanted EVERYTHING in notion_state, we'd need a way to serve it. 
-        // Assuming user means CONTENT and DATA json/md files.
         await ensureDir('public/images');
         const filepath = path.join('public/images', filename);
-
-        // Simple check: if file exists, we might skip. But Notion URLs expire, so we should re-download if it's a signed URL.
-        // However, generic "Is this the same image?" is hard without hashing.
-        // For static site generation, downloading every time is safer for correctness, but slower.
-        // Let's download every time for now to ensure freshness.
-
-        // NOTE: In a real app, you might check if the file exists and is recent, or hash the URL.
 
         const response = await fetch(url);
         if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText} `);
@@ -76,8 +61,6 @@ n2m.setCustomTransformer('image', async (block) => {
     }
 
     try {
-        // Extract extension or default to .jpg
-        // Notion URLs often end with path/to/file.png?query
         const urlBase = url.split('?')[0];
         const ext = path.extname(urlBase) || '.jpg';
         const filename = `content-${block.id}${ext}`;
@@ -115,7 +98,6 @@ async function fetchAllDatabasePages(databaseId, filter, sorts) {
     let results = [];
     let cursor = undefined;
 
-    // Check if global fetch is available (Node 18+)
     if (typeof fetch === 'undefined') {
         throw new Error("Global fetch not found. Please use Node.js 18+");
     }
@@ -152,13 +134,6 @@ async function fetchAllDatabasePages(databaseId, filter, sorts) {
 // Data Extractors
 async function getPageByName(parentId, name) {
     const children = await fetchAllChildren(parentId);
-    // This is naive, finding a child page by title requires iterating or search. 
-    // Search is better but global. Let's try to search by parent + title if possible, 
-    // or just list children and filter if it's a small site. 
-    // For robust 'Config' finding, let's look at recent pages or assume structure.
-
-    // Better approach: Use Search API restricted to immediate children if possible? No.
-    // We will list children of ROOT.
 
     for (const block of children) {
         if (block.type === 'child_page' && block.child_page.title === name) {
@@ -175,14 +150,12 @@ async function fetchConfigKV(dbId, prefix = 'config') {
     const pages = await fetchAllDatabasePages(dbId);
     const data = {};
     for (const page of pages) {
-        // Assume Name (Title) and Value (RichText) and optional Media (Files)
         const props = page.properties;
         const key = props.Name?.title?.[0]?.plain_text;
         if (!key) continue;
 
         let val = props.Value?.rich_text?.[0]?.plain_text || '';
 
-        // If there's a file, prefer that or add it
         if (props.Media?.files?.length > 0) {
             const rawUrl = props.Media.files[0].file?.url || props.Media.files[0].external?.url;
             if (rawUrl) {
@@ -198,15 +171,17 @@ async function fetchConfigKV(dbId, prefix = 'config') {
 }
 
 async function syncConfig() {
-    console.log("Syncing Config...");
-    // Find the Config Database directly (Full Page)
-    const configDbId = await findFullPageDb("Config");
+    console.log("Syncing General Configuration...");
+    const settingsPageId = await getPageByName(ROOT_PAGE_ID, "Settings");
+    if (!settingsPageId) {
+        console.warn("Settings page not found!");
+        return;
+    }
+
+    const configDbId = await findFullPageDb("General Configuration", settingsPageId);
 
     if (!configDbId) {
-        console.warn("Config database not found! (Checking for legacy page...)");
-        // Fallback or just warn? Given we want to enforce full page, let's just warn.
-        // But if the user hasn't run seed yet, it won't be there.
-        // The script relies on existing structure.
+        console.warn("General Configuration database not found in Settings!");
         return;
     }
 
@@ -220,8 +195,8 @@ async function syncConfig() {
     await fs.writeFile('notion_state/data/site.json', JSON.stringify(configData, null, 2));
 }
 
-async function findFullPageDb(name) {
-    const children = await fetchAllChildren(ROOT_PAGE_ID);
+async function findFullPageDb(name, parentId = ROOT_PAGE_ID) {
+    const children = await fetchAllChildren(parentId);
     const db = children.find(b => b.type === 'child_database' && b.child_database.title === name);
     return db ? db.id : null;
 }
@@ -239,6 +214,7 @@ async function fetchInfoSectionData(dbId) {
         description: props.description?.rich_text?.[0]?.plain_text || props.Description?.rich_text?.[0]?.plain_text || '',
         link: props.link?.url || props.Link?.url || '',
         view_type: props.view_type?.select?.name || props['View Type']?.select?.name || 'col_centered_view',
+        visibility: props.visibility?.checkbox ?? true,
     };
 
     const imageProp = props.image?.files || props.Image?.files;
@@ -266,6 +242,7 @@ async function fetchDynamicSectionData(dbId) {
         collection_name: props.collection_name?.title?.[0]?.plain_text || '',
         section_title: props.section_title?.rich_text?.[0]?.plain_text || '',
         view_type: props.view_type?.select?.name || 'list_view',
+        visibility: props.visibility?.checkbox ?? true,
     };
 }
 
@@ -312,8 +289,6 @@ async function syncHomePage() {
 
         console.log(`   > Processing: ${dbTitle}`);
 
-        // introspect DB properties to determine type
-        // Use manual fetch to ensure we get properties regardless of library version
         const dbDetails = await fetchDatabaseDetails(dbId);
 
         const props = dbDetails.properties || {};
@@ -344,7 +319,6 @@ async function syncHomePage() {
         } else {
             // Fallback to property check (legacy/inference)
             if (props['collection_name']) {
-                // Dynamic Section
                 const data = await fetchDynamicSectionData(dbId);
                 if (data) {
                     sections.push({
@@ -355,7 +329,6 @@ async function syncHomePage() {
                     });
                 }
             } else if ((props['description'] && props['title']) || (props['Description'] && props['Title'])) {
-                // Info Section
                 const data = await fetchInfoSectionData(dbId);
                 if (data) {
                     sections.push({
@@ -394,16 +367,12 @@ async function syncAllCollections() {
     for (const dbBlock of databases) {
         const dbTitle = dbBlock.child_database.title;
         const dbId = dbBlock.id;
-        const slug = slugify(dbTitle); // e.g. "Projects" -> "projects"
+        const slug = slugify(dbTitle);
 
         console.log(`   > Syncing Collection: ${dbTitle} (${slug})...`);
 
-        // Introspect DB to check structure? 
-        // We assume shared schema for simplicity as per plan: Title, Description, Image, Tags, Link, Order
-        // If schema differs, we do best effort mapping.
-
         const pages = await fetchAllDatabasePages(dbId, undefined, [
-            { property: 'Order', direction: 'ascending' }
+            { property: 'order_priority', direction: 'descending' }
         ]);
 
         await ensureDir(`notion_state/content/${slug}`);
@@ -412,10 +381,9 @@ async function syncAllCollections() {
             const mdBlocks = await n2m.pageToMarkdown(page.id);
             const mdString = n2m.toMarkdownString(mdBlocks);
 
-            // Map properties generically
             const props = page.properties;
             const itemTitle = props.Title?.title?.[0]?.plain_text || 'Untitled';
-            const itemSlug = props.Slug?.rich_text?.[0]?.plain_text || slugify(itemTitle); // Prefer explicit slug if available
+            const itemSlug = props.Slug?.rich_text?.[0]?.plain_text || slugify(itemTitle);
 
             // Image/Cover
             const rawImage = props.Image?.files?.[0]?.file?.url || props.Image?.files?.[0]?.external?.url;
@@ -428,21 +396,25 @@ async function syncAllCollections() {
             const tags = props.Tags?.multi_select?.map(o => o.name) || [];
             const link = props.Link?.url || '';
             const description = props.Description?.rich_text?.[0]?.plain_text || '';
-            const order = props.Order?.number || 0;
+            const order_priority = props.order_priority?.number || props.Order?.number || 0;
+            const author_username = props.author_username?.rich_text?.[0]?.plain_text || '';
+            const video_embed_link = props.video_embed_link?.url || '';
 
             const frontmatter = {
                 slug: itemSlug,
                 title: itemTitle,
-                collection: slug, // Add collection name to frontmatter
+                collection: slug,
                 date: page.created_time,
                 description,
-                image, // Generic name
-                cover: { image: image, alt: itemTitle }, // Compat
-                thumbnail: image, // Compat
+                image,
+                cover: { image: image, alt: itemTitle },
+                thumbnail: image,
                 tags,
                 link,
-                tools: tags.join(', '), // Compat for projects
-                order
+                tools: tags.join(', '),
+                order_priority,
+                author_username,
+                video_embed_link,
             };
 
             const fileContent = `---\n${JSON.stringify(frontmatter, null, 2)}\n---\n\n${mdString.parent}`;
@@ -459,7 +431,6 @@ async function syncNavbarPagesContainer() {
         return;
     }
 
-    // ... (rest same, just wrapping up)
     const children = await fetchAllChildren(pagesContainerId);
     for (const block of children) {
         if (block.type === 'child_page') {
@@ -484,6 +455,118 @@ async function syncNavbarPagesContainer() {
     }
 }
 
+// --- New: Sync Authors ---
+async function syncAuthors() {
+    console.log("Syncing Authors...");
+    const authorsDbId = await findFullPageDb("Authors");
+    if (!authorsDbId) {
+        console.warn("Authors database not found!");
+        return;
+    }
+
+    const pages = await fetchAllDatabasePages(authorsDbId);
+    const authors = [];
+
+    for (const page of pages) {
+        const props = page.properties;
+
+        const name = props.name?.title?.[0]?.plain_text || '';
+        const username = props.username?.rich_text?.[0]?.plain_text || '';
+        const email = props.email?.email || '';
+        const description = props.description?.rich_text?.[0]?.plain_text || '';
+        const instagram_handle = props.instagram_handle?.rich_text?.[0]?.plain_text || '';
+        const x_handle = props.x_handle?.rich_text?.[0]?.plain_text || '';
+        const github_handle = props.github_handle?.rich_text?.[0]?.plain_text || '';
+
+        let picture = '';
+        const picFile = props.picture?.files?.[0];
+        if (picFile) {
+            const rawUrl = picFile.file?.url || picFile.external?.url;
+            if (rawUrl) {
+                const ext = path.extname(rawUrl.split('?')[0]) || '.jpg';
+                picture = await downloadImage(rawUrl, `author-${slugify(username)}${ext}`);
+            }
+        }
+
+        authors.push({
+            name,
+            username,
+            email,
+            description,
+            picture,
+            instagram_handle,
+            x_handle,
+            github_handle,
+        });
+    }
+
+    await ensureDir('notion_state/data');
+    await fs.writeFile('notion_state/data/authors.json', JSON.stringify(authors, null, 2));
+}
+
+// --- 5. Sync Collection Settings ---
+async function syncCollectionSettings() {
+    console.log("Syncing Configure Collections...");
+    const settingsPageId = await getPageByName(ROOT_PAGE_ID, "Settings");
+    if (!settingsPageId) {
+        console.warn("Settings page not found!");
+        return;
+    }
+
+    const collectionSettingsPageId = await getPageByName(settingsPageId, "Configure Collections");
+    if (!collectionSettingsPageId) {
+        console.warn("Configure Collections page not found in Settings!");
+        return;
+    }
+
+    const children = await fetchAllChildren(collectionSettingsPageId);
+    const databases = children.filter(b => b.type === 'child_database');
+
+    const settings = {};
+
+    for (const dbBlock of databases) {
+        const pages = await fetchAllDatabasePages(dbBlock.id);
+        for (const page of pages) {
+            const props = page.properties;
+            const collectionName = props.collection_name?.title?.[0]?.plain_text || '';
+            if (!collectionName) continue;
+
+            settings[collectionName.toLowerCase()] = {
+                collection_name: collectionName,
+                enable_rss: props.enable_rss?.checkbox ? 'true' : 'false',
+                show_newsletter_section: props.show_newsletter_section?.checkbox ? 'true' : 'false',
+            };
+        }
+    }
+
+    await ensureDir('notion_state/data');
+    await fs.writeFile('notion_state/data/collection_settings.json', JSON.stringify(settings, null, 2));
+}
+
+// --- New: Sync Code Injection ---
+async function syncCodeInjection() {
+    console.log("Syncing Code Injection...");
+    const settingsPageId = await getPageByName(ROOT_PAGE_ID, "Settings");
+    if (!settingsPageId) {
+        console.warn("Settings page not found!");
+        return;
+    }
+
+    const codeInjectionPageId = await getPageByName(settingsPageId, "Code");
+    if (!codeInjectionPageId) {
+        console.warn("Code Injection page not found in Settings!");
+        return;
+    }
+
+    const children = await fetchAllChildren(codeInjectionPageId);
+    const codeBlocks = children
+        .filter(b => b.type === 'code')
+        .map(b => b.code.rich_text.map(t => t.plain_text).join(''));
+
+    await ensureDir('notion_state/data');
+    await fs.writeFile('notion_state/data/code_injection.json', JSON.stringify(codeBlocks, null, 2));
+}
+
 
 async function main() {
     try {
@@ -491,6 +574,9 @@ async function main() {
         await syncHomePage();
         await syncNavbarPagesContainer();
         await syncAllCollections();
+        await syncAuthors();
+        await syncCollectionSettings();
+        await syncCodeInjection();
         console.log("Completed sync.");
     } catch (e) {
         console.error(e);

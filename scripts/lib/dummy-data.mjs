@@ -1,5 +1,5 @@
 
-// Global Config Page Data
+// Configuration Page Data
 export const dummyConfig = [
   // Top Level
   { field: 'title', value: 'My Notion Portfolio' },
@@ -25,6 +25,12 @@ export const dummyConfig = [
   { field: 'favicon', value: '', media: 'https://cdn-icons-png.flaticon.com/512/3233/3233483.png' },
   { field: 'keywords', value: 'portfolio, notion, nextjs' },
   { field: 'og_image', value: '', media: 'https://placehold.co/1200x630/png' },
+
+  // Newsletter & Footer
+  { field: 'enable_newsletter', value: 'false' },
+  { field: 'mailchimp_form_link', value: '' },
+  { field: 'mention_this_tool_in_footer', value: 'true' },
+  { field: 'show_newsletter_section_on_home', value: 'false' },
 ];
 
 /**
@@ -36,6 +42,7 @@ export const dummyConfig = [
 // 1. Hero Section (Info Section)
 export const dummyHeroSection = {
   type: 'info_section',
+  visibility: 'true',
   title: 'Hero Section',
   data: [
     {
@@ -51,6 +58,7 @@ export const dummyHeroSection = {
 // 2. Dynamic Sections
 export const dummyDynamicGallery = {
   type: 'dynamic_section',
+  visibility: 'true',
   title: 'My Gallery',
   data: [
     {
@@ -63,6 +71,7 @@ export const dummyDynamicGallery = {
 
 export const dummyDynamicProjects = {
   type: 'dynamic_section',
+  visibility: 'true',
   title: 'Selected Projects',
   data: [
     {
@@ -75,6 +84,7 @@ export const dummyDynamicProjects = {
 
 export const dummyDynamicBlog = {
   type: 'dynamic_section',
+  visibility: 'true',
   title: 'Recent Writing',
   data: [
     {
@@ -103,153 +113,218 @@ export const dummyCollections = {
     {
       title: 'Mountain View',
       description: 'I took this photo while hiking in the mountains.',
-      image: 'https://images.unsplash.com/photo-1519681393798-38e36fefce15?w=600&h=600&fit=crop',
+      image: 'https://picsum.photos/seed/mountain/600/600',
       tags: ['Nature', 'Photography'],
       link: 'https://unsplash.com',
-      order: 1,
+      order_priority: 6,
+      author_username: 'johndoe',
     },
     {
       title: 'City Lights',
       description: 'The city comes alive at night. A long exposure shot.',
-      image: 'https://images.unsplash.com/photo-1542397284385-6010376c5337?w=600&h=601&fit=crop',
+      image: 'https://picsum.photos/seed/city/600/600',
       tags: ['Urban', 'Night'],
       link: '',
-      order: 2,
+      order_priority: 5,
+      author_username: 'johndoe',
     },
     {
       title: 'Ocean Breeze',
       description: 'Calm waves hitting the shore during sunset.',
-      image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=602&fit=crop',
+      image: 'https://picsum.photos/seed/ocean/600/600',
       tags: ['Nature', 'Water'],
       link: '',
-      order: 3,
+      order_priority: 4,
+      author_username: 'janedoe',
     },
     {
       title: 'Forest Mist',
       description: 'Early morning mist rolling through the pine trees.',
-      image: 'https://images.unsplash.com/photo-1448375240586-dfd8f3793371?w=600&h=603&fit=crop',
+      image: 'https://picsum.photos/seed/forest/600/600',
       tags: ['Nature', 'Forest'],
       link: '',
-      order: 4,
+      order_priority: 3,
+      author_username: 'janedoe',
     },
     {
       title: 'Desert Dunes',
       description: 'Layered sand dunes under the bright sun.',
-      image: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=600&h=604&fit=crop',
+      image: 'https://picsum.photos/seed/desert/600/600',
       tags: ['Nature', 'Desert'],
       link: '',
-      order: 5,
+      order_priority: 2,
+      author_username: 'johndoe',
     },
     {
       title: 'Urban Architecture',
       description: 'Modern lines and glass facades.',
-      image: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&h=605&fit=crop',
+      image: 'https://picsum.photos/seed/architecture/600/600',
       tags: ['Architecture', 'Urban'],
       link: '',
-      order: 6,
+      order_priority: 1,
+      author_username: 'janedoe',
     }
   ],
   Projects: [
     {
       title: 'Notion Portfolio',
       description: 'A static site generated from Notion content, built with Next.js.',
-      image: 'https://images.unsplash.com/photo-1507238691140-d94cf9536852?w=800&h=600&fit=crop',
+      image: 'https://picsum.photos/seed/notion/800/600',
       tags: ['Next.js', 'Notion API'],
       link: 'https://github.com',
-      order: 1,
+      order_priority: 6,
+      author_username: 'johndoe',
+      video_embed_link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
     },
     {
       title: 'AI Chatbot',
       description: 'A conversational AI interface using OpenAI API.',
-      image: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=800&h=601&fit=crop',
+      image: 'https://picsum.photos/seed/ai/800/600',
       tags: ['Python', 'OpenAI', 'React'],
       link: 'https://github.com',
-      order: 2,
+      order_priority: 5,
+      author_username: 'janedoe',
     },
     {
       title: 'E-commerce Store',
       description: 'Full-featured online store with Stripe integration.',
-      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?w=800&h=602&fit=crop',
+      image: 'https://picsum.photos/seed/ecommerce/800/600',
       tags: ['React', 'Stripe', 'Node.js'],
       link: 'https://github.com',
-      order: 3,
+      order_priority: 4,
+      author_username: 'johndoe',
     },
     {
       title: 'Task Manager',
       description: 'Productivity app to organize daily tasks and goals.',
-      image: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&h=603&fit=crop',
+      image: 'https://picsum.photos/seed/task/800/600',
       tags: ['Vue.js', 'Firebase'],
       link: 'https://github.com',
-      order: 4,
+      order_priority: 3,
+      author_username: 'janedoe',
     },
     {
       title: 'Weather App',
       description: 'Real-time weather forecasts using geolocation.',
-      image: 'https://images.unsplash.com/photo-1592210454359-9043f067919b?w=800&h=604&fit=crop',
+      image: 'https://picsum.photos/seed/weather/800/600',
       tags: ['JavaScript', 'API'],
       link: 'https://github.com',
-      order: 5,
+      order_priority: 2,
+      author_username: 'johndoe',
     },
     {
       title: 'Finance Tracker',
       description: 'Track income and expenses with visual charts.',
-      image: 'https://images.unsplash.com/photo-1554224155-984063581895?w=800&h=605&fit=crop',
+      image: 'https://picsum.photos/seed/finance/800/600',
       tags: ['React', 'D3.js'],
       link: 'https://github.com',
-      order: 6,
+      order_priority: 1,
+      author_username: 'janedoe',
     }
   ],
   Blogs: [
     {
       title: 'Hello World',
       description: 'Welcome to my first blog post! In this post, I will share my journey.',
-      image: 'https://images.unsplash.com/photo-1499750310159-a52f3377a986?w=1000&h=600&fit=crop',
+      image: 'https://picsum.photos/seed/hello/1000/600',
       tags: ['Personal', 'Update'],
       link: '',
-      order: 1,
+      order_priority: 6,
+      author_username: 'johndoe',
     },
     {
       title: 'The Future of Web Dev',
       description: 'Thoughts on where the industry is heading with AI and new frameworks.',
-      image: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=1001&h=600&fit=crop',
+      image: 'https://picsum.photos/seed/webdev/1000/600',
       tags: ['Tech', 'Opinion'],
       link: '',
-      order: 2,
+      order_priority: 5,
+      author_username: 'janedoe',
+      video_embed_link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
     },
     {
       title: 'Mastering CSS Grid',
       description: 'A comprehensive guide to building complex layouts with CSS Grid.',
-      image: 'https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=1002&h=600&fit=crop',
+      image: 'https://picsum.photos/seed/css/1000/600',
       tags: ['CSS', 'Tutorial'],
       link: '',
-      order: 3,
+      order_priority: 4,
+      author_username: 'johndoe',
     },
     {
       title: 'Why I Use Next.js',
       description: 'The benefits of server-side rendering and static site generation.',
-      image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=1003&h=600&fit=crop',
+      image: 'https://picsum.photos/seed/nextjs/1000/600',
       tags: ['Next.js', 'React'],
       link: '',
-      order: 4,
+      order_priority: 3,
+      author_username: 'janedoe',
     },
     {
       title: 'Remote Work Tips',
       description: 'How to stay productive and maintain a healthy work-life balance.',
-      image: 'https://images.unsplash.com/photo-1593642532744-93771563d659?w=1004&h=600&fit=crop',
+      image: 'https://picsum.photos/seed/remote/1000/600',
       tags: ['Productivity', 'Lifestyle'],
       link: '',
-      order: 5,
+      order_priority: 2,
+      author_username: 'johndoe',
     },
     {
       title: 'Learning Rust',
       description: 'My experience diving into systems programming with Rust.',
-      image: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=1005&h=600&fit=crop',
+      image: 'https://picsum.photos/seed/rust/1000/600',
       tags: ['Rust', 'Programming'],
       link: '',
-      order: 6,
+      order_priority: 1,
+      author_username: 'janedoe',
     }
   ]
 };
+
+/**
+ * COLLECTION SETTINGS
+ * Stored in Root > Collection Settings > [Inline DB per collection]
+ */
+export const dummyCollectionSettings = {
+  Gallery: { collection_name: 'Gallery', enable_rss: 'false', show_newsletter_section: 'false' },
+  Projects: { collection_name: 'Projects', enable_rss: 'true', show_newsletter_section: 'false' },
+  Blogs: { collection_name: 'Blogs', enable_rss: 'true', show_newsletter_section: 'true' },
+};
+
+/**
+ * AUTHORS
+ * Stored in Root > Authors (Database)
+ */
+export const dummyAuthors = [
+  {
+    name: 'John Doe',
+    username: 'johndoe',
+    email: 'john@example.com',
+    description: 'Full-stack developer, open source enthusiast, and coffee addict.',
+    picture: 'https://picsum.photos/seed/johndoe/200/200',
+    instagram_handle: 'johndoe',
+    x_handle: 'johndoe',
+    github_handle: 'johndoe',
+  },
+  {
+    name: 'Jane Doe',
+    username: 'janedoe',
+    email: 'jane@example.com',
+    description: 'Designer and frontend developer with a passion for beautiful interfaces.',
+    picture: 'https://picsum.photos/seed/janedoe/200/200',
+    instagram_handle: 'janedoe',
+    x_handle: 'janedoe',
+    github_handle: 'janedoe',
+  }
+];
+
+/**
+ * CODE INJECTION
+ * Content blocks to inject into <head>
+ */
+export const dummyCodeInjection = [
+  '<!-- Swan Code Injection: Add your analytics, meta tags, or custom scripts here -->',
+];
 
 export const dummyNavbarPages = [
   {

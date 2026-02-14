@@ -6,6 +6,7 @@ import { flex, stack } from '@/styled-system/patterns';
 import { SettingsMenu } from './SettingsMenu';
 import { getHomeData, getNavbarPages } from '@/lib/data';
 import { SocialIcons } from './SocialIcons';
+import { SearchButton } from './SearchButton';
 
 // ... styles remain mostly same, but remove iconStyle/containerStyle if unused (socialContainerStyle is used in SocialIcons now)
 // But wait, Sidebar defines local socialContainerStyle. I should use the one from SocialIcons or just wrap it?
@@ -18,7 +19,7 @@ const sidebarStyle = stack({
     left: '20px',
     h: 'calc(100vh - 40px)',
     w: '260px',
-    bg: 'bg.surface',
+    bg: 'bg.primary',
     // ...
     borderRight: '1px solid token(colors.border.subtle)',
     justify: 'space-between',
@@ -135,6 +136,9 @@ export async function Sidebar() {
                 <div className={dividerStyle} />
 
                 <nav className={navStackStyle}>
+                    <div className={css({ mb: '4' })}>
+                        <SearchButton />
+                    </div>
                     <Link
                         href="/"
                         className={navLinkStyle}
