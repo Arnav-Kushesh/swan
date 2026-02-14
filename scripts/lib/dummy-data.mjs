@@ -4,7 +4,7 @@ export const dummyConfig = [
   // Top Level
   { field: 'title', value: 'My Notion Portfolio' },
   { field: 'tagline', value: 'Software Engineer & Designer' },
-  { field: 'logo', value: '', media: 'https://placehold.co/100' },
+  { field: 'logo', value: '', media: 'https://picsum.photos/id/1015/100/100' },
   { field: 'description', value: 'A portfolio site built with Next.js and Notion.' },
 
   // Socials
@@ -22,9 +22,9 @@ export const dummyConfig = [
   // Sidebar
   { field: 'sidebar_navigation', value: 'false' },
   // Site Info
-  { field: 'favicon', value: '', media: 'https://cdn-icons-png.flaticon.com/512/3233/3233483.png' },
+  { field: 'favicon', value: '', media: 'https://picsum.photos/id/1016/512/512' },
   { field: 'keywords', value: 'portfolio, notion, nextjs' },
-  { field: 'og_image', value: '', media: 'https://placehold.co/1200x630/png' },
+  { field: 'og_image', value: '', media: 'https://picsum.photos/id/1018/1200/630' },
 
   // Newsletter & Footer
   { field: 'enable_newsletter', value: 'false' },
@@ -35,8 +35,6 @@ export const dummyConfig = [
 
 /**
  * HOME PAGE SECTIONS
- * The Home Page will contain a list of Inline Databases.
- * We'll represent them here as objects that the script will create as DBs.
  */
 
 // 1. Hero Section (Info Section)
@@ -49,7 +47,7 @@ export const dummyHeroSection = {
       title: 'Welcome to my portfolio',
       description: 'This is a longer bio paragraph about yourself. I build things with code.',
       link: 'https://example.com/about',
-      image: 'https://placedog.net/500',
+      image: 'https://picsum.photos/id/1025/500/500',
       view_type: 'col_centered_view',
     }
   ]

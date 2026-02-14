@@ -40,6 +40,7 @@ Run the seed script to automatically create the required database structure in y
 ```bash
 npm run seed
 ```
+> **Note**: If you encounter broken images in your Notion workspace, run `npm run seed` again to update them with fresh placeholders.
 *This will create specific Pages and Databases (Home, Settings, Collections) in your root page.*
 
 ### 4. Sync & Run
