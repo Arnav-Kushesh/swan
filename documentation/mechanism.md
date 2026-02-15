@@ -65,6 +65,8 @@ Next.js generates static HTML/CSS/JS at build time:
 Combined: `npm run sync-and-build` does steps 2-3 together
 ```
 
+> **Crucial**: Because this is a Static Site, you **must trigger a new build/deployment** on your hosting platform (Netlify, Vercel) whenever you update content in Notion. The site will not update dynamically on its own.
+
 For continuous deployment, set up a webhook or cron job that triggers the build pipeline when Notion content changes.
 
 ## Key Design Decisions

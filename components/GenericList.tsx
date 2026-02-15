@@ -228,7 +228,7 @@ export function GenericList({ items, viewType }: GenericListProps) {
 
     return (
         <>
-            <div className={css({ display: 'flex', flexDirection: 'column', gap: '8px' })}>
+            <div className={css({ display: 'flex', flexDirection: 'column', gap: '12px' })}>
                 {visibleItems.map((item) => {
                     const post = item as Post;
                     const title = getItemTitle(item);
@@ -241,8 +241,8 @@ export function GenericList({ items, viewType }: GenericListProps) {
                             className={css({
                                 display: 'flex',
                                 flexDirection: { base: 'column', sm: 'row' },
-                                gap: '16px',
-                                p: '16px',
+                                gap: '24px',
+                                p: '20px',
                                 borderRadius: '12px',
                                 border: '1px solid token(colors.border.default)',
                                 bg: 'transparent',
@@ -252,8 +252,8 @@ export function GenericList({ items, viewType }: GenericListProps) {
                         >
                             {!isMinimal && image && (
                                 <div className={css({
-                                    width: { base: '100%', sm: '140px' },
-                                    height: { base: '180px', sm: '90px' },
+                                    aspectRatio: 1,
+                                    height: { base: '180px', sm: '110px' },
                                     flexShrink: 0,
                                     borderRadius: '8px',
                                     overflow: 'hidden',
@@ -267,21 +267,21 @@ export function GenericList({ items, viewType }: GenericListProps) {
                             )}
 
                             <div className={css({ flex: 1, minWidth: 0 })}>
-                                <h3 className={css({ fontWeight: '600', fontSize: '1rem', color: 'text.primary', truncate: true, mb: '4px' })}>
+                                <h3 className={css({ fontWeight: '600', fontSize: '1.15rem', color: 'text.primary', truncate: true, mb: '4px' })}>
                                     {title}
                                 </h3>
                                 {post.description && (
-                                    <p className={css({ color: 'text.secondary', fontSize: '0.85rem', lineClamp: 2, lineHeight: '1.5' })}>
+                                    <p className={css({ color: 'text.secondary', fontSize: '0.95rem', lineClamp: 2, lineHeight: '1.5' })}>
                                         {post.description}
                                     </p>
                                 )}
                             </div>
                             <div className={css({
-                                fontSize: '0.8rem',
+                                fontSize: '0.85rem',
                                 color: 'text.tertiary',
                                 whiteSpace: 'nowrap',
                                 flexShrink: 0,
-                                alignSelf: { base: 'flex-start', sm: 'center' },
+                                alignSelf: { base: 'flex-start', sm: 'flex-start' },
                             })}>
                                 {post.date && format(new Date(post.date), 'MMM d, yyyy')}
                             </div>

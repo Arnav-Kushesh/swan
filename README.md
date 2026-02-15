@@ -103,6 +103,9 @@ Swan is designed for static hosting.
    ```
 4. Set the **Output Directory**: `out`
 
+### 🔄 Updating Content from Notion
+Since Swan is a Static Site Generator (SSG), changes in Notion do NOT appear automatically. You must **trigger a fresh build** (or redeploy) in your hosting dashboard (Netlify/Vercel) to fetch and render new content.
+
 ---
 
 ## 🤝 Contributing

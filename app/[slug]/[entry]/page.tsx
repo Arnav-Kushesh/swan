@@ -145,7 +145,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
                         className={css({
                             display: 'inline-block',
                             bg: 'text.primary',
-                            color: 'bg.primary',
+                            color: 'bg.primary !important',
                             px: '24px',
                             py: '10px',
                             borderRadius: 'full',
