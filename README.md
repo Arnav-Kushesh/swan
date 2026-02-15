@@ -16,6 +16,17 @@ Swan is a powerful **Notion-to-Website** engine that turns your Notion workspace
 - **Theming**: Toggle between Light/Dark modes and preset color themes.
 - **RSS Feeds**: Auto-generated feeds for every content collection.
 
+## 💬 Unique Comment Paradigm
+
+Swan introduces a radical new approach to comments: **No Backend Required**.
+
+Instead of complex databases and moderation systems, Swan uses  `mailto` 
+
+- **Zero Infrastructure**: No databases, no servers, no third-party scripts.
+- **Direct Connection**: Clicking "Reply" opens the user's email client with a pre-filled subject line, initiating a direct email thread between the reader and the author.
+- **Higher Quality**: By shifting the conversation to email, you foster deeper, more thoughtful exchanges (1-on-1) rather than public performative comments.
+- **The New Paradigm**: We believe the future of indie blogging is **relational, not transactional**. Email threads build real relationships.
+
 ---
 
 ## 🚀 Quick Start
