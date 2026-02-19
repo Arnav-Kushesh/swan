@@ -2,7 +2,7 @@
 
 Swan is a powerful **Notion-to-Website** engine that turns your Notion workspace into a high-performance, static website. Built with **Next.js**, **PandaCSS**, and the **Notion API**, it offers the simplicity of a CMS with the speed of a static site.
 
-![Swan Demo](public/images/demo-placeholder.png)
+![Swan Logo](assets/swan.png)
 
 ## ✨ Features
 
@@ -356,8 +356,8 @@ Navbar pages (About, Contact, etc.) can also contain inline database sections. A
 A floating "Experiment" button in the bottom-right corner opens a panel for trying out different settings:
 
 - **Section Views:** Change the view type of any homepage section in real time
-  - *Info sections:* `col_centered_view`, `col_left_view`, `row_view`, `row_reverse_view`
-  - *Dynamic sections:* `list_view`, `card_view`, `grid_view`, `minimal_list_view`
+  - _Info sections:_ `col_centered_view`, `col_left_view`, `row_view`, `row_reverse_view`
+  - _Dynamic sections:_ `list_view`, `card_view`, `grid_view`, `minimal_list_view`
 - **Color Mode:** Switch between all 9 themes
 - **Sidebar Toggle:** Enable/disable sidebar navigation
 
