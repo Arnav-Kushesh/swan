@@ -80,7 +80,7 @@ export default async function RootLayout({
                     >
                         {children}
                     </AppLayout>
-                    <ExperimentPanel />
+                    {process.env.NODE_ENV !== 'production' && <ExperimentPanel />}
                 </GlobalConfigProvider>
             </body>
         </html>
