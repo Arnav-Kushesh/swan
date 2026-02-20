@@ -5,6 +5,8 @@ import { HtmlSection } from './HtmlSection';
 import { IframeSection } from './IframeSection';
 import { VideoEmbedSection } from './VideoEmbedSection';
 import { MailBasedCommentSection } from './MailBasedCommentSection';
+import { Newsletter } from './Newsletter';
+import { getHomeData } from '@/lib/data';
 
 export function SectionRenderer({ section }: { section: SectionData }) {
     // Safety guard: never render disabled sections
@@ -23,6 +25,10 @@ export function SectionRenderer({ section }: { section: SectionData }) {
             return <VideoEmbedSection data={section} />;
         case 'mail_based_comment_section':
             return <MailBasedCommentSection data={section} />;
+        case 'newsletter_section': {
+            const homeData = getHomeData();
+            return <Newsletter mailchimpFormLink={homeData.info?.mailchimp_form_link} />;
+        }
         default:
             return null;
     }

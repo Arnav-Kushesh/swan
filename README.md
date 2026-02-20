@@ -13,8 +13,8 @@ Swan is a powerful **Notion-to-Website** engine that turns your Notion workspace
 
 ## ✨ Features
 
-- **Heads-free CMS**: Manage 100% of your content (posts, pages, config) in Notion.
-- **Blazing Fast**: Static Site Generation (SSG) ensures instant page loads and perfect SEO.
+- **Notion as CMS**: Manage 100% of your content (posts, pages, config) in Notion.
+- **Fast**: Static Site Generation (SSG) ensures instant page loads and perfect SEO.
 - **Global Search**: Built-in `Cmd+K` command palette to search all content.
 - **Multi-Author**: Support for multiple authors with dedicated profile pages.
 - **Rich Content**: Supports video embeds, code blocks, callouts, and more.

@@ -109,7 +109,14 @@ export interface MailBasedCommentSectionData {
     enabled?: boolean;
 }
 
-export type SectionData = InfoSectionData | DynamicSectionData | HtmlSectionData | IframeSectionData | VideoEmbedSectionData | MailBasedCommentSectionData;
+export interface NewsletterSectionData {
+    type: 'newsletter_section';
+    id: string;
+    title: string;
+    enabled?: boolean;
+}
+
+export type SectionData = InfoSectionData | DynamicSectionData | HtmlSectionData | IframeSectionData | VideoEmbedSectionData | MailBasedCommentSectionData | NewsletterSectionData;
 
 export interface HomeData {
     info?: InfoConfig;
@@ -160,6 +167,7 @@ export interface CollectionSettings {
     collection_name: string;
     enable_rss: string;
     show_newsletter_section: string;
+    show_mail_based_comment_section: string;
 }
 
 function safeJsonParse<T>(filePath: string, fallback: T): T {

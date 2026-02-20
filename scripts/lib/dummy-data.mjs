@@ -1,37 +1,50 @@
 
-// Configuration Page Data
-export const dummyConfig = [
-  // Top Level
-  { field: 'title', value: 'My Notion Portfolio' },
-  { field: 'tagline', value: 'Software Engineer & Designer' },
-  { field: 'logo', value: '', media: 'https://picsum.photos/id/1015/100/100' },
-  { field: 'description', value: 'A portfolio site built with Next.js and Notion.' },
+/**
+ * MAIN CONFIGURATION
+ * Stored in Settings > Main Configuration (Database)
+ * Contains site identity fields: title, description, tagline, keywords, logo, favicon, og_image
+ */
+export const dummyBasicConfig = {
+  title: 'My Notion Portfolio',
+  description: 'A portfolio site built with Next.js and Notion.',
+  tagline: 'Software Engineer & Designer',
+  keywords: 'portfolio, notion, nextjs',
+  logo: 'https://picsum.photos/id/1015/100/100',
+  favicon: 'https://picsum.photos/id/1016/512/512',
+  og_image: 'https://picsum.photos/id/1018/1200/630',
+  default_color_mode: 'light',
+  sidebar_navigation: false,
+};
 
-  // Socials
-  { field: 'social_github', value: 'https://github.com' },
-  { field: 'social_twitter', value: 'https://twitter.com' },
-  { field: 'social_linkedin', value: 'https://linkedin.com' },
-  { field: 'social_instagram', value: 'https://instagram.com' },
-  { field: 'social_youtube', value: 'https://youtube.com' },
-  { field: 'social_facebook', value: 'https://facebook.com' },
-  { field: 'social_twitch', value: 'https://twitch.tv' },
-
-  // Visibility Flags
-  { field: 'disable_logo_in_topbar', value: 'false' },
-  { field: 'disable_logo_in_sidebar', value: 'false' },
-  // Sidebar
-  { field: 'sidebar_navigation', value: 'false' },
-  // Site Info
-  { field: 'favicon', value: '', media: 'https://picsum.photos/id/1016/512/512' },
-  { field: 'keywords', value: 'portfolio, notion, nextjs' },
-  { field: 'og_image', value: '', media: 'https://picsum.photos/id/1018/1200/630' },
-
-  // Newsletter & Footer
-  { field: 'enable_newsletter', value: 'false' },
-  { field: 'mailchimp_form_link', value: '' },
-  { field: 'mention_this_tool_in_footer', value: 'true' },
-  { field: 'show_newsletter_section_on_home', value: 'false' },
+/**
+ * SOCIAL LINKS
+ * Stored in Settings > Social Links (Database)
+ * Contains all social media URLs
+ */
+export const dummySocialLinks = [
+  { name: 'github', data: 'https://github.com' },
+  { name: 'twitter', data: 'https://twitter.com' },
+  { name: 'linkedin', data: 'https://linkedin.com' },
+  { name: 'instagram', data: 'https://instagram.com' },
+  { name: 'youtube', data: 'https://youtube.com' },
+  { name: 'facebook', data: 'https://facebook.com' },
+  { name: 'twitch', data: 'https://twitch.tv' },
+  { name: 'email', data: 'john@example.com' },
 ];
+
+/**
+ * GENERAL CONFIGURATION
+ * Stored in Settings > General Configuration (Database)
+ * Individual columns with checkboxes for boolean fields
+ */
+export const dummyConfig = {
+  disable_logo_in_topbar: false,
+  disable_logo_in_sidebar: false,
+  enable_newsletter: false,
+  mailchimp_form_link: '',
+  mention_this_tool_in_footer: true,
+  show_newsletter_section_on_home: false,
+};
 
 /**
  * HOME PAGE SECTIONS
@@ -102,7 +115,7 @@ export const dummyHtmlSection = {
     {
       title: 'Custom HTML',
       html_code: `<div style="font-family: system-ui; padding: 16px;">
-  <h2>👋 Hello from user HTML</h2>
+  <h2>Hello from user HTML</h2>
   <p>This content is rendered inside an iframe.</p>
 
   <button id="btn">Click me</button>
@@ -160,6 +173,18 @@ export const dummyMailBasedCommentSection = {
   ]
 };
 
+// 7. Newsletter Section (disabled by default)
+export const dummyNewsletterSection = {
+  type: 'newsletter_section',
+  enabled: 'false',
+  title: 'Newsletter',
+  data: [
+    {
+      title: 'Newsletter',
+    }
+  ]
+};
+
 // The order here determines the order of creation on the Home Page, and thus the default order on the site.
 export const dummyHomePageSections = [
   dummyHeroSection,
@@ -170,6 +195,7 @@ export const dummyHomePageSections = [
   dummyIframeSection,
   dummyVideoEmbedSection,
   dummyMailBasedCommentSection,
+  dummyNewsletterSection,
 ];
 
 /**
@@ -187,6 +213,10 @@ export const dummyCollections = {
       link: 'https://unsplash.com',
       order_priority: 6,
       author_username: 'johndoe',
+      rich_content: [
+        { type: 'paragraph', content: 'This photograph was taken during an early morning hike through the Appalachian mountains. The light was perfect, casting long shadows across the valley below.' },
+        { type: 'paragraph', content: 'I used a wide-angle lens to capture the full expanse of the landscape. The clouds were rolling in just as the sun broke through, creating a dramatic contrast.' },
+      ],
     },
     {
       title: 'City Lights',
@@ -196,6 +226,10 @@ export const dummyCollections = {
       link: '',
       order_priority: 5,
       author_username: 'johndoe',
+      rich_content: [
+        { type: 'paragraph', content: 'A long exposure photograph of the downtown skyline at night. The trails of car headlights create streaks of white and red across the frame.' },
+        { type: 'paragraph', content: 'Shot from a rooftop parking garage, this image captures the energy and vibrancy of the city after dark.' },
+      ],
     },
     {
       title: 'Ocean Breeze',
@@ -205,6 +239,9 @@ export const dummyCollections = {
       link: '',
       order_priority: 4,
       author_username: 'janedoe',
+      rich_content: [
+        { type: 'paragraph', content: 'The golden hour at the beach is always magical. This shot captures the moment when the sun dips below the horizon and the sky turns shades of orange and purple.' },
+      ],
     },
     {
       title: 'Forest Mist',
@@ -214,6 +251,9 @@ export const dummyCollections = {
       link: '',
       order_priority: 3,
       author_username: 'janedoe',
+      rich_content: [
+        { type: 'paragraph', content: 'Taken at dawn in a Pacific Northwest forest. The mist weaves between the towering pine trees, creating an ethereal atmosphere.' },
+      ],
     },
     {
       title: 'Desert Dunes',
@@ -223,6 +263,9 @@ export const dummyCollections = {
       link: '',
       order_priority: 2,
       author_username: 'johndoe',
+      rich_content: [
+        { type: 'paragraph', content: 'The Sahara Desert stretches endlessly in every direction. The wind sculpts the dunes into elegant curves and ridges that shift with each passing day.' },
+      ],
     },
     {
       title: 'Urban Architecture',
@@ -232,6 +275,9 @@ export const dummyCollections = {
       link: '',
       order_priority: 1,
       author_username: 'janedoe',
+      rich_content: [
+        { type: 'paragraph', content: 'Contemporary architecture at its finest. These glass and steel structures reflect the sky and surrounding buildings, creating a kaleidoscope of shapes and colors.' },
+      ],
     }
   ],
   Projects: [
@@ -244,6 +290,14 @@ export const dummyCollections = {
       order_priority: 6,
       author_username: 'johndoe',
       video_embed_link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      rich_content: [
+        { type: 'heading_2', content: 'About This Project' },
+        { type: 'paragraph', content: 'This project transforms a Notion workspace into a fully functional portfolio website. It uses the Notion API to fetch content and Next.js for static site generation.' },
+        { type: 'heading_2', content: 'Features' },
+        { type: 'bullet_list_item', content: 'Automatic content syncing from Notion' },
+        { type: 'bullet_list_item', content: 'Multiple collection types (blogs, projects, gallery)' },
+        { type: 'bullet_list_item', content: 'Theming and customization support' },
+      ],
     },
     {
       title: 'AI Chatbot',
@@ -253,6 +307,10 @@ export const dummyCollections = {
       link: 'https://github.com',
       order_priority: 5,
       author_username: 'janedoe',
+      rich_content: [
+        { type: 'paragraph', content: 'An intelligent chatbot that uses the OpenAI API to generate context-aware responses. Built with a React frontend and Python backend.' },
+        { type: 'paragraph', content: 'The chatbot supports multi-turn conversations and can be customized with different personas and knowledge bases.' },
+      ],
     },
     {
       title: 'E-commerce Store',
@@ -262,6 +320,10 @@ export const dummyCollections = {
       link: 'https://github.com',
       order_priority: 4,
       author_username: 'johndoe',
+      rich_content: [
+        { type: 'paragraph', content: 'A complete e-commerce solution with product listings, shopping cart, checkout flow, and payment processing via Stripe.' },
+        { type: 'paragraph', content: 'Includes an admin dashboard for managing products, orders, and customer data.' },
+      ],
     },
     {
       title: 'Task Manager',
@@ -271,6 +333,9 @@ export const dummyCollections = {
       link: 'https://github.com',
       order_priority: 3,
       author_username: 'janedoe',
+      rich_content: [
+        { type: 'paragraph', content: 'A productivity application built with Vue.js and Firebase. Features drag-and-drop task organization, due dates, and priority levels.' },
+      ],
     },
     {
       title: 'Weather App',
@@ -280,6 +345,9 @@ export const dummyCollections = {
       link: 'https://github.com',
       order_priority: 2,
       author_username: 'johndoe',
+      rich_content: [
+        { type: 'paragraph', content: 'A weather application that uses geolocation to provide real-time forecasts. Displays temperature, humidity, wind speed, and a 7-day outlook.' },
+      ],
     },
     {
       title: 'Finance Tracker',
@@ -289,6 +357,9 @@ export const dummyCollections = {
       link: 'https://github.com',
       order_priority: 1,
       author_username: 'janedoe',
+      rich_content: [
+        { type: 'paragraph', content: 'A personal finance tracker that visualizes income and expenses with interactive D3.js charts. Supports multiple accounts and budget categories.' },
+      ],
     }
   ],
   Blogs: [
@@ -300,6 +371,12 @@ export const dummyCollections = {
       link: '',
       order_priority: 6,
       author_username: 'johndoe',
+      rich_content: [
+        { type: 'paragraph', content: 'Welcome to my blog! This is my first post and I am excited to share my thoughts and experiences with you.' },
+        { type: 'paragraph', content: 'I have been working as a software engineer for several years now, and I have learned a lot along the way. This blog will be a place for me to document my journey and share what I have learned.' },
+        { type: 'heading_2', content: 'What to Expect' },
+        { type: 'paragraph', content: 'I plan to write about web development, programming languages, and the tools I use daily. Stay tuned for more content!' },
+      ],
     },
     {
       title: 'The Future of Web Dev',
@@ -310,6 +387,10 @@ export const dummyCollections = {
       order_priority: 5,
       author_username: 'janedoe',
       video_embed_link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      rich_content: [
+        { type: 'paragraph', content: 'The web development landscape is evolving rapidly. With the rise of AI-powered tools and new JavaScript frameworks, developers need to stay adaptable.' },
+        { type: 'paragraph', content: 'In this post, I explore some of the trends I see shaping the future of our industry and what skills will be most valuable going forward.' },
+      ],
     },
     {
       title: 'Mastering CSS Grid',
@@ -319,6 +400,11 @@ export const dummyCollections = {
       link: '',
       order_priority: 4,
       author_username: 'johndoe',
+      rich_content: [
+        { type: 'paragraph', content: 'CSS Grid is one of the most powerful layout systems available in CSS. In this tutorial, I will walk you through the fundamentals and show you how to build complex, responsive layouts.' },
+        { type: 'heading_2', content: 'Getting Started' },
+        { type: 'paragraph', content: 'To use CSS Grid, you simply need to set display: grid on a container element. From there, you can define rows and columns using grid-template-rows and grid-template-columns.' },
+      ],
     },
     {
       title: 'Why I Use Next.js',
@@ -328,6 +414,10 @@ export const dummyCollections = {
       link: '',
       order_priority: 3,
       author_username: 'janedoe',
+      rich_content: [
+        { type: 'paragraph', content: 'Next.js has become my go-to framework for building React applications. The built-in support for server-side rendering and static site generation makes it incredibly versatile.' },
+        { type: 'paragraph', content: 'In this post, I share the reasons why I chose Next.js for my projects and how it has improved my development workflow.' },
+      ],
     },
     {
       title: 'Remote Work Tips',
@@ -337,6 +427,12 @@ export const dummyCollections = {
       link: '',
       order_priority: 2,
       author_username: 'johndoe',
+      rich_content: [
+        { type: 'paragraph', content: 'Working remotely offers many benefits, but it also comes with unique challenges. Here are some tips I have gathered over the years to stay productive and maintain a healthy work-life balance.' },
+        { type: 'bullet_list_item', content: 'Set up a dedicated workspace' },
+        { type: 'bullet_list_item', content: 'Establish a consistent routine' },
+        { type: 'bullet_list_item', content: 'Take regular breaks' },
+      ],
     },
     {
       title: 'Learning Rust',
@@ -346,18 +442,22 @@ export const dummyCollections = {
       link: '',
       order_priority: 1,
       author_username: 'janedoe',
+      rich_content: [
+        { type: 'paragraph', content: 'Rust has been on my radar for a while, and I finally decided to take the plunge. In this post, I share my experience learning Rust as someone coming from a JavaScript background.' },
+        { type: 'paragraph', content: 'The ownership model and borrow checker were initially challenging, but they have fundamentally changed how I think about memory management.' },
+      ],
     }
   ]
 };
 
 /**
  * COLLECTION SETTINGS
- * Stored in Root > Collection Settings > [Inline DB per collection]
+ * Stored in Settings > Configure Collections > [Inline DB per collection]
  */
 export const dummyCollectionSettings = {
-  Gallery: { collection_name: 'Gallery', enable_rss: 'false', show_newsletter_section: 'false' },
-  Projects: { collection_name: 'Projects', enable_rss: 'true', show_newsletter_section: 'false' },
-  Blogs: { collection_name: 'Blogs', enable_rss: 'true', show_newsletter_section: 'true' },
+  Gallery: { collection_name: 'Gallery', enable_rss: 'false', show_newsletter_section: 'false', show_mail_based_comment_section: 'true' },
+  Projects: { collection_name: 'Projects', enable_rss: 'true', show_newsletter_section: 'false', show_mail_based_comment_section: 'true' },
+  Blogs: { collection_name: 'Blogs', enable_rss: 'true', show_newsletter_section: 'true', show_mail_based_comment_section: 'true' },
 };
 
 /**
@@ -432,6 +532,12 @@ export const dummyNavbarPages = [
         title: 'About Video',
         data: [{ title: 'About Video', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ' }]
       },
+      {
+        type: 'newsletter_section',
+        enabled: 'false',
+        title: 'About Newsletter',
+        data: [{ title: 'About Newsletter' }]
+      },
     ]
   },
   {
@@ -461,6 +567,12 @@ export const dummyNavbarPages = [
         enabled: 'false',
         title: 'Contact Video',
         data: [{ title: 'Contact Video', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ' }]
+      },
+      {
+        type: 'newsletter_section',
+        enabled: 'false',
+        title: 'Contact Newsletter',
+        data: [{ title: 'Contact Newsletter' }]
       },
     ]
   }

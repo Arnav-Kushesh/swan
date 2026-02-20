@@ -139,49 +139,119 @@ async function getPageByName(parentId, name) {
     return null;
 }
 
-// Find Inline DB directly on Page
-
-async function fetchConfigKV(dbId, prefix = 'config') {
+// --- Fetch Main Configuration (individual columns, single row) ---
+async function fetchBasicConfig(dbId) {
     if (!dbId) return {};
     const pages = await fetchAllDatabasePages(dbId);
+    if (pages.length === 0) return {};
+
+    const props = pages[0].properties;
     const data = {};
-    for (const page of pages) {
-        const props = page.properties;
-        const key = props.Name?.title?.[0]?.plain_text;
-        if (!key) continue;
 
-        let val = props.Value?.rich_text?.[0]?.plain_text || '';
+    // Text fields
+    data.title = props.title?.title?.[0]?.plain_text || '';
+    data.description = props.description?.rich_text?.[0]?.plain_text || '';
+    data.tagline = props.tagline?.rich_text?.[0]?.plain_text || '';
+    data.keywords = props.keywords?.rich_text?.[0]?.plain_text || '';
 
-        if (props.Media?.files?.length > 0) {
-            const rawUrl = props.Media.files[0].file?.url || props.Media.files[0].external?.url;
+    // File fields - download images
+    for (const field of ['logo', 'favicon', 'og_image']) {
+        const files = props[field]?.files;
+        if (files?.length > 0) {
+            const rawUrl = files[0].file?.url || files[0].external?.url;
             if (rawUrl) {
                 const ext = path.extname(rawUrl.split('?')[0]) || '.jpg';
-                const filename = `${prefix}-${slugify(key)}${ext}`;
-                val = await downloadImage(rawUrl, filename);
+                const filename = `site-${slugify(field)}${ext}`;
+                data[field] = await downloadImage(rawUrl, filename);
             }
+        } else {
+            data[field] = '';
         }
-
-        data[key] = val;
     }
+
+    // Select fields
+    data.default_color_mode = props.default_color_mode?.select?.name || 'light';
+
+    // Checkbox fields in basic config
+    data.sidebar_navigation = props.sidebar_navigation?.checkbox ? 'true' : 'false';
+
+    return data;
+}
+
+// --- Fetch General Configuration (individual columns with checkboxes, single row) ---
+async function fetchGeneralConfig(dbId) {
+    if (!dbId) return {};
+    const pages = await fetchAllDatabasePages(dbId);
+    if (pages.length === 0) return {};
+
+    const props = pages[0].properties;
+    const data = {};
+
+    // Checkbox fields -> stored as 'true'/'false' strings for backward compatibility
+    const checkboxFields = [
+        'disable_logo_in_topbar',
+        'disable_logo_in_sidebar',
+        'enable_newsletter',
+        'mention_this_tool_in_footer',
+        'show_newsletter_section_on_home',
+    ];
+
+    for (const field of checkboxFields) {
+        const val = props[field]?.checkbox;
+        data[field] = val ? 'true' : 'false';
+    }
+
+    // URL fields
+    data.mailchimp_form_link = props.mailchimp_form_link?.url || '';
+
+    return data;
+}
+
+// --- Fetch Social Links (name/data columns, one row per social link) ---
+async function fetchSocialLinks(dbId) {
+    if (!dbId) return {};
+    const pages = await fetchAllDatabasePages(dbId);
+    if (pages.length === 0) return {};
+
+    const data = {};
+
+    for (const page of pages) {
+        const props = page.properties;
+        const name = props.name?.title?.[0]?.plain_text || '';
+        const linkValue = props.data?.rich_text?.[0]?.plain_text || '';
+
+        if (name) {
+            // Store as social_<name> for backward compatibility with SocialIcons component
+            data[`social_${name.toLowerCase()}`] = linkValue;
+        }
+    }
+
     return data;
 }
 
 async function syncConfig() {
-    console.log("Syncing General Configuration...");
+    console.log("Syncing Configuration...");
     const settingsPageId = await getPageByName(ROOT_PAGE_ID, "Settings");
     if (!settingsPageId) {
         console.warn("Settings page not found!");
         return;
     }
 
-    const configDbId = await findFullPageDb("General Configuration", settingsPageId);
+    // Fetch from all three config databases
+    const basicConfigDbId = await findFullPageDb("Main Configuration", settingsPageId);
+    const generalConfigDbId = await findFullPageDb("General Configuration", settingsPageId);
+    const socialLinksDbId = await findFullPageDb("Social Links", settingsPageId);
 
-    if (!configDbId) {
-        console.warn("General Configuration database not found in Settings!");
-        return;
-    }
+    const basicConfig = await fetchBasicConfig(basicConfigDbId);
+    const generalConfig = await fetchGeneralConfig(generalConfigDbId);
+    const socialLinks = await fetchSocialLinks(socialLinksDbId);
 
-    const siteInfo = await fetchConfigKV(configDbId, 'site');
+    // Merge all into a single info object for backward compatibility
+    const siteInfo = {
+        ...basicConfig,
+        ...generalConfig,
+        ...socialLinks,
+    };
 
     const configData = {
         info: siteInfo
@@ -308,6 +378,20 @@ async function fetchMailBasedCommentSectionData(dbId) {
     };
 }
 
+// New Helper to fetch Newsletter Section Data
+async function fetchNewsletterSectionData(dbId) {
+    const pages = await fetchAllDatabasePages(dbId);
+    if (pages.length === 0) return null;
+
+    const page = pages[0];
+    const props = page.properties;
+
+    return {
+        title: props.title?.title?.[0]?.plain_text || props.Title?.title?.[0]?.plain_text || '',
+        enabled: props.enabled?.checkbox ?? props.visibility?.checkbox ?? true,
+    };
+}
+
 // Helper to retrieve DB details with explicit version (to ensure properties)
 async function fetchDatabaseDetails(databaseId) {
     if (typeof fetch === 'undefined') {
@@ -377,6 +461,9 @@ async function processSectionsFromPage(pageId) {
         } else if (sectionType === 'mail_based_comment_section') {
             const data = await fetchMailBasedCommentSectionData(dbId);
             if (data) section = { type: 'mail_based_comment_section', id: dbId, title: dbTitle, ...data };
+        } else if (sectionType === 'newsletter_section') {
+            const data = await fetchNewsletterSectionData(dbId);
+            if (data) section = { type: 'newsletter_section', id: dbId, title: dbTitle, ...data };
         } else {
             // Fallback to property check (legacy/inference)
             if (props['collection_name']) {
@@ -583,30 +670,26 @@ async function syncCollectionSettings() {
         return;
     }
 
-    const collectionSettingsPageId = await getPageByName(settingsPageId, "Configure Collections");
-    if (!collectionSettingsPageId) {
-        console.warn("Configure Collections page not found in Settings!");
+    const configureCollectionsDbId = await findFullPageDb("Configure Collections", settingsPageId);
+    if (!configureCollectionsDbId) {
+        console.warn("Configure Collections database not found in Settings!");
         return;
     }
 
-    const children = await fetchAllChildren(collectionSettingsPageId);
-    const databases = children.filter(b => b.type === 'child_database');
-
+    const pages = await fetchAllDatabasePages(configureCollectionsDbId);
     const settings = {};
 
-    for (const dbBlock of databases) {
-        const pages = await fetchAllDatabasePages(dbBlock.id);
-        for (const page of pages) {
-            const props = page.properties;
-            const collectionName = props.collection_name?.title?.[0]?.plain_text || '';
-            if (!collectionName) continue;
+    for (const page of pages) {
+        const props = page.properties;
+        const collectionName = props.collection_name?.title?.[0]?.plain_text || '';
+        if (!collectionName) continue;
 
-            settings[collectionName.toLowerCase()] = {
-                collection_name: collectionName,
-                enable_rss: props.enable_rss?.checkbox ? 'true' : 'false',
-                show_newsletter_section: props.show_newsletter_section?.checkbox ? 'true' : 'false',
-            };
-        }
+        settings[collectionName.toLowerCase()] = {
+            collection_name: collectionName,
+            enable_rss: props.enable_rss?.checkbox ? 'true' : 'false',
+            show_newsletter_section: props.show_newsletter_section?.checkbox ? 'true' : 'false',
+            show_mail_based_comment_section: props.show_mail_based_comment_section?.checkbox ? 'true' : 'false',
+        };
     }
 
     await ensureDir('notion_state/data');
