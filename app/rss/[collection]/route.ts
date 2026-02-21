@@ -28,6 +28,8 @@ export async function GET(
     const rssItems = posts.map((post) => {
         const link = `${baseUrl}/${collection}/${post.slug}`;
         const pubDate = post.date ? new Date(post.date).toUTCString() : new Date().toUTCString();
+        const image = post.cover?.image || post.image || post.thumbnail;
+        const tags = post.tags || [];
 
         return `
     <item>
@@ -35,7 +37,10 @@ export async function GET(
       <link>${link}</link>
       <guid>${link}</guid>
       <pubDate>${pubDate}</pubDate>
-      <description><![CDATA[${post.description || ''}]]></description>
+      <description><![CDATA[${post.description || ''}]]></description>${post.author_username ? `
+      <author>${post.author_username}</author>` : ''}${image ? `
+      <enclosure url="${image}" type="image/jpeg"/>` : ''}${tags.map(tag => `
+      <category><![CDATA[${tag}]]></category>`).join('')}
     </item>`;
     }).join('');
 

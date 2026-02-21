@@ -5,39 +5,15 @@ import matter from 'gray-matter';
 const contentDirectory = path.join(process.cwd(), 'notion_state/content');
 const dataDirectory = path.join(process.cwd(), 'notion_state/data');
 
-// Re-export specific interfaces if needed for cleaner imports
-export interface HeroConfig {
-    tagline: string;
-    long_bio: string;
-    profile_image: string;
-    twitter?: string;
-    github?: string;
-    linkedin?: string;
-    email?: string;
-    instagram?: string;
-    youtube?: string;
-    facebook?: string;
-    twitch?: string;
-    alignment?: 'left' | 'center';
-}
-
-export interface BlogsConfig {
-    title: string;
-    show_section: string;
-    view_type: string;
-    show_images?: boolean | string;
-}
-
 export interface InfoConfig {
     title: string;
     description: string;
     logo?: string;
-    favicon: string;
-    keywords: string;
-    og_image: string;
+    favicon?: string;
+    keywords?: string;
+    og_image?: string;
     sidebar_navigation?: string;
     tagline?: string;
-    default_theme?: 'light' | 'dark' | 'system';
     default_color_mode?: string;
     disable_logo_in_sidebar?: string;
     disable_logo_in_topbar?: string;
@@ -49,7 +25,6 @@ export interface InfoConfig {
     social_youtube?: string;
     social_facebook?: string;
     social_twitch?: string;
-    // New global config fields
     enable_newsletter?: string;
     mailchimp_form_link?: string;
     mention_this_tool_in_footer?: string;
@@ -62,8 +37,12 @@ export interface InfoSectionData {
     title: string;
     description: string;
     link?: string;
+    button_text?: string;
     image?: string;
     view_type?: 'col_centered_view' | 'col_left_view' | 'row_reverse_view' | 'row_view';
+    media_aspect_ratio?: string;
+    media_mobile_width?: string;
+    media_desktop_width?: string;
     enabled?: boolean;
 }
 
@@ -71,8 +50,11 @@ export interface DynamicSectionData {
     type: 'dynamic_section';
     id: string;
     title: string;
+    description?: string;
     collection_name: string;
-    view_type?: 'list_view' | 'card_view' | 'grid_view' | 'minimal_list_view';
+    view_type?: 'list_view' | 'card_view' | 'grid_view' | 'minimal_list_view' | 'tiny_card_view' | 'big_card_view';
+    items_shown_at_once?: number;
+    top_section_centered?: boolean;
     enabled?: boolean;
 }
 
@@ -81,6 +63,8 @@ export interface HtmlSectionData {
     id: string;
     title: string;
     html_code: string;
+    height?: number;
+    full_width?: boolean;
     enabled?: boolean;
 }
 
@@ -89,6 +73,8 @@ export interface IframeSectionData {
     id: string;
     title: string;
     url: string;
+    height?: number;
+    full_width?: boolean;
     enabled?: boolean;
 }
 
@@ -100,12 +86,26 @@ export interface VideoEmbedSectionData {
     enabled?: boolean;
 }
 
-export interface MailBasedCommentSectionData {
-    type: 'mail_based_comment_section';
+export interface MediaSectionData {
+    type: 'media_section';
     id: string;
     title: string;
-    topic_title: string;
-    author_email: string;
+    media?: string;
+    height?: number;
+    height_on_mobile?: number;
+    height_on_desktop?: number;
+    full_width?: boolean;
+    enabled?: boolean;
+}
+
+export interface MailtoSectionData {
+    type: 'mailto_section';
+    id: string;
+    title: string;
+    subject: string;
+    receiver: string;
+    placeholder_text?: string;
+    button_text?: string;
     enabled?: boolean;
 }
 
@@ -116,7 +116,7 @@ export interface NewsletterSectionData {
     enabled?: boolean;
 }
 
-export type SectionData = InfoSectionData | DynamicSectionData | HtmlSectionData | IframeSectionData | VideoEmbedSectionData | MailBasedCommentSectionData | NewsletterSectionData;
+export type SectionData = InfoSectionData | DynamicSectionData | HtmlSectionData | IframeSectionData | VideoEmbedSectionData | MediaSectionData | MailtoSectionData | NewsletterSectionData;
 
 export interface HomeData {
     info?: InfoConfig;
@@ -136,10 +136,11 @@ export interface Post {
     thumbnail?: string;
     image?: string;
     link?: string;
+    button_text?: string;
     tools?: string;
     collection?: string;
     order_priority?: number;
-    tags?: string[] | any[];
+    tags?: string[];
     author_username?: string;
     video_embed_link?: string;
 }
@@ -167,7 +168,7 @@ export interface CollectionSettings {
     collection_name: string;
     enable_rss: string;
     show_newsletter_section: string;
-    show_mail_based_comment_section: string;
+    show_mailto_section: string;
 }
 
 function safeJsonParse<T>(filePath: string, fallback: T): T {
@@ -192,36 +193,6 @@ export function getHomeData(): HomeData {
         return homeData;
     }
     return {} as HomeData;
-}
-
-export function getGalleryItems(): GalleryItem[] {
-    const dirPath = path.join(contentDirectory, 'gallery');
-    if (!fs.existsSync(dirPath)) return [];
-
-    const fileNames = fs.readdirSync(dirPath);
-    return fileNames
-        .filter((fileName) => fileName.endsWith('.md'))
-        .map((fileName) => {
-            const slug = fileName.replace(/\.md$/, '');
-            const fullPath = path.join(dirPath, fileName);
-            const fileContents = fs.readFileSync(fullPath, 'utf8');
-            const { data } = matter(fileContents);
-
-            return {
-                slug,
-                name: data.name,
-                image: data.image,
-                link: data.link,
-                order_priority: data.order_priority || data.order || 0,
-            };
-        })
-        .sort((a, b) => {
-            // Higher order_priority = higher position (descending)
-            if (a.order_priority !== b.order_priority) {
-                return b.order_priority - a.order_priority;
-            }
-            return a.name.localeCompare(b.name);
-        });
 }
 
 // Generic getPosts (can be used for any collection)
@@ -300,26 +271,6 @@ export function getPost(slug: string, section: string): Post | null {
         tags: data.tags || [],
         ...data,
     } as Post;
-}
-
-export function getGalleryItem(slug: string): GalleryItem | null {
-    const dirPath = path.join(contentDirectory, 'gallery');
-    const fullPath = path.join(dirPath, `${slug}.md`);
-
-    if (!fs.existsSync(fullPath)) {
-        return null;
-    }
-
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
-    const { data, content } = matter(fileContents);
-
-    return {
-        slug,
-        name: data.name,
-        image: data.image,
-        link: data.link,
-        content, // Include content
-    };
 }
 
 export function getNavbarPages(): { slug: string; title: string }[] {
@@ -421,6 +372,20 @@ export function getCssInjection(): string[] {
     return safeJsonParse(fullPath, []);
 }
 
+// --- Advanced Config ---
+
+export interface AdvancedConfig {
+    limit_theme_selection?: string[];
+    primary_font?: string;
+    secondary_font?: string;
+}
+
+export function getAdvancedConfig(): AdvancedConfig {
+    const fullPath = path.join(dataDirectory, 'advanced_config.json');
+    if (!fs.existsSync(fullPath)) return {};
+    return safeJsonParse<AdvancedConfig>(fullPath, {});
+}
+
 // --- New: All Posts (for search) ---
 
 export function getAllPosts(): Post[] {
@@ -448,4 +413,28 @@ export function getCollectionNames(): string[] {
     return fs.readdirSync(contentDir)
         .filter(f => fs.statSync(path.join(contentDir, f)).isDirectory())
         .filter(f => f !== 'navbarPages');
+}
+
+export function getAllTags(): string[] {
+    const allPosts = getAllPosts();
+    const tagSet = new Set<string>();
+    for (const post of allPosts) {
+        if (post.tags) {
+            for (const tag of post.tags) {
+                const name = typeof tag === 'string' ? tag : (tag as { name: string }).name;
+                if (name) tagSet.add(name);
+            }
+        }
+    }
+    return Array.from(tagSet).sort();
+}
+
+export function getPostsByTag(tag: string): Post[] {
+    const allPosts = getAllPosts();
+    return allPosts.filter(post =>
+        post.tags?.some(t => {
+            const name = typeof t === 'string' ? t : (t as { name: string }).name;
+            return name.toLowerCase() === tag.toLowerCase();
+        })
+    );
 }

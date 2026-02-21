@@ -4,6 +4,7 @@ import { container } from '@/styled-system/patterns';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import { AuthorPostList } from './AuthorPostList';
 
 export const dynamicParams = false;
 
@@ -99,74 +100,9 @@ export default async function AuthorPage({ params }: { params: Promise<{ usernam
             </section>
 
             {/* Author's Posts */}
-            {authorPosts.length > 0 && (
-                <section>
-                    <h2 className={css({ fontSize: '1.3rem', fontWeight: '700', mb: '20px', letterSpacing: '-0.02em' })}>
-                        Published Work
-                    </h2>
-                    <div className={css({ display: 'flex', flexDirection: 'column', gap: '8px' })}>
-                        {authorPosts.map((post) => (
-                            <Link
-                                key={`${post.collection}-${post.slug}`}
-                                href={`/${post.collection}/${post.slug}`}
-                                className={css({
-                                    display: 'flex',
-                                    flexDirection: { base: 'column', sm: 'row' },
-                                    gap: '16px',
-                                    p: '16px',
-                                    borderRadius: '12px',
-                                    border: '1px solid token(colors.border.default)',
-                                    transition: 'all 0.2s ease',
-                                    textDecoration: 'none',
-                                    _hover: { bg: 'bg.secondary', borderColor: 'text.tertiary', transform: 'translateY(-1px)' },
-                                })}
-                            >
-                                {(post.thumbnail || post.image) && (
-                                    <div className={css({
-                                        width: { base: '100%', sm: '120px' },
-                                        height: { base: '160px', sm: '80px' },
-                                        flexShrink: 0,
-                                        borderRadius: '8px',
-                                        overflow: 'hidden',
-                                    })}>
-                                        <img
-                                            src={post.thumbnail || post.image}
-                                            alt={post.title}
-                                            className={css({ width: '100%', height: '100%', objectFit: 'cover' })}
-                                        />
-                                    </div>
-                                )}
-                                <div className={css({ flex: 1, minWidth: 0 })}>
-                                    <div className={css({ display: 'flex', alignItems: 'center', gap: '8px', mb: '4px' })}>
-                                        <span className={css({
-                                            fontSize: '0.7rem',
-                                            bg: 'bg.tertiary',
-                                            color: 'text.secondary',
-                                            px: '6px',
-                                            py: '2px',
-                                            borderRadius: 'full',
-                                            textTransform: 'capitalize',
-                                            flexShrink: 0,
-                                        })}>
-                                            {post.collection}
-                                        </span>
-                                        <h3 className={css({ fontWeight: '600', fontSize: '1rem', truncate: true, color: 'text.primary' })}>
-                                            {post.title}
-                                        </h3>
-                                    </div>
-                                    {post.description && (
-                                        <p className={css({ color: 'text.secondary', fontSize: '0.85rem', lineClamp: 2, lineHeight: '1.5' })}>
-                                            {post.description}
-                                        </p>
-                                    )}
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                </section>
-            )}
-
-            {authorPosts.length === 0 && (
+            {authorPosts.length > 0 ? (
+                <AuthorPostList posts={authorPosts} />
+            ) : (
                 <p className={css({ textAlign: 'center', color: 'text.tertiary', fontSize: '0.95rem' })}>
                     No published work yet.
                 </p>

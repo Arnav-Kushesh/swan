@@ -11,22 +11,24 @@
 
 Swan is a powerful **Notion-to-Website** engine that turns your Notion workspace into a high-performance, static website. Built with **Next.js**, **PandaCSS**, and the **Notion API**, it offers the simplicity of a CMS with the speed of a static site.
 
-## ✨ Features
+## Features
 
 - **Notion as CMS**: Manage 100% of your content (posts, pages, config) in Notion.
 - **Fast**: Static Site Generation (SSG) ensures instant page loads and perfect SEO.
 - **Collections**: Create multiple content collections (blogs, projects, galleries) with different display views.
-- **Global Search**: Built-in `Cmd+K` command palette to search all content.
+- **Global Search**: Built-in `Cmd+K` command palette to search all content with fuzzy matching.
 - **Multi-Author**: Support for multiple authors with dedicated profile pages.
 - **Rich Content**: Supports video embeds, code blocks, callouts, and more.
-- **7 Section Types**: Info, Dynamic, HTML, Iframe, Video Embed, Newsletter, and Mail-Based Comment sections.
+- **9 Section Types**: Info, Dynamic, HTML, Iframe, Video Embed, Media, Mailto, Newsletter sections.
+- **6 View Types for Dynamic Sections**: List, Card, Grid, Minimal List, Tiny Card, and Big Card views.
 - **Newsletter Ready**: Native Mailchimp integration form with per-collection and per-page control.
-- **Code & CSS Injection**: Add Analytics, Ads, or custom styles directly from Notion using html_section and "html head code" page in settings
-- **8 Color Themes**: Light, Dark, Blue, Purple, Pink, Red, Green, and Cream.
+- **Code & CSS Injection**: Add Analytics, Ads, or custom styles directly from Notion.
+- **8 Color Themes**: Light, Dark, Blue, Purple, Pink, Red, Green, and Cream — with optional theme restriction via Advanced Configuration.
 - **Two Navigation Modes**: Top navbar or left sidebar — configurable from Notion.
 - **RSS Feeds**: Auto-generated feeds for every content collection.
 - **SEO Optimized**: Static generation with sitemap, meta tags, OpenGraph images, and keywords.
-- **Unique Comment System**: Email-based commenting via `mailto` — no databases, no servers, no third-party scripts.
+- **Email Contact System**: Email-based messaging via `mailto_section` — no databases, no servers, no third-party scripts.
+- **Media Section**: Display images or looping videos with configurable height and full-width mode.
 - **Content Freedom**: You own your content. No vendor lock-in, no monthly fees. Host anywhere for free.
 
 ---
@@ -43,15 +45,15 @@ Use Swan to build your startup's website entirely from Notion. Create landing pa
 
 ### Portfolio Site
 
-Showcase your work using Swan's collections and multiple view types (grid, card, list, minimal list). Create a Gallery for photography, a Projects collection for case studies, and a Blogs collection for writing — each with its own display style, RSS feed, and author attribution.
+Showcase your work using Swan's collections and multiple view types (grid, card, list, minimal list, tiny card, big card). Create a Gallery for photography, a Projects collection for case studies, and a Blogs collection for writing — each with its own display style, RSS feed, and author attribution.
 
 ### Your Own YouTube Alternative
 
-Host your videos on any platform (Vimeo, Bunny Stream, your own server) and embed them on your Swan site using the `video_embed_section` feature or the `video_embed_link` property on collection items. Unlike YouTube, **no one can censor or demonetize your content**. You control the entire experience — the page layout, the branding, the ads. Monetize freely by placing Google AdSense or any ad network script via `html_section` blocks right alongside your videos, or inject ad scripts globally via the HTML Head Code page. Your content, your platform, your revenue — without a middleman taking a cut or deciding what's allowed.
+Host your videos on any platform (Vimeo, Bunny Stream, your own server) and embed them on your Swan site using the `video_embed_section` feature, `media_section` for looping background videos, or the `video_embed_link` property on collection items. Unlike YouTube, **no one can censor or demonetize your content**. You control the entire experience — the page layout, the branding, the ads. Monetize freely by placing Google AdSense or any ad network script via `html_section` blocks right alongside your videos, or inject ad scripts globally via the HTML Head Code page. Your content, your platform, your revenue — without a middleman taking a cut or deciding what's allowed.
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Clone & Install
 
@@ -94,7 +96,7 @@ npm run dev   # Starts Next.js at localhost:3000
 
 ---
 
-## 🛠️ Project Structure
+## Project Structure
 
 ```
 swan/
@@ -125,8 +127,9 @@ Root Page
 │   ├── [Inline DB] Custom HTML (html_section)
 │   ├── [Inline DB] Embedded Page (iframe_section)
 │   ├── [Inline DB] Featured Video (video_embed_section)
-│   ├── [Inline DB] Newsletter (newsletter_section)
-│   └── [Inline DB] Leave a Comment (mail_based_comment_section)
+│   ├── [Inline DB] Media (media_section)
+│   ├── [Inline DB] Contact Form (mailto_section)
+│   └── [Inline DB] Newsletter (newsletter_section)
 ├── Navbar Pages
 │   ├── About (page, can contain inline DB sections)
 │   └── Contact (page, can contain inline DB sections)
@@ -138,6 +141,7 @@ Root Page
 │   ├── Main Configuration (database)
 │   ├── General Configuration (database)
 │   ├── Social Links (database)
+│   ├── Advanced Configuration (database)
 │   ├── Configure Collections (database)
 │   ├── Collection Page Extra Sections
 │   │   ├── Gallery (page with inline DB sections)
@@ -163,28 +167,31 @@ Each item in a collection has:
 | `Image`            | Files        | Cover/thumbnail image                 |
 | `Tags`             | Multi-select | Categorization tags                   |
 | `Link`             | URL          | External link                         |
+| `button_text`      | Rich Text    | Custom button label                   |
 | `order_priority`   | Number       | Sort order (higher = first)           |
 | `author_username`  | Rich Text    | Author username (links to Authors DB) |
 | `video_embed_link` | URL          | Optional video embed URL              |
 
 The page content (body) of each item becomes the full article content, rendered as markdown. You can write rich content using all of Notion's block types — headings, paragraphs, images, code blocks, callouts, quotes, bullet lists, numbered lists, toggle blocks, and more.
 
+During sync, a `dominant_color` is automatically extracted from each item's image for use with the Big Card view type.
+
 ### Collection Settings
 
 Per-collection configuration is managed in **Settings > Configure Collections**, a single database with one row per collection:
 
-| Property                          | Type     | Description                                    |
-| --------------------------------- | -------- | ---------------------------------------------- |
-| `collection_name`                 | Title    | Name of the collection                         |
-| `enable_rss`                      | Checkbox | Generate an RSS feed for this collection       |
-| `show_newsletter_section`         | Checkbox | Show newsletter signup on collection pages     |
-| `show_mail_based_comment_section` | Checkbox | Show email comment section on collection pages |
+| Property                  | Type     | Description                                    |
+| ------------------------- | -------- | ---------------------------------------------- |
+| `collection_name`         | Title    | Name of the collection                         |
+| `enable_rss`              | Checkbox | Generate an RSS feed for this collection       |
+| `show_newsletter_section` | Checkbox | Show newsletter signup on collection pages     |
+| `show_mailto_section`     | Checkbox | Show mailto section on collection pages        |
 
 ### Collection Page Extra Sections
 
 Extra sections can be added to every entry page of a collection via **Settings > Collection Page Extra Sections > [Collection Name]**. Each collection has a dedicated page where you place inline database sections. These are rendered on every entry page of that collection, giving you the ability to add related content, CTAs, or ads to all posts.
 
-All 7 section types are supported.
+All 9 section types are supported.
 
 ---
 
@@ -194,15 +201,16 @@ Sections are inline databases placed on the Home Page, Navbar Pages, or Collecti
 
 ### 1. `info_section`
 
-A static content section with text, image, and optional CTA button. Use it for hero sections, about blurbs, feature highlights, or any static content block.
+A static content section with text, image/video, and optional CTA button. Use it for hero sections, about blurbs, feature highlights, or any static content block. If the image is a video file (`.mp4`, `.webm`, `.mov`, `.ogg`), it will render as a looping video with no controls.
 
 **Database Properties:**
 | Property | Type | Description |
 |----------|------|-------------|
 | `title` | Title | Section heading |
 | `description` | Rich Text | Section body text |
-| `link` | URL | Optional CTA button link |
-| `image` | Files | Optional hero/feature image |
+| `link` | URL | Optional CTA button link (button hidden if empty) |
+| `button_text` | Rich Text | Custom button label (defaults to "Explore") |
+| `image` | Files | Optional hero/feature image or video |
 | `view_type` | Select | Layout: `col_centered_view`, `col_left_view`, `row_view`, `row_reverse_view` |
 | `section_type` | Select | Must be `info_section` |
 | `enabled` | Checkbox | Show/hide the section |
@@ -216,9 +224,20 @@ Displays items from a collection (blogs, projects, gallery) in various view type
 |----------|------|-------------|
 | `collection_name` | Title | Name of the collection to display (e.g., "Blogs") |
 | `section_title` | Rich Text | Display title for the section |
-| `view_type` | Select | Layout: `list_view`, `card_view`, `grid_view`, `minimal_list_view` |
+| `description` | Rich Text | Optional description shown below the title |
+| `view_type` | Select | Layout: `list_view`, `card_view`, `grid_view`, `minimal_list_view`, `tiny_card_view`, `big_card_view` |
+| `items_shown_at_once` | Number | Number of items per page (default: 6) |
+| `top_section_centered` | Checkbox | Center the title and description |
 | `section_type` | Select | Must be `dynamic_section` |
 | `enabled` | Checkbox | Show/hide the section |
+
+**View Types:**
+- **`list_view`**: Full-width list with image, title, description, and date
+- **`card_view`**: 3-column grid with image, title, description, and tags
+- **`grid_view`**: 3-column image grid with title overlay
+- **`minimal_list_view`**: Text-only list with title, description, and date
+- **`tiny_card_view`**: 5-column grid of small square image thumbnails (no text)
+- **`big_card_view`**: 2-column grid with large images and gradient backgrounds using the item's dominant color
 
 ### 3. `html_section`
 
@@ -235,6 +254,8 @@ Renders custom HTML inside a sandboxed iframe. This is one of Swan's most powerf
 | Property | Type | Description |
 |----------|------|-------------|
 | `title` | Title | Section heading |
+| `height` | Number | Custom height in pixels |
+| `full_width` | Checkbox | Edge-to-edge display (removes border radius and border) |
 | `section_type` | Select | Must be `html_section` |
 | `enabled` | Checkbox | Show/hide the section |
 
@@ -255,6 +276,8 @@ Embeds an external webpage in an iframe. Use this to embed any website, tool, or
 |----------|------|-------------|
 | `title` | Title | Section heading |
 | `url` | URL | The URL to embed |
+| `height` | Number | Custom height in pixels (defaults to 16:9 aspect ratio) |
+| `full_width` | Checkbox | Edge-to-edge display (removes border radius and border) |
 | `section_type` | Select | Must be `iframe_section` |
 | `enabled` | Checkbox | Show/hide the section |
 
@@ -276,7 +299,42 @@ Embeds a video (YouTube, Vimeo, etc.) using the embed URL. Videos play inline on
 | `section_type` | Select | Must be `video_embed_section` |
 | `enabled` | Checkbox | Show/hide the section |
 
-### 6. `newsletter_section`
+### 6. `media_section`
+
+Displays an image or a looping video. If the media file is a video (`.mp4`, `.webm`, `.mov`, `.ogg`), it renders as a looping video with no controls. Otherwise, it renders as an image.
+
+**Use cases:**
+
+- Hero background videos
+- Full-width banner images
+- Ambient looping video sections
+
+**Database Properties:**
+| Property | Type | Description |
+|----------|------|-------------|
+| `title` | Title | Section heading |
+| `media` | Files | Image or video file |
+| `height` | Number | Display height in pixels (default: 400) |
+| `full_width` | Checkbox | Edge-to-edge display (removes border radius and border) |
+| `section_type` | Select | Must be `media_section` |
+| `enabled` | Checkbox | Show/hide the section |
+
+### 7. `mailto_section`
+
+An email-based contact form. When a reader submits the form, their email client opens with a pre-filled subject line and message body.
+
+**Database Properties:**
+| Property | Type | Description |
+|----------|------|-------------|
+| `title` | Title | Section heading |
+| `subject` | Rich Text | Email subject line |
+| `receiver` | Rich Text | Recipient email address |
+| `placeholder_text` | Rich Text | Textarea placeholder (defaults to "Share your thoughts...") |
+| `button_text` | Rich Text | Submit button label (defaults to "Send") |
+| `section_type` | Select | Must be `mailto_section` |
+| `enabled` | Checkbox | Show/hide the section |
+
+### 8. `newsletter_section`
 
 Renders a Mailchimp-powered newsletter signup form. This section reads the `mailchimp_form_link` from your General Configuration. Add it to the homepage, navbar pages, or collection extra sections.
 
@@ -286,23 +344,11 @@ Renders a Mailchimp-powered newsletter signup form. This section reads the `mail
 | `section_type` | Select | Must be `newsletter_section` |
 | `enabled` | Checkbox | Show/hide the section |
 
-### 7. `mail_based_comment_section`
-
-A unique email-based comment system. When a reader clicks "comment", their email client opens with a pre-filled subject line, initiating a direct email thread with the author. No databases, no servers, no third-party comment scripts.
-
-**Database Properties:**
-| Property | Type | Description |
-|----------|------|-------------|
-| `topic_title` | Title | Email subject line |
-| `author_email` | Rich Text | Recipient email address |
-| `section_type` | Select | Must be `mail_based_comment_section` |
-| `enabled` | Checkbox | Show/hide the section |
-
 ---
 
 ## Configuration
 
-Swan's configuration is split across three databases under the Settings page. This keeps concerns separated and makes each settings page focused and easy to manage.
+Swan's configuration is split across multiple databases under the Settings page. This keeps concerns separated and makes each settings page focused and easy to manage.
 
 ### Main Configuration
 
@@ -333,6 +379,16 @@ The "General Configuration" database stores feature flags and toggles. All boole
 | `mention_this_tool_in_footer`     | Checkbox | Show "Built with Swan" in the footer      |
 | `show_newsletter_section_on_home` | Checkbox | Show a newsletter section on the homepage |
 
+### Advanced Configuration
+
+The "Advanced Configuration" database allows fine-grained control over site behavior. It has a single row of data.
+
+| Column                   | Type         | Description                                                                 |
+| ------------------------ | ------------ | --------------------------------------------------------------------------- |
+| `limit_theme_selection`  | Multi-select | Which themes users can choose from (defaults to all 8 if all are selected)  |
+
+Remove themes from the multi-select to prevent users from selecting them in the Settings menu.
+
 ### Social Links
 
 The "Social Links" database stores your social media profiles and contact links. It has two columns — `name` and `data` — with one row per social link.
@@ -346,7 +402,7 @@ Supported social platforms: github, twitter, linkedin, instagram, youtube, faceb
 
 ---
 
-## 🎨 Design Customization
+## Design Customization
 
 ### Color Themes
 
@@ -364,6 +420,8 @@ Swan supports 8 color themes:
 | `green`  | Dark  | Forest green               |
 
 Set the default via `default_color_mode` in Main Configuration. Users can switch themes via the Settings menu in the navbar/sidebar, and the choice persists in their browser's localStorage.
+
+To restrict which themes are available to users, edit the `limit_theme_selection` multi-select in Advanced Configuration.
 
 ### Navigation Modes
 
@@ -404,7 +462,7 @@ Swan is built on the principle that **you own your content**:
 - **No vendor lock-in**: Your content lives in Notion and is synced as Markdown files. You can export it anytime.
 - **No monthly fees**: Host on Vercel, Netlify, GitHub Pages, or any static host for free.
 - **No restrictions**: Custom themes, code injection, custom HTML sections — no limitations on what you can build.
-- **No middleman**: Direct email-based comments, your own ad scripts, your own analytics.
+- **No middleman**: Direct email-based contact, your own ad scripts, your own analytics.
 - **Full SEO control**: Meta descriptions, keywords, OpenGraph images, auto-generated sitemap — all managed from Notion.
 
 ---
@@ -469,18 +527,18 @@ To add a navbar page, create a new child page under "Navbar Pages" in Notion.
 
 ## Search
 
-Swan includes a built-in search (Cmd+K / Ctrl+K) that searches across all collection items by title, description, collection name, and tags. The search index is built at compile time — no external search service required.
+Swan includes a built-in search (Cmd+K / Ctrl+K) that searches across all collection items by title, description, collection name, and tags. The search uses fuzzy matching with relevance scoring. The search index is built at compile time — no external search service required.
 
 ---
 
 ## Experiment Panel
 
-A floating "Experiment" button in the bottom-right corner opens a panel for trying out different settings:
+A floating "Experiment" button in the bottom-right corner (dev mode only) opens a panel for trying out different settings:
 
 - **Section Views:** Change the view type of any homepage section in real time
   - _Info sections:_ `col_centered_view`, `col_left_view`, `row_view`, `row_reverse_view`
-  - _Dynamic sections:_ `list_view`, `card_view`, `grid_view`, `minimal_list_view`
-- **Color Mode:** Switch between all 8 themes
+  - _Dynamic sections:_ `list_view`, `card_view`, `grid_view`, `minimal_list_view`, `tiny_card_view`, `big_card_view`
+- **Color Mode:** Switch between all 8 themes (not restricted by Advanced Configuration)
 - **Sidebar Toggle:** Enable/disable sidebar navigation
 
 Changes made via the Experiment panel are **temporary** and will not persist after a page refresh.
@@ -497,13 +555,13 @@ notion_state/ (local JSON + Markdown cache)
 Static HTML/CSS/JS (Next.js static export)
 ```
 
-1. **Sync:** Fetches all data from Notion API, downloads images, converts pages to markdown
+1. **Sync:** Fetches all data from Notion API, downloads images, extracts dominant colors, converts pages to markdown
 2. **Build:** Next.js reads from `notion_state/` and generates a fully static site
 3. **Deploy:** Upload the `out/` directory to any static hosting (Vercel, Netlify, GitHub Pages, etc.)
 
 ---
 
-## 📦 Deployment
+## Deployment
 
 Swan is designed for static hosting.
 
@@ -517,16 +575,16 @@ Swan is designed for static hosting.
    ```
 4. Set the **Output Directory**: `out`
 
-### 🔄 Updating Content from Notion
+### Updating Content from Notion
 
 Since Swan is a Static Site Generator (SSG), changes in Notion do NOT appear automatically. You must **trigger a fresh build** (or redeploy) in your hosting dashboard (Netlify/Vercel) to fetch and render new content.
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-Contributions are welcome!.
+Contributions are welcome!
 
-## 📄 License
+## License
 
 MIT © [Arnav Kushesh](https://github.com/arnav-kushesh)

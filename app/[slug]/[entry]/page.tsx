@@ -1,4 +1,4 @@
-import { getPosts, getPost, getAuthor, getExtraSections } from '../../../lib/data';
+import { getPosts, getPost, getAuthor, getExtraSections, getCollectionNames, getHomeData } from '../../../lib/data';
 import { processMarkdown } from '../../../lib/markdown';
 import { postContentStyle } from '../../../components/shared/post-styles';
 import { AuthorInfo } from '../../../components/AuthorInfo';
@@ -8,20 +8,14 @@ import { notFound } from 'next/navigation';
 import { css } from '../../../styled-system/css';
 import { format } from 'date-fns';
 import { Metadata } from 'next';
-import fs from 'fs';
-import path from 'path';
+import Link from 'next/link';
 
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-    const contentDir = path.join(process.cwd(), 'notion_state/content');
-    if (!fs.existsSync(contentDir)) return [];
-
-    const collections = fs.readdirSync(contentDir).filter(f => fs.statSync(path.join(contentDir, f)).isDirectory());
-
+    const collections = getCollectionNames();
     const params = [];
     for (const collection of collections) {
-        if (collection === 'navbarPages') continue;
         const posts = getPosts(collection);
         for (const post of posts) {
             params.push({ slug: collection, entry: post.slug });
@@ -54,6 +48,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
     const content = await processMarkdown(post.content);
     const author = post.author_username ? getAuthor(post.author_username) : null;
     const extraSections = getExtraSections(slug).filter(s => s.enabled !== false);
+    const homeData = getHomeData();
 
     return (
         <article className={css({ maxWidth: '800px', margin: '0 auto', py: '40px', px: '20px' })}>
@@ -104,7 +99,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
                 </div>
             ) : null}
 
-            {content && content !== 'undefined' && (
+            {content && (
                 <div
                     className={postContentStyle}
                     dangerouslySetInnerHTML={{ __html: content }}
@@ -117,7 +112,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
                     {Array.isArray(post.tags) ? post.tags.map(tag => {
                         const tagName = typeof tag === 'string' ? tag : (tag as { name: string }).name;
                         return (
-                            <span key={tagName} className={css({
+                            <Link key={tagName} href={`/tag/${encodeURIComponent(tagName)}`} className={css({
                                 bg: 'bg.secondary',
                                 color: 'text.secondary',
                                 px: '10px',
@@ -125,18 +120,20 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
                                 borderRadius: 'full',
                                 fontSize: '0.75rem',
                                 fontWeight: '500',
+                                transition: 'all 0.15s ease',
+                                _hover: { bg: 'bg.tertiary', color: 'text.primary' },
                             })}>
                                 {tagName}
-                            </span>
+                            </Link>
                         );
                     }) : String(post.tags)}
                 </div>
             )}
 
             {/* Author Info (Moved to bottom) */}
-            {post.author_username && (
+            {author && (
                 <div className={css({ mb: '40px' })}>
-                    <AuthorInfo authorUsername={post.author_username} />
+                    <AuthorInfo author={author} />
                 </div>
             )}
 
@@ -156,7 +153,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
                             transition: 'all 0.2s ease',
                             _hover: { opacity: 0.9, transform: 'translateY(-1px)' },
                         })}>
-                        Visit Project
+                        {post.button_text || 'Visit Project'}
                     </a>
                 </div>
             )}
@@ -165,7 +162,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
             {extraSections.length > 0 && (
                 <div className={css({ mt: '40px', display: 'flex', flexDirection: 'column', gap: '0' })}>
                     {extraSections.map((section) => (
-                        <SectionRenderer key={section.id} section={section} />
+                        <SectionRenderer key={section.id} section={section} mailchimpFormLink={homeData.info?.mailchimp_form_link} />
                     ))}
                 </div>
             )}

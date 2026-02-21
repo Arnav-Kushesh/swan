@@ -36,16 +36,23 @@ export const THEMES = [...LIGHT_THEMES, ...DARK_THEMES];
 export function GlobalConfigProvider({
     initialConfig,
     searchIndex = [],
+    allowedThemes: allowedThemesProp,
     children
 }: {
     initialConfig: HomeData;
     searchIndex?: SearchItem[];
+    allowedThemes?: string[];
     children: React.ReactNode;
 }) {
     const [colorMode, setColorMode] = useState<string>((initialConfig.info?.default_color_mode as string) || 'light');
     const [showSidebar, setShowSidebar] = useState<boolean>(initialConfig.info?.sidebar_navigation === 'true');
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [sectionViewOverrides, setSectionViewOverrides] = useState<Record<string, string>>({});
+
+    // Filter themes by allowedThemes if provided
+    const effectiveThemes = allowedThemesProp && allowedThemesProp.length > 0
+        ? THEMES.filter(t => allowedThemesProp.includes(t))
+        : THEMES;
 
     const toggleSidebar = () => setShowSidebar(prev => !prev);
     const setSidebarTemporary = (show: boolean) => setShowSidebar(show);
@@ -63,7 +70,7 @@ export function GlobalConfigProvider({
 
     useEffect(() => {
         const saved = localStorage.getItem('swan-color-mode');
-        if (saved && THEMES.includes(saved)) {
+        if (saved && effectiveThemes.includes(saved)) {
             setColorMode(saved);
         }
     }, []);
@@ -91,7 +98,7 @@ export function GlobalConfigProvider({
             colorMode,
             setColorMode,
             setColorModeTemporary,
-            availableThemes: THEMES,
+            availableThemes: effectiveThemes,
             showSidebar,
             toggleSidebar,
             setSidebarTemporary,

@@ -1,4 +1,4 @@
-import { getNavbarPages, getNavbarPage } from '@/lib/data';
+import { getNavbarPages, getNavbarPage, getHomeData } from '@/lib/data';
 import { processMarkdown } from '@/lib/markdown';
 import { postContentStyle } from '@/components/shared/post-styles';
 import { SectionRenderer } from '@/components/SectionRenderer';
@@ -33,6 +33,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
     const content = await processMarkdown(post.content);
     const sections = (post.sections || []).filter(s => s.enabled !== false);
+    const homeData = getHomeData();
 
     return (
         <article className={css({ maxWidth: '800px', margin: '0 auto', py: '40px', px: '20px', minHeight: '60vh' })}>
@@ -56,7 +57,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             {sections.length > 0 && (
                 <div className={css({ mt: '40px', display: 'flex', flexDirection: 'column', gap: '0' })}>
                     {sections.map((section) => (
-                        <SectionRenderer key={section.id} section={section} />
+                        <SectionRenderer key={section.id} section={section} mailchimpFormLink={homeData.info?.mailchimp_form_link} />
                     ))}
                 </div>
             )}

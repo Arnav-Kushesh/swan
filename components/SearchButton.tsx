@@ -21,11 +21,11 @@ export function SearchButton() {
                     borderRadius: '8px',
                     bg: 'transparent',
                     border: 'none',
-                    color: 'text.tertiary',
+                    color: 'text.primary',
                     transition: 'all 0.15s ease',
                     display: 'flex',
                     alignItems: 'center',
-                    _hover: { color: 'text.primary', bg: 'bg.secondary' },
+                    _hover: { bg: 'bg.secondary' },
                 })}
             >
                 <Search size={18} />

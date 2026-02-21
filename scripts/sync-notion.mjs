@@ -5,7 +5,8 @@ import fs from 'fs/promises';
 import path from 'path';
 import dotenv from 'dotenv';
 
-// Load .env
+// Load .env.local first (Next.js convention), then .env as fallback
+dotenv.config({ path: '.env.local' });
 dotenv.config({ path: '.env' });
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
@@ -94,35 +95,15 @@ async function fetchAllDatabasePages(databaseId, filter, sorts) {
     let results = [];
     let cursor = undefined;
 
-    if (typeof fetch === 'undefined') {
-        throw new Error("Global fetch not found. Please use Node.js 18+");
-    }
-
     do {
-        const body = {
-            start_cursor: cursor,
-        };
-        if (filter) body.filter = filter;
-        if (sorts) body.sorts = sorts;
+        const query = { database_id: databaseId };
+        if (cursor) query.start_cursor = cursor;
+        if (filter) query.filter = filter;
+        if (sorts) query.sorts = sorts;
 
-        const response = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${process.env.NOTION_API_KEY}`,
-                'Notion-Version': '2022-06-28',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        });
-
-        if (!response.ok) {
-            const err = await response.text();
-            throw new Error(`Notion API Query Failed: ${response.status} ${response.statusText} - ${err}`);
-        }
-
-        const data = await response.json();
-        results.push(...data.results);
-        cursor = data.next_cursor;
+        const response = await notion.databases.query(query);
+        results.push(...response.results);
+        cursor = response.next_cursor;
     } while (cursor);
     return results;
 }
@@ -279,7 +260,11 @@ async function fetchInfoSectionData(dbId) {
         title: props.title?.title?.[0]?.plain_text || props.Title?.title?.[0]?.plain_text || '',
         description: props.description?.rich_text?.[0]?.plain_text || props.Description?.rich_text?.[0]?.plain_text || '',
         link: props.link?.url || props.Link?.url || '',
+        button_text: props.button_text?.rich_text?.[0]?.plain_text || '',
         view_type: props.view_type?.select?.name || props['View Type']?.select?.name || 'col_centered_view',
+        media_aspect_ratio: props.media_aspect_ratio?.rich_text?.[0]?.plain_text || '',
+        media_mobile_width: props.media_mobile_width?.rich_text?.[0]?.plain_text || '',
+        media_desktop_width: props.media_desktop_width?.rich_text?.[0]?.plain_text || '',
         enabled: props.enabled?.checkbox ?? props.visibility?.checkbox ?? true,
     };
 
@@ -307,7 +292,10 @@ async function fetchDynamicSectionData(dbId) {
     return {
         collection_name: props.collection_name?.title?.[0]?.plain_text || '',
         section_title: props.section_title?.rich_text?.[0]?.plain_text || '',
+        description: props.description?.rich_text?.[0]?.plain_text || '',
         view_type: props.view_type?.select?.name || 'list_view',
+        items_shown_at_once: props.items_shown_at_once?.number || 6,
+        top_section_centered: props.top_section_centered?.checkbox ?? false,
         enabled: props.enabled?.checkbox ?? props.visibility?.checkbox ?? true,
     };
 }
@@ -330,7 +318,11 @@ async function fetchHtmlSectionData(dbId) {
         .map(b => b.code.rich_text.map(t => t.plain_text).join(''));
     const html_code = codeBlocks.join('\n');
 
-    return { title, html_code, enabled };
+    const height = props.height?.number || null;
+
+    const full_width = props.full_width?.checkbox ?? false;
+
+    return { title, html_code, height, full_width, enabled };
 }
 
 // New Helper to fetch Iframe Section Data
@@ -344,6 +336,8 @@ async function fetchIframeSectionData(dbId) {
     return {
         title: props.title?.title?.[0]?.plain_text || props.Title?.title?.[0]?.plain_text || '',
         url: props.url?.url || props.URL?.url || '',
+        height: props.height?.number || undefined,
+        full_width: props.full_width?.checkbox ?? false,
         enabled: props.enabled?.checkbox ?? props.visibility?.checkbox ?? true,
     };
 }
@@ -363,8 +357,39 @@ async function fetchVideoEmbedSectionData(dbId) {
     };
 }
 
-// New Helper to fetch Mail Based Comment Section Data
-async function fetchMailBasedCommentSectionData(dbId) {
+// Helper to fetch Media Section Data
+async function fetchMediaSectionData(dbId) {
+    const pages = await fetchAllDatabasePages(dbId);
+    if (pages.length === 0) return null;
+
+    const page = pages[0];
+    const props = page.properties;
+
+    // Download media file
+    let media = '';
+    const mediaFiles = props.media?.files;
+    if (mediaFiles && mediaFiles.length > 0) {
+        const file = mediaFiles[0];
+        const url = file.file?.url || file.external?.url || '';
+        if (url) {
+            const ext = path.extname(new URL(url).pathname) || '.jpg';
+            media = await downloadImage(url, `media-${dbId.slice(0, 8)}${ext}`);
+        }
+    }
+
+    return {
+        title: props.title?.title?.[0]?.plain_text || props.Title?.title?.[0]?.plain_text || '',
+        media,
+        height: props.height?.number || undefined,
+        height_on_mobile: props.height_on_mobile?.number || undefined,
+        height_on_desktop: props.height_on_desktop?.number || undefined,
+        full_width: props.full_width?.checkbox ?? false,
+        enabled: props.enabled?.checkbox ?? props.visibility?.checkbox ?? true,
+    };
+}
+
+// Helper to fetch Mailto Section Data
+async function fetchMailtoSectionData(dbId) {
     const pages = await fetchAllDatabasePages(dbId);
     if (pages.length === 0) return null;
 
@@ -372,8 +397,11 @@ async function fetchMailBasedCommentSectionData(dbId) {
     const props = page.properties;
 
     return {
-        topic_title: props.topic_title?.title?.[0]?.plain_text || props.Title?.title?.[0]?.plain_text || '',
-        author_email: props.author_email?.rich_text?.[0]?.plain_text || props.author_email?.email || '',
+        title: props.title?.title?.[0]?.plain_text || props.Title?.title?.[0]?.plain_text || '',
+        subject: props.subject?.rich_text?.[0]?.plain_text || '',
+        receiver: props.receiver?.rich_text?.[0]?.plain_text || '',
+        placeholder_text: props.placeholder_text?.rich_text?.[0]?.plain_text || '',
+        button_text: props.button_text?.rich_text?.[0]?.plain_text || '',
         enabled: props.enabled?.checkbox ?? props.visibility?.checkbox ?? true,
     };
 }
@@ -392,24 +420,9 @@ async function fetchNewsletterSectionData(dbId) {
     };
 }
 
-// Helper to retrieve DB details with explicit version (to ensure properties)
+// Helper to retrieve DB details
 async function fetchDatabaseDetails(databaseId) {
-    if (typeof fetch === 'undefined') {
-        throw new Error("Global fetch not found. Please use Node.js 18+");
-    }
-    const response = await fetch(`https://api.notion.com/v1/databases/${databaseId}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${process.env.NOTION_API_KEY}`,
-            'Notion-Version': '2022-06-28',
-            'Content-Type': 'application/json'
-        }
-    });
-    if (!response.ok) {
-        const err = await response.text();
-        throw new Error(`Notion API Retrieve DB Failed: ${response.status} ${err}`);
-    }
-    return await response.json();
+    return await notion.databases.retrieve({ database_id: databaseId });
 }
 
 // Reusable: process all section databases on a given page
@@ -458,9 +471,12 @@ async function processSectionsFromPage(pageId) {
         } else if (sectionType === 'video_embed_section') {
             const data = await fetchVideoEmbedSectionData(dbId);
             if (data) section = { type: 'video_embed_section', id: dbId, title: dbTitle, ...data };
-        } else if (sectionType === 'mail_based_comment_section') {
-            const data = await fetchMailBasedCommentSectionData(dbId);
-            if (data) section = { type: 'mail_based_comment_section', id: dbId, title: dbTitle, ...data };
+        } else if (sectionType === 'media_section') {
+            const data = await fetchMediaSectionData(dbId);
+            if (data) section = { type: 'media_section', id: dbId, title: dbTitle, ...data };
+        } else if (sectionType === 'mailto_section') {
+            const data = await fetchMailtoSectionData(dbId);
+            if (data) section = { type: 'mailto_section', id: dbId, title: dbTitle, ...data };
         } else if (sectionType === 'newsletter_section') {
             const data = await fetchNewsletterSectionData(dbId);
             if (data) section = { type: 'newsletter_section', id: dbId, title: dbTitle, ...data };
@@ -550,6 +566,7 @@ async function syncAllCollections() {
             const order_priority = props.order_priority?.number || props.Order?.number || 0;
             const author_username = props.author_username?.rich_text?.[0]?.plain_text || '';
             const video_embed_link = props.video_embed_link?.url || '';
+            const button_text = props.button_text?.rich_text?.[0]?.plain_text || '';
 
             const frontmatter = {
                 slug: itemSlug,
@@ -562,13 +579,15 @@ async function syncAllCollections() {
                 thumbnail: image,
                 tags,
                 link,
+                button_text,
                 tools: tags.join(', '),
                 order_priority,
                 author_username,
                 video_embed_link,
             };
 
-            const fileContent = `---\n${JSON.stringify(frontmatter, null, 2)}\n---\n\n${mdString.parent}`;
+            const body = mdString?.parent || '';
+            const fileContent = `---\n${JSON.stringify(frontmatter, null, 2)}\n---\n\n${body}`;
             await fs.writeFile(`notion_state/content/${slug}/${itemSlug}.md`, fileContent);
         }
     }
@@ -600,12 +619,14 @@ async function syncNavbarPagesContainer() {
 
             const frontmatter = {
                 title,
-                date: new Date().toISOString(),
+                date: block.last_edited_time || new Date().toISOString(),
+                description: '',
                 menu: "main",
                 sections: sections.length > 0 ? sections : undefined,
             };
 
-            const fileContent = `---\n${JSON.stringify(frontmatter, null, 2)}\n---\n\n${mdString.parent}`;
+            const body = mdString?.parent || '';
+            const fileContent = `---\n${JSON.stringify(frontmatter, null, 2)}\n---\n\n${body}`;
             await ensureDir('notion_state/content/navbarPages');
             await fs.writeFile(`notion_state/content/navbarPages/${slug}.md`, fileContent);
         }
@@ -688,7 +709,7 @@ async function syncCollectionSettings() {
             collection_name: collectionName,
             enable_rss: props.enable_rss?.checkbox ? 'true' : 'false',
             show_newsletter_section: props.show_newsletter_section?.checkbox ? 'true' : 'false',
-            show_mail_based_comment_section: props.show_mail_based_comment_section?.checkbox ? 'true' : 'false',
+            show_mailto_section: props.show_mailto_section?.checkbox ? 'true' : 'false',
         };
     }
 
@@ -780,6 +801,34 @@ async function syncExtraSections() {
     await fs.writeFile('notion_state/data/extra_sections.json', JSON.stringify(extraSections, null, 2));
 }
 
+async function syncAdvancedConfig() {
+    console.log("Syncing Advanced Configuration...");
+    const settingsPageId = await getPageByName(ROOT_PAGE_ID, "Settings");
+    if (!settingsPageId) {
+        console.warn("Settings page not found!");
+        return;
+    }
+
+    const advancedConfigDbId = await findFullPageDb("Advanced Configuration", settingsPageId);
+    if (!advancedConfigDbId) {
+        console.warn("Advanced Configuration database not found in Settings!");
+        return;
+    }
+
+    const pages = await fetchAllDatabasePages(advancedConfigDbId);
+    const config = {};
+
+    if (pages.length > 0) {
+        const props = pages[0].properties;
+        config.limit_theme_selection = props.limit_theme_selection?.multi_select?.map(o => o.name) || [];
+        config.primary_font = props.primary_font?.rich_text?.[0]?.plain_text || '';
+        config.secondary_font = props.secondary_font?.rich_text?.[0]?.plain_text || '';
+    }
+
+    await ensureDir('notion_state/data');
+    await fs.writeFile('notion_state/data/advanced_config.json', JSON.stringify(config, null, 2));
+}
+
 async function main() {
     try {
         await syncConfig();
@@ -791,6 +840,7 @@ async function main() {
         await syncCodeInjection();
         await syncCssInjection();
         await syncExtraSections();
+        await syncAdvancedConfig();
         console.log("Completed sync.");
     } catch (e) {
         console.error(e);

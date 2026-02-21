@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Image from 'next/image';
 import { css } from '@/styled-system/css';
 import { flex, stack } from '@/styled-system/patterns';
@@ -6,6 +5,7 @@ import { SettingsMenu } from './SettingsMenu';
 import { getHomeData, getNavbarPages } from '@/lib/data';
 import { SocialIcons } from './SocialIcons';
 import { SearchButton } from './SearchButton';
+import { SidebarNavLinks } from './SidebarNavLinks';
 
 const sidebarStyle = stack({
     pos: 'fixed',
@@ -50,22 +50,6 @@ const titleStyle = css({ fontSize: '1rem', fontWeight: '600', color: 'text.prima
 const taglineStyle = css({ fontSize: '0.8rem', color: 'text.secondary', lineHeight: '1.5' });
 
 const dividerStyle = css({ h: '1px', bg: 'border.default', w: '100%', mt: 2, display: 'block' });
-
-const navStackStyle = stack({ gap: '4px' });
-
-const navLinkStyle = css({
-    fontSize: '0.875rem',
-    color: 'text.secondary',
-    fontWeight: '500',
-    py: '8px',
-    px: '12px',
-    borderRadius: '8px',
-    transition: 'all 0.15s ease',
-    _hover: {
-        color: 'text.primary',
-        bg: 'bg.secondary',
-    },
-});
 
 const footerStyle = flex({
     gap: '12px',
@@ -112,20 +96,7 @@ export async function Sidebar() {
 
                 <div className={dividerStyle} />
 
-                <nav className={navStackStyle}>
-                    <Link href="/" className={navLinkStyle}>
-                        Home
-                    </Link>
-                    {pages.map((page) => (
-                        <Link
-                            key={page.slug}
-                            href={`/${page.slug}`}
-                            className={navLinkStyle}
-                        >
-                            {page.title}
-                        </Link>
-                    ))}
-                </nav>
+                <SidebarNavLinks pages={pages} />
             </div>
 
             <div className={footerStyle}>

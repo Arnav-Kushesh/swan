@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { css } from '../styled-system/css';
 import { Post, GalleryItem } from '../lib/data';
 import { format } from 'date-fns';
 
-const ITEMS_PER_PAGE = 6;
+const DEFAULT_ITEMS_PER_PAGE = 6;
 
 function getItemTitle(item: Post | GalleryItem): string {
     if ('name' in item && item.name) return item.name;
@@ -33,14 +34,17 @@ function getTagName(tag: string | { name: string }): string {
 interface GenericListProps {
     items: (Post | GalleryItem)[];
     viewType: string;
+    itemsPerPage?: number;
 }
 
-export function GenericList({ items, viewType }: GenericListProps) {
-    const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+export function GenericList({ items, viewType, itemsPerPage }: GenericListProps) {
+    const router = useRouter();
+    const perPage = itemsPerPage || DEFAULT_ITEMS_PER_PAGE;
+    const [visibleCount, setVisibleCount] = useState(perPage);
     const visibleItems = items.slice(0, visibleCount);
     const hasMore = visibleCount < items.length;
 
-    const loadMore = () => setVisibleCount(prev => prev + ITEMS_PER_PAGE);
+    const loadMore = () => setVisibleCount(prev => prev + perPage);
 
     const paginationButton = hasMore ? (
         <div className={css({ display: 'flex', justifyContent: 'center', mt: '32px' })}>
@@ -95,19 +99,24 @@ export function GenericList({ items, viewType }: GenericListProps) {
                                 })}
                             >
                                 {hasVideo ? (
-                                    <iframe
-                                        src={post.video_embed_link}
-                                        title={title}
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowFullScreen
-                                        className={css({ width: '100%', height: '100%', border: 'none' })}
-                                    />
-                                ) : (
+                                    <div className={css({ width: '100%', height: '100%', pointerEvents: 'none' })}>
+                                        <iframe
+                                            src={post.video_embed_link}
+                                            title={title}
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            className={css({ width: '100%', height: '100%', border: 'none' })}
+                                        />
+                                    </div>
+                                ) : getItemImage(item) ? (
                                     <img
-                                        src={item.image}
+                                        src={getItemImage(item)}
                                         alt={title}
                                         className={css({ width: '100%', height: '100%', objectFit: 'cover' })}
                                     />
+                                ) : (
+                                    <div className={css({ width: '100%', height: '100%', bg: 'bg.secondary', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'text.tertiary', fontSize: '0.875rem' })}>
+                                        No image
+                                    </div>
                                 )}
                                 <div className={css({
                                     position: 'absolute',
@@ -147,9 +156,9 @@ export function GenericList({ items, viewType }: GenericListProps) {
                         const image = getItemImage(item);
 
                         return (
-                            <Link
+                            <div
                                 key={item.slug}
-                                href={getItemHref(item)}
+                                onClick={() => router.push(getItemHref(item))}
                                 className={css({
                                     display: 'flex',
                                     flexDirection: 'column',
@@ -158,6 +167,7 @@ export function GenericList({ items, viewType }: GenericListProps) {
                                     border: '1px solid token(colors.border.default)',
                                     overflow: 'hidden',
                                     transition: 'all 0.2s ease',
+                                    cursor: 'pointer',
                                     _hover: { borderColor: 'primary', transform: 'translateY(-2px)' },
                                 })}
                             >
@@ -199,19 +209,138 @@ export function GenericList({ items, viewType }: GenericListProps) {
                                             {post.tags.slice(0, 3).map(tag => {
                                                 const name = getTagName(tag);
                                                 return (
-                                                    <span key={name} className={css({
-                                                        fontSize: '0.7rem',
-                                                        bg: 'bg.tertiary',
-                                                        color: 'text.secondary',
-                                                        px: '8px',
-                                                        py: '3px',
-                                                        borderRadius: 'full',
-                                                    })}>
+                                                    <Link
+                                                        key={name}
+                                                        href={`/tag/${encodeURIComponent(name)}`}
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        className={css({
+                                                            fontSize: '0.7rem',
+                                                            bg: 'bg.tertiary',
+                                                            color: 'text.secondary',
+                                                            px: '8px',
+                                                            py: '3px',
+                                                            borderRadius: 'full',
+                                                            transition: 'all 0.15s ease',
+                                                            position: 'relative',
+                                                            zIndex: 1,
+                                                            _hover: { bg: 'primary', color: 'white' },
+                                                        })}
+                                                    >
                                                         {name}
-                                                    </span>
+                                                    </Link>
                                                 );
                                             })}
                                         </div>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+                {paginationButton}
+            </>
+        );
+    }
+
+    if (viewType === 'tiny_card_view') {
+        return (
+            <>
+                <div className={css({
+                    display: 'grid',
+                    gridTemplateColumns: { base: 'repeat(3, 1fr)', lg: 'repeat(5, 1fr)' },
+                    gap: '8px',
+                    width: '100%',
+                })}>
+                    {visibleItems.map((item) => {
+                        const image = getItemImage(item);
+                        return (
+                            <Link
+                                key={item.slug}
+                                href={getItemHref(item)}
+                                className={css({
+                                    display: 'block',
+                                    position: 'relative',
+                                    aspectRatio: 'square',
+                                    borderRadius: '10px',
+                                    overflow: 'hidden',
+                                    border: '1px solid token(colors.border.default)',
+                                    transition: 'all 0.2s ease',
+                                    _hover: { transform: 'scale(1.03)', borderColor: 'primary' },
+                                })}
+                            >
+                                {image ? (
+                                    <img
+                                        src={image}
+                                        alt={getItemTitle(item)}
+                                        className={css({ width: '100%', height: '100%', objectFit: 'cover' })}
+                                    />
+                                ) : (
+                                    <div className={css({ width: '100%', height: '100%', bg: 'bg.secondary' })} />
+                                )}
+                            </Link>
+                        );
+                    })}
+                </div>
+                {paginationButton}
+            </>
+        );
+    }
+
+    if (viewType === 'big_card_view') {
+        return (
+            <>
+                <div className={css({
+                    display: 'grid',
+                    gridTemplateColumns: { base: '1fr', md: 'repeat(2, 1fr)' },
+                    gap: '24px',
+                    width: '100%',
+                })}>
+                    {visibleItems.map((item) => {
+                        const post = item as Post;
+                        const title = getItemTitle(item);
+                        const image = getItemImage(item);
+
+                        return (
+                            <Link
+                                key={item.slug}
+                                href={getItemHref(item)}
+                                className={css({
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    borderRadius: '16px',
+                                    overflow: 'hidden',
+                                    bg: 'bg.secondary',
+                                    border: '1px solid token(colors.border.default)',
+                                    transition: 'all 0.2s ease',
+                                    _hover: { transform: 'translateY(-3px)', borderColor: 'primary' },
+                                })}
+                            >
+                                {image && (
+                                    <div className={css({ aspectRatio: '4/3', overflow: 'hidden' })}>
+                                        <img
+                                            src={image}
+                                            alt={title}
+                                            className={css({
+                                                width: '100%',
+                                                height: '100%',
+                                                objectFit: 'cover',
+                                            })}
+                                        />
+                                    </div>
+                                )}
+                                <div className={css({ p: '20px', display: 'flex', flexDirection: 'column', gap: '8px' })}>
+                                    <h3 className={css({
+                                        fontWeight: '700',
+                                        fontSize: '1.2rem',
+                                        lineHeight: '1.3',
+                                        color: 'text.primary',
+                                    })}>
+                                        {title}
+                                    </h3>
+                                    {post.description && (
+                                        <p className={css({ color: 'text.secondary', fontSize: '0.9rem', lineHeight: '1.5', lineClamp: 3 })}>
+                                            {post.description}
+                                        </p>
                                     )}
                                 </div>
                             </Link>

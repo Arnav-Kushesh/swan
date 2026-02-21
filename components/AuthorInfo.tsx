@@ -1,15 +1,12 @@
 import { css } from '@/styled-system/css';
 import Link from 'next/link';
-import { getAuthor } from '@/lib/data';
+import { Author } from '@/lib/data';
 
 interface AuthorInfoProps {
-    authorUsername: string;
+    author: Author;
 }
 
-export function AuthorInfo({ authorUsername }: AuthorInfoProps) {
-    if (!authorUsername) return null;
-
-    const author = getAuthor(authorUsername);
+export function AuthorInfo({ author }: AuthorInfoProps) {
     if (!author) return null;
 
     return (

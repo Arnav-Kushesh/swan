@@ -1,7 +1,8 @@
 @layer reset, base, tokens, recipes, utilities;
 
 :root {
-    --font-inter: 'Inter', sans-serif;
+    --font-primary: 'Inter', sans-serif;
+    --font-secondary: 'Inter', sans-serif;
 }
 
 html {
@@ -22,9 +23,11 @@ body {
     box-sizing: border-box;
 }
 
-a {
-    text-decoration: none;
-    color: inherit;
+@layer base {
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
 }
 
 ::selection {
@@ -50,23 +53,12 @@ a {
     background: var(--colors-text-tertiary);
 }
 
-/* Animations */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes scaleUp {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-8px); }
-    to { opacity: 1; transform: translateY(0); }
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }

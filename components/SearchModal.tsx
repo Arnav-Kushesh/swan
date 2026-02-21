@@ -20,6 +20,49 @@ interface SearchModalProps {
     onClose: () => void;
 }
 
+/** Simple fuzzy match: returns true if all characters in query appear in target in order */
+function fuzzyMatch(target: string, query: string): { match: boolean; score: number } {
+    const t = target.toLowerCase();
+    const q = query.toLowerCase();
+
+    // Exact substring match gets highest score
+    if (t.includes(q)) return { match: true, score: 2 };
+
+    // Fuzzy: all query chars must appear in order in target
+    let ti = 0;
+    let qi = 0;
+    let consecutiveBonus = 0;
+    let lastMatchIdx = -2;
+
+    while (ti < t.length && qi < q.length) {
+        if (t[ti] === q[qi]) {
+            if (ti === lastMatchIdx + 1) consecutiveBonus += 0.1;
+            lastMatchIdx = ti;
+            qi++;
+        }
+        ti++;
+    }
+
+    if (qi === q.length) {
+        // Score based on how compact the match is (closer chars = better)
+        const score = 1 + consecutiveBonus - (ti - q.length) / t.length * 0.5;
+        return { match: true, score: Math.max(0.1, score) };
+    }
+
+    return { match: false, score: 0 };
+}
+
+function scoreItem(item: SearchItem, query: string): number {
+    const titleResult = fuzzyMatch(item.title, query);
+    const descResult = fuzzyMatch(item.description, query);
+    const collResult = fuzzyMatch(item.collection, query);
+    const tagResults = (item.tags || []).map(t => fuzzyMatch(t, query));
+    const bestTagScore = tagResults.reduce((max, r) => Math.max(max, r.score), 0);
+
+    // Weight: title > tags > collection > description
+    return titleResult.score * 3 + bestTagScore * 2 + collResult.score * 1.5 + descResult.score;
+}
+
 export function SearchModal({ items, isOpen, onClose }: SearchModalProps) {
     const [query, setQuery] = useState('');
     const [mounted, setMounted] = useState(false);
@@ -50,13 +93,12 @@ export function SearchModal({ items, isOpen, onClose }: SearchModalProps) {
 
     const results = useMemo(() => {
         if (query.trim().length === 0) return [];
-        const q = query.toLowerCase();
-        return items.filter(item =>
-            item.title.toLowerCase().includes(q) ||
-            item.description.toLowerCase().includes(q) ||
-            item.collection.toLowerCase().includes(q) ||
-            (item.tags || []).some(t => t.toLowerCase().includes(q))
-        ).slice(0, 20);
+        return items
+            .map(item => ({ item, score: scoreItem(item, query.trim()) }))
+            .filter(({ score }) => score > 0)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 20)
+            .map(({ item }) => item);
     }, [query, items]);
 
     if (!isOpen || !mounted) return null;

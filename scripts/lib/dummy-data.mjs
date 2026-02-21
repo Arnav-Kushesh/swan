@@ -60,8 +60,12 @@ export const dummyHeroSection = {
       title: 'Welcome to my portfolio',
       description: 'This is a longer bio paragraph about yourself. I build things with code.',
       link: 'https://example.com/about',
+      button_text: 'Explore',
       image: 'https://picsum.photos/id/1025/500/500',
       view_type: 'col_centered_view',
+      media_aspect_ratio: '16/9',
+      media_mobile_width: '100%',
+      media_desktop_width: '600px',
     }
   ]
 };
@@ -75,7 +79,10 @@ export const dummyDynamicGallery = {
     {
       collection_name: 'Gallery',
       section_title: 'My Gallery',
+      description: '',
       view_type: 'grid_view',
+      items_shown_at_once: 9,
+      top_section_centered: false,
     }
   ]
 };
@@ -88,7 +95,10 @@ export const dummyDynamicProjects = {
     {
       collection_name: 'Projects',
       section_title: 'Selected Projects',
+      description: 'A selection of my favorite projects',
       view_type: 'card_view',
+      items_shown_at_once: 6,
+      top_section_centered: false,
     }
   ]
 };
@@ -101,7 +111,10 @@ export const dummyDynamicBlog = {
     {
       collection_name: 'Blogs',
       section_title: 'Recent Writing',
+      description: '',
       view_type: 'minimal_list_view', // Text only
+      items_shown_at_once: 6,
+      top_section_centered: false,
     }
   ]
 };
@@ -114,6 +127,8 @@ export const dummyHtmlSection = {
   data: [
     {
       title: 'Custom HTML',
+      height: 300,
+      full_width: false,
       html_code: `<div style="font-family: system-ui; padding: 16px;">
   <h2>Hello from user HTML</h2>
   <p>This content is rendered inside an iframe.</p>
@@ -143,6 +158,8 @@ export const dummyIframeSection = {
     {
       title: 'Example Website',
       url: 'https://example.com',
+      height: 500,
+      full_width: false,
     }
   ]
 };
@@ -160,20 +177,39 @@ export const dummyVideoEmbedSection = {
   ]
 };
 
-// 6. Mail Based Comment Section (disabled by default)
-export const dummyMailBasedCommentSection = {
-  type: 'mail_based_comment_section',
+// 6. Mailto Section (disabled by default)
+export const dummyMailtoSection = {
+  type: 'mailto_section',
   enabled: 'false',
   title: 'Leave a Comment',
   data: [
     {
-      topic_title: 'Feedback on my portfolio',
-      author_email: 'john@example.com',
+      title: 'Leave a Comment',
+      subject: 'Feedback on my portfolio',
+      receiver: 'john@example.com',
+      placeholder_text: 'Share your thoughts...',
+      button_text: 'Send',
     }
   ]
 };
 
 // 7. Newsletter Section (disabled by default)
+export const dummyMediaSection = {
+  type: 'media_section',
+  enabled: 'false',
+  title: 'Media',
+  data: [
+    {
+      title: 'Media',
+      media: 'https://picsum.photos/id/1035/1200/600',
+      height: 400,
+      height_on_mobile: 250,
+      height_on_desktop: 400,
+      full_width: false,
+    }
+  ]
+};
+
 export const dummyNewsletterSection = {
   type: 'newsletter_section',
   enabled: 'false',
@@ -194,7 +230,8 @@ export const dummyHomePageSections = [
   dummyHtmlSection,
   dummyIframeSection,
   dummyVideoEmbedSection,
-  dummyMailBasedCommentSection,
+  dummyMediaSection,
+  dummyMailtoSection,
   dummyNewsletterSection,
 ];
 
@@ -455,9 +492,9 @@ export const dummyCollections = {
  * Stored in Settings > Configure Collections > [Inline DB per collection]
  */
 export const dummyCollectionSettings = {
-  Gallery: { collection_name: 'Gallery', enable_rss: 'false', show_newsletter_section: 'false', show_mail_based_comment_section: 'true' },
-  Projects: { collection_name: 'Projects', enable_rss: 'true', show_newsletter_section: 'false', show_mail_based_comment_section: 'true' },
-  Blogs: { collection_name: 'Blogs', enable_rss: 'true', show_newsletter_section: 'true', show_mail_based_comment_section: 'true' },
+  Gallery: { collection_name: 'Gallery', enable_rss: 'false', show_newsletter_section: 'false', show_mailto_section: 'true' },
+  Projects: { collection_name: 'Projects', enable_rss: 'true', show_newsletter_section: 'false', show_mailto_section: 'true' },
+  Blogs: { collection_name: 'Blogs', enable_rss: 'true', show_newsletter_section: 'true', show_mailto_section: 'true' },
 };
 
 /**
@@ -502,6 +539,12 @@ export const dummyCodeInjection = [
 export const dummyCssInjection = [
   '/* Swan CSS Injection: Add your custom styles here */',
 ];
+
+export const dummyAdvancedConfig = {
+  limit_theme_selection: ['light', 'dark', 'blue', 'purple', 'pink', 'red', 'green', 'cream'],
+  primary_font: 'Inter',
+  secondary_font: 'Inter',
+};
 
 export const dummyNavbarPages = [
   {

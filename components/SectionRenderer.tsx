@@ -4,11 +4,16 @@ import { DynamicSection } from './DynamicSection';
 import { HtmlSection } from './HtmlSection';
 import { IframeSection } from './IframeSection';
 import { VideoEmbedSection } from './VideoEmbedSection';
-import { MailBasedCommentSection } from './MailBasedCommentSection';
+import { MediaSection } from './MediaSection';
+import { MailtoSection } from './MailtoSection';
 import { Newsletter } from './Newsletter';
-import { getHomeData } from '@/lib/data';
 
-export function SectionRenderer({ section }: { section: SectionData }) {
+interface SectionRendererProps {
+    section: SectionData;
+    mailchimpFormLink?: string;
+}
+
+export function SectionRenderer({ section, mailchimpFormLink }: SectionRendererProps) {
     // Safety guard: never render disabled sections
     if (section.enabled === false) return null;
 
@@ -23,12 +28,12 @@ export function SectionRenderer({ section }: { section: SectionData }) {
             return <IframeSection data={section} />;
         case 'video_embed_section':
             return <VideoEmbedSection data={section} />;
-        case 'mail_based_comment_section':
-            return <MailBasedCommentSection data={section} />;
-        case 'newsletter_section': {
-            const homeData = getHomeData();
-            return <Newsletter mailchimpFormLink={homeData.info?.mailchimp_form_link} />;
-        }
+        case 'media_section':
+            return <MediaSection data={section} />;
+        case 'mailto_section':
+            return <MailtoSection data={section} />;
+        case 'newsletter_section':
+            return <Newsletter mailchimpFormLink={mailchimpFormLink} />;
         default:
             return null;
     }

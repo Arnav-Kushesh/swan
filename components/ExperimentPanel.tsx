@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { css } from '@/styled-system/css';
-import { useGlobalConfig, LIGHT_THEMES, DARK_THEMES } from '@/components/providers/GlobalConfigProvider';
-import { FlaskConical, X, Check, Layout, List, Grid2x2, LayoutGrid, AlignJustify, Columns2, Rows2, AlignCenter, AlignLeft } from 'lucide-react';
+import { useGlobalConfig } from '@/components/providers/GlobalConfigProvider';
+import { FlaskConical, X, Layout, List, Grid2x2, LayoutGrid, AlignJustify, Columns2, Rows2, AlignCenter, AlignLeft } from 'lucide-react';
+import { ThemePicker } from './ThemePicker';
 
 export function ExperimentPanel() {
-    const { colorMode, setColorModeTemporary, availableThemes, showSidebar, setSidebarTemporary, config, sectionViewOverrides, setSectionViewOverride } = useGlobalConfig();
+    const { colorMode, setColorModeTemporary, showSidebar, setSidebarTemporary, config, sectionViewOverrides, setSectionViewOverride } = useGlobalConfig();
     const [isOpen, setIsOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
 
@@ -16,6 +17,8 @@ export function ExperimentPanel() {
         { value: 'card_view', label: 'Card', icon: LayoutGrid },
         { value: 'grid_view', label: 'Grid', icon: Grid2x2 },
         { value: 'minimal_list_view', label: 'Minimal', icon: AlignJustify },
+        { value: 'tiny_card_view', label: 'Tiny', icon: Grid2x2 },
+        { value: 'big_card_view', label: 'Big', icon: Rows2 },
     ];
 
     const INFO_VIEW_OPTIONS = [
@@ -48,17 +51,6 @@ export function ExperimentPanel() {
         }
         return () => { document.body.style.overflow = 'unset'; };
     }, [isOpen]);
-
-    const themeColors: Record<string, string> = {
-        light: '#f5f5f7',
-        dark: '#1a1a1a',
-        blue: '#1E293B',
-        purple: '#4c1d95',
-        pink: '#FFE0ED',
-        red: '#450a0a',
-        green: '#064e3b',
-        cream: '#FFF8EC',
-    };
 
     const panelContent = (
         <div
@@ -235,80 +227,14 @@ export function ExperimentPanel() {
                     )}
 
                     {/* Color Mode */}
-                    <div>
-                        {[{ label: 'Light', themes: LIGHT_THEMES }, { label: 'Dark', themes: DARK_THEMES }].map(({ label, themes }) => (
-                            <div key={label} className={css({ mb: '12px' })}>
-                                <h3 className={css({ fontSize: '0.6rem', fontWeight: '600', textTransform: 'uppercase', color: 'text.tertiary', mb: '8px', letterSpacing: '0.05em' })}>
-                                    {label}
-                                </h3>
-                                <div className={css({
-                                    display: 'grid',
-                                    gridTemplateColumns: 'repeat(auto-fill, minmax(44px, 1fr))',
-                                    gap: '6px',
-                                })}>
-                                    {themes.map((theme) => (
-                                        <button
-                                            key={theme}
-                                            onClick={() => setColorModeTemporary(theme)}
-                                            className={css({
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                gap: '3px',
-                                                cursor: 'pointer',
-                                                bg: 'transparent',
-                                                border: 'none',
-                                                p: '0',
-                                                transition: 'all 0.15s ease',
-                                                _hover: { transform: 'scale(1.08)' },
-                                            })}
-                                            title={theme.charAt(0).toUpperCase() + theme.slice(1)}
-                                        >
-                                            <div
-                                                className={css({
-                                                    w: '28px',
-                                                    h: '28px',
-                                                    borderRadius: '6px',
-                                                    border: '2px solid',
-                                                    borderColor: colorMode === theme ? 'primary' : 'transparent',
-                                                    position: 'relative',
-                                                    overflow: 'hidden',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.1)',
-                                                })}
-                                            >
-                                                <div
-                                                    className={css({ position: 'absolute', inset: 0, borderRadius: '4px' })}
-                                                    style={{ backgroundColor: themeColors[theme] || '#888' }}
-                                                />
-                                                {colorMode === theme && (
-                                                    <div className={css({
-                                                        position: 'relative',
-                                                        zIndex: 1,
-                                                        bg: 'rgba(0,0,0,0.25)',
-                                                        borderRadius: 'full',
-                                                        p: '1px',
-                                                    })}>
-                                                        <Check size={8} color="white" />
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <span className={css({
-                                                fontSize: '0.5rem',
-                                                color: colorMode === theme ? 'text.primary' : 'text.tertiary',
-                                                fontWeight: colorMode === theme ? '600' : '400',
-                                                textTransform: 'capitalize',
-                                            })}>
-                                                {theme}
-                                            </span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    <ThemePicker
+                        colorMode={colorMode}
+                        onThemeChange={setColorModeTemporary}
+                        swatchSize={28}
+                        checkSize={8}
+                        fontSize="0.5rem"
+                        gap="6px"
+                    />
                 </div>
             </div>
         </div>

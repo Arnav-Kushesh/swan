@@ -9,12 +9,12 @@
     "lint": "eslint .",
     "sync": "npm run clean && node scripts/sync-notion.mjs",
     "clean": "rm -rf notion_state .next out",
-    "sync-and-build": "npm run prepare && npm run sync && next build",
+    "sync-and-build": "panda codegen && npm run sync && next build",
     "seed": "panda codegen && node scripts/add-dummy-data.mjs",
     "add-dummy-data": "node scripts/add-dummy-data.mjs"
   },
   "dependencies": {
-    "@notionhq/client": "^5.8.0",
+    "@notionhq/client": "^2.3.0",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",
     "gray-matter": "^4.0.3",

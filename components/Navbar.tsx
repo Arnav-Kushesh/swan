@@ -6,6 +6,7 @@ import { SettingsMenu } from './SettingsMenu';
 import { getHomeData, getNavbarPages } from '@/lib/data';
 import { SocialIcons } from './SocialIcons';
 import { SearchButton } from './SearchButton';
+import { NavLinks } from './NavLinks';
 
 const navbarStyle = css({
     pos: 'fixed',
@@ -14,7 +15,6 @@ const navbarStyle = css({
     w: '100%',
     zIndex: 100,
     bg: 'bg.primary',
-    backdropFilter: 'blur(12px)',
     borderBottom: '1px solid token(colors.border.default)',
     transition: 'all 0.2s ease',
 });
@@ -37,20 +37,6 @@ const logoStyle = css({
 });
 
 const navLinksContainerStyle = flex({ gap: '6px', alignItems: 'center' });
-
-const linkStyle = css({
-    color: 'text.secondary',
-    fontSize: '0.875rem',
-    fontWeight: '500',
-    transition: 'color 0.2s',
-    px: '10px',
-    py: '6px',
-    borderRadius: '6px',
-    _hover: {
-        color: 'text.primary',
-        bg: 'bg.secondary',
-    },
-});
 
 export async function Navbar() {
     const homeData = getHomeData();
@@ -91,20 +77,7 @@ export async function Navbar() {
                 )}
 
                 <div className={navLinksContainerStyle}>
-                    <div className={css({ display: { base: 'none', md: 'flex' }, alignItems: 'center', gap: '2px' })}>
-                        <Link href="/" className={linkStyle}>
-                            Home
-                        </Link>
-                        {pages.map((page) => (
-                            <Link
-                                key={page.slug}
-                                href={`/${page.slug}`}
-                                className={linkStyle}
-                            >
-                                {page.title}
-                            </Link>
-                        ))}
-                    </div>
+                    <NavLinks pages={pages} mobileExtra={<SocialIcons config={homeData.info} />} />
 
                     <div className={css({
                         display: { base: 'none', lg: 'flex' },

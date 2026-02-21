@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { getNavbarPages, getAllPosts, getAuthors, getCollectionNames } from '@/lib/data';
+import { getNavbarPages, getAllPosts, getAuthors } from '@/lib/data';
 
 export const dynamic = 'force-static';
 
@@ -38,13 +38,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: 0.6,
     }));
 
-    // 5. RSS feeds
-    const rssFeeds = getCollectionNames().map((name) => ({
-        url: `${baseUrl}/rss/${name}`,
-        lastModified: new Date(),
-        changeFrequency: 'weekly' as const,
-        priority: 0.3,
-    }));
-
-    return [root, ...pages, ...allPosts, ...authors, ...rssFeeds];
+    return [root, ...pages, ...allPosts, ...authors];
 }

@@ -18,8 +18,9 @@ Root Page
 │   ├── [Inline DB] Custom HTML (html_section)
 │   ├── [Inline DB] Embedded Page (iframe_section)
 │   ├── [Inline DB] Featured Video (video_embed_section)
-│   ├── [Inline DB] Newsletter (newsletter_section)
-│   └── [Inline DB] Leave a Comment (mail_based_comment_section)
+│   ├── [Inline DB] Media (media_section)
+│   ├── [Inline DB] Contact Form (mailto_section)
+│   └── [Inline DB] Newsletter (newsletter_section)
 ├── Navbar Pages
 │   ├── About (page, can contain inline DB sections)
 │   └── Contact (page, can contain inline DB sections)
@@ -31,6 +32,7 @@ Root Page
 │   ├── Main Configuration (database)
 │   ├── General Configuration (database)
 │   ├── Social Links (database)
+│   ├── Advanced Configuration (database)
 │   ├── Configure Collections (database)
 │   ├── Collection Page Extra Sections
 │   │   ├── Gallery (page with inline DB sections)
@@ -49,15 +51,16 @@ Sections are inline databases placed on the Home Page, Navbar Pages, or Collecti
 
 ### 1. `info_section`
 
-A static content section with text, image, and optional CTA button.
+A static content section with text, image/video, and optional CTA button. If the image is a video file (`.mp4`, `.webm`, `.mov`, `.ogg`), it renders as a looping video with no controls.
 
 **Database Properties:**
 | Property | Type | Description |
 |----------|------|-------------|
 | `title` | Title | Section heading |
 | `description` | Rich Text | Section body text |
-| `link` | URL | Optional CTA button link |
-| `image` | Files | Optional hero/feature image |
+| `link` | URL | Optional CTA button link (button hidden if empty) |
+| `button_text` | Rich Text | Custom button label (defaults to "Explore") |
+| `image` | Files | Optional hero/feature image or video |
 | `view_type` | Select | Layout: `col_centered_view`, `col_left_view`, `row_view`, `row_reverse_view` |
 | `section_type` | Select | Must be `info_section` |
 | `enabled` | Checkbox | Show/hide the section |
@@ -71,9 +74,20 @@ Displays items from a collection (blogs, projects, gallery) in various view type
 |----------|------|-------------|
 | `collection_name` | Title | Name of the collection to display (e.g., "Blogs") |
 | `section_title` | Rich Text | Display title for the section |
-| `view_type` | Select | Layout: `list_view`, `card_view`, `grid_view`, `minimal_list_view` |
+| `description` | Rich Text | Optional description shown below the title |
+| `view_type` | Select | Layout: `list_view`, `card_view`, `grid_view`, `minimal_list_view`, `tiny_card_view`, `big_card_view` |
+| `items_shown_at_once` | Number | Number of items per page (default: 6) |
+| `top_section_centered` | Checkbox | Center the title and description |
 | `section_type` | Select | Must be `dynamic_section` |
 | `enabled` | Checkbox | Show/hide the section |
+
+**View Types:**
+- **`list_view`**: Full-width list with image, title, description, and date
+- **`card_view`**: 3-column grid with image, title, description, and tags
+- **`grid_view`**: 3-column image grid with title overlay
+- **`minimal_list_view`**: Text-only list with title, description, and date
+- **`tiny_card_view`**: 5-column grid of small square image thumbnails (no text)
+- **`big_card_view`**: 2-column grid with large images and gradient backgrounds using the item's dominant color
 
 ### 3. `html_section`
 
@@ -83,6 +97,8 @@ Renders custom HTML inside a sandboxed iframe. The HTML code is stored as a code
 | Property | Type | Description |
 |----------|------|-------------|
 | `title` | Title | Section heading |
+| `height` | Number | Custom height in pixels |
+| `full_width` | Checkbox | Edge-to-edge display (removes border radius and border) |
 | `section_type` | Select | Must be `html_section` |
 | `enabled` | Checkbox | Show/hide the section |
 
@@ -97,6 +113,8 @@ Embeds an external webpage in an iframe.
 |----------|------|-------------|
 | `title` | Title | Section heading |
 | `url` | URL | The URL to embed |
+| `height` | Number | Custom height in pixels (defaults to 16:9 aspect ratio) |
+| `full_width` | Checkbox | Edge-to-edge display (removes border radius and border) |
 | `section_type` | Select | Must be `iframe_section` |
 | `enabled` | Checkbox | Show/hide the section |
 
@@ -112,7 +130,36 @@ Embeds a video (YouTube, Vimeo, etc.) using the embed URL.
 | `section_type` | Select | Must be `video_embed_section` |
 | `enabled` | Checkbox | Show/hide the section |
 
-### 6. `newsletter_section`
+### 6. `media_section`
+
+Displays an image or a looping video. If the media file is a video (`.mp4`, `.webm`, `.mov`, `.ogg`), it renders as a looping video with no controls. Otherwise, it renders as an image.
+
+**Database Properties:**
+| Property | Type | Description |
+|----------|------|-------------|
+| `title` | Title | Section heading |
+| `media` | Files | Image or video file |
+| `height` | Number | Display height in pixels (default: 400) |
+| `full_width` | Checkbox | Edge-to-edge display (removes border radius and border) |
+| `section_type` | Select | Must be `media_section` |
+| `enabled` | Checkbox | Show/hide the section |
+
+### 7. `mailto_section`
+
+An email-based contact form. When a reader submits the form, their email client opens with a pre-filled subject line and message body.
+
+**Database Properties:**
+| Property | Type | Description |
+|----------|------|-------------|
+| `title` | Title | Section heading |
+| `subject` | Rich Text | Email subject line |
+| `receiver` | Rich Text | Recipient email address |
+| `placeholder_text` | Rich Text | Textarea placeholder (defaults to "Share your thoughts...") |
+| `button_text` | Rich Text | Submit button label (defaults to "Send") |
+| `section_type` | Select | Must be `mailto_section` |
+| `enabled` | Checkbox | Show/hide the section |
+
+### 8. `newsletter_section`
 
 Renders a Mailchimp-powered newsletter signup form. Reads the `mailchimp_form_link` from General Configuration.
 
@@ -120,18 +167,6 @@ Renders a Mailchimp-powered newsletter signup form. Reads the `mailchimp_form_li
 | Property | Type | Description |
 |----------|------|-------------|
 | `section_type` | Select | Must be `newsletter_section` |
-| `enabled` | Checkbox | Show/hide the section |
-
-### 7. `mail_based_comment_section`
-
-A simple email-based comment form using `mailto:` links.
-
-**Database Properties:**
-| Property | Type | Description |
-|----------|------|-------------|
-| `topic_title` | Title | Email subject line |
-| `author_email` | Rich Text | Recipient email address |
-| `section_type` | Select | Must be `mail_based_comment_section` |
 | `enabled` | Checkbox | Show/hide the section |
 
 ---
@@ -147,11 +182,14 @@ Collections are full-page databases stored under the "Collections" page. Each it
 | `Image` | Files | Cover/thumbnail image |
 | `Tags` | Multi-select | Categorization tags |
 | `Link` | URL | External link |
+| `button_text` | Rich Text | Custom button label |
 | `order_priority` | Number | Sort order (higher = first) |
 | `author_username` | Rich Text | Author username (links to Authors DB) |
 | `video_embed_link` | URL | Optional video embed URL |
 
 The page content (body) of each item becomes the full article content, rendered as markdown.
+
+During sync, a `dominant_color` is automatically extracted from each item's image for use with the Big Card view type.
 
 ### Collection Settings
 
@@ -162,7 +200,7 @@ Per-collection configuration is managed in **Settings > Configure Collections**,
 | `collection_name` | Title | Name of the collection |
 | `enable_rss` | Checkbox | Generate an RSS feed for this collection |
 | `show_newsletter_section` | Checkbox | Show newsletter signup on collection pages |
-| `show_mail_based_comment_section` | Checkbox | Show email comment section on collection pages |
+| `show_mailto_section` | Checkbox | Show mailto section on collection pages |
 
 ---
 
@@ -197,6 +235,16 @@ Stores feature flags and toggles as individual checkbox/URL columns with a singl
 | `mention_this_tool_in_footer` | Checkbox | Show "Built with Swan" in the footer |
 | `show_newsletter_section_on_home` | Checkbox | Show a newsletter section on the homepage |
 
+### Advanced Configuration
+
+Fine-grained control over site behavior with a single row of data.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `limit_theme_selection` | Multi-select | Which themes users can choose from (defaults to all 8) |
+
+Remove themes from the multi-select to prevent users from selecting them in the Settings menu.
+
 ### Social Links
 
 Stores social media profiles with one row per social platform.
@@ -226,6 +274,8 @@ Swan supports 8 color themes:
 | `green` | Dark | Forest green |
 
 Set the default via `default_color_mode` in Main Configuration. Users can change themes via the Settings menu or the Experiment panel.
+
+To restrict which themes are available to users, edit the `limit_theme_selection` multi-select in Advanced Configuration.
 
 ---
 
@@ -272,7 +322,7 @@ Extra sections can be added to collection entry pages (blog posts, projects, etc
 
 Each collection name page contains inline databases representing sections. These sections are rendered on every entry page of that collection.
 
-All 7 section types are supported (info, dynamic, html, iframe, video_embed, newsletter, mail_based_comment).
+All 9 section types are supported (info, dynamic, html, iframe, video_embed, media, mailto, newsletter).
 
 ---
 
@@ -284,12 +334,12 @@ Navbar pages (About, Contact, etc.) can also contain inline database sections. A
 
 ## Experiment Panel
 
-A floating "Experiment" button in the bottom-right corner opens a panel for trying out different settings:
+A floating "Experiment" button in the bottom-right corner (dev mode only) opens a panel for trying out different settings:
 
 - **Section Views:** Change the view type of any homepage section in real time
   - *Info sections:* `col_centered_view`, `col_left_view`, `row_view`, `row_reverse_view`
-  - *Dynamic sections:* `list_view`, `card_view`, `grid_view`, `minimal_list_view`
-- **Color Mode:** Switch between all 8 themes
+  - *Dynamic sections:* `list_view`, `card_view`, `grid_view`, `minimal_list_view`, `tiny_card_view`, `big_card_view`
+- **Color Mode:** Switch between all 8 themes (not restricted by Advanced Configuration)
 - **Sidebar Toggle:** Enable/disable sidebar navigation
 
 Changes made via the Experiment panel are **temporary** and will not persist after a page refresh.
@@ -304,7 +354,7 @@ RSS feeds are auto-generated for collections with `enable_rss` checked in their 
 
 ## Search
 
-Swan includes a built-in search (Cmd+K / Ctrl+K) that searches across all collection items by title, description, collection name, and tags.
+Swan includes a built-in search (Cmd+K / Ctrl+K) that searches across all collection items by title, description, collection name, and tags. Uses fuzzy matching with relevance scoring.
 
 ---
 
@@ -318,6 +368,6 @@ notion_state/ (local JSON + Markdown cache)
 Static HTML/CSS/JS (Next.js static export)
 ```
 
-1. **Sync:** Fetches all data from Notion API, downloads images, converts pages to markdown
+1. **Sync:** Fetches all data from Notion API, downloads images, extracts dominant colors, converts pages to markdown
 2. **Build:** Next.js reads from `notion_state/` and generates a fully static site
 3. **Deploy:** Upload the `out/` directory to any static hosting (Vercel, Netlify, GitHub Pages, etc.)

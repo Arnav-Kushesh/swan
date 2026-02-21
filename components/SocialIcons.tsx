@@ -7,7 +7,7 @@ import { InfoConfig } from '@/lib/data';
 const socialContainerStyle = flex({ gap: '8px', alignItems: 'center', wrap: 'wrap' });
 
 const iconStyle = css({
-    color: 'text.tertiary',
+    color: 'text.primary',
     transition: 'color 0.15s ease',
     cursor: 'pointer',
     display: 'flex',
@@ -16,7 +16,7 @@ const iconStyle = css({
     p: '4px',
     borderRadius: '6px',
     _hover: {
-        color: 'text.primary',
+        opacity: 0.7,
     },
 });
 

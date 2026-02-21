@@ -10,6 +10,7 @@ import {
   dummyCodeInjection,
   dummyCssInjection,
   dummyExtraSections,
+  dummyAdvancedConfig,
 } from "./dummy-data.mjs";
 
 /**
@@ -96,6 +97,8 @@ export async function seedNotion(rootPageId, notion) {
   // Nest under Settings
   await createBasicConfigDB(settingsPageId, notion);
   await createConfigDB(settingsPageId, notion);
+  await createAdvancedConfigDB(settingsPageId, notion);
+
   await createSocialLinksDB(settingsPageId, notion);
   await createCollectionSettingsPage(settingsPageId, notion);
   await createExtraSectionsPage(settingsPageId, notion);
@@ -215,7 +218,8 @@ const sectionTypeOptions = [
   { name: "html_section", color: "purple" },
   { name: "iframe_section", color: "blue" },
   { name: "video_embed_section", color: "red" },
-  { name: "mail_based_comment_section", color: "green" },
+  { name: "media_section", color: "pink" },
+  { name: "mailto_section", color: "green" },
   { name: "newsletter_section", color: "yellow" },
 ];
 
@@ -418,14 +422,15 @@ async function createCollectionsPage(rootPageId, notion) {
 async function createCollections(parentId, notion) {
   const sharedSchema = {
     Title: { title: {} },
+    Slug: { rich_text: {} },
     Description: { rich_text: {} },
     Image: { files: {} },
     Tags: { multi_select: {} },
     Link: { url: {} },
+    button_text: { rich_text: {} },
     order_priority: { number: { format: "number" } },
     author_username: { rich_text: {} },
     video_embed_link: { url: {} },
-    // Rich Content is just the page content
   };
 
   for (const [name, items] of Object.entries(dummyCollections)) {
@@ -445,11 +450,18 @@ async function createCollections(parentId, notion) {
     console.log(`     Seeding ${items.length} items into ${name}...`);
 
     for (const item of items) {
+      const itemSlug = item.title
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/[\s_-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
       const props = {
         Title: { title: plainText(item.title) },
+        Slug: { rich_text: plainText(itemSlug) },
         Description: { rich_text: plainText(item.description) },
         Tags: { multi_select: (item.tags || []).map((t) => ({ name: t })) },
         Link: { url: item.link || null },
+        button_text: { rich_text: plainText(item.button_text || "") },
         order_priority: { number: item.order_priority || 0 },
         author_username: { rich_text: plainText(item.author_username || "") },
         video_embed_link: { url: item.video_embed_link || null },
@@ -540,8 +552,10 @@ async function createAnySection(notion, parentId, section) {
     await createIframeSection(notion, parentId, section);
   } else if (section.type === "video_embed_section") {
     await createVideoEmbedSection(notion, parentId, section);
-  } else if (section.type === "mail_based_comment_section") {
-    await createMailBasedCommentSection(notion, parentId, section);
+  } else if (section.type === "media_section") {
+    await createMediaSection(notion, parentId, section);
+  } else if (section.type === "mailto_section") {
+    await createMailtoSection(notion, parentId, section);
   } else if (section.type === "newsletter_section") {
     await createNewsletterSection(notion, parentId, section);
   }
@@ -553,6 +567,7 @@ async function createInfoSection(notion, parentId, sectionData) {
     title: { title: {} },
     description: { rich_text: {} },
     link: { url: {} },
+    button_text: { rich_text: {} },
     image: { files: {} },
     view_type: {
       select: {
@@ -564,6 +579,9 @@ async function createInfoSection(notion, parentId, sectionData) {
         ],
       },
     },
+    media_aspect_ratio: { rich_text: {} },
+    media_mobile_width: { rich_text: {} },
+    media_desktop_width: { rich_text: {} },
     section_type: {
       select: { options: sectionTypeOptions },
     },
@@ -584,7 +602,17 @@ async function createInfoSection(notion, parentId, sectionData) {
       title: { title: plainText(item.title) },
       description: { rich_text: plainText(item.description) },
       link: { url: item.link || null },
+      button_text: { rich_text: plainText(item.button_text || "") },
       view_type: { select: { name: item.view_type } },
+      media_aspect_ratio: {
+        rich_text: plainText(item.media_aspect_ratio || ""),
+      },
+      media_mobile_width: {
+        rich_text: plainText(item.media_mobile_width || ""),
+      },
+      media_desktop_width: {
+        rich_text: plainText(item.media_desktop_width || ""),
+      },
       section_type: { select: { name: "info_section" } },
       enabled: { checkbox: sectionData.enabled === "true" },
     };
@@ -610,6 +638,7 @@ async function createDynamicSection(notion, parentId, sectionData) {
   const properties = {
     collection_name: { title: {} },
     section_title: { rich_text: {} },
+    description: { rich_text: {} },
     view_type: {
       select: {
         options: [
@@ -617,9 +646,13 @@ async function createDynamicSection(notion, parentId, sectionData) {
           { name: "card_view", color: "green" },
           { name: "grid_view", color: "yellow" },
           { name: "minimal_list_view", color: "gray" },
+          { name: "tiny_card_view", color: "pink" },
+          { name: "big_card_view", color: "red" },
         ],
       },
     },
+    items_shown_at_once: { number: {} },
+    top_section_centered: { checkbox: {} },
     section_type: {
       select: { options: sectionTypeOptions },
     },
@@ -641,7 +674,10 @@ async function createDynamicSection(notion, parentId, sectionData) {
       section_title: {
         rich_text: plainText(item.section_title || sectionData.title),
       },
+      description: { rich_text: plainText(item.description || "") },
       view_type: { select: { name: item.view_type } },
+      items_shown_at_once: { number: item.items_shown_at_once || 6 },
+      top_section_centered: { checkbox: item.top_section_centered || false },
       section_type: { select: { name: "dynamic_section" } },
       enabled: { checkbox: sectionData.enabled === "true" },
     };
@@ -659,6 +695,8 @@ async function createHtmlSection(notion, parentId, sectionData) {
   console.log(`     - Creating HTML Section: ${sectionData.title}`);
   const properties = {
     title: { title: {} },
+    height: { number: { format: "number" } },
+    full_width: { checkbox: {} },
     section_type: {
       select: { options: sectionTypeOptions },
     },
@@ -678,6 +716,8 @@ async function createHtmlSection(notion, parentId, sectionData) {
       parent: { database_id: db.id },
       properties: {
         title: { title: plainText(item.title || sectionData.title) },
+        height: { number: item.height || null },
+        full_width: { checkbox: item.full_width || false },
         section_type: { select: { name: "html_section" } },
         enabled: { checkbox: sectionData.enabled === "true" },
       },
@@ -692,6 +732,8 @@ async function createIframeSection(notion, parentId, sectionData) {
   const properties = {
     title: { title: {} },
     url: { url: {} },
+    height: { number: {} },
+    full_width: { checkbox: {} },
     section_type: {
       select: { options: sectionTypeOptions },
     },
@@ -712,6 +754,8 @@ async function createIframeSection(notion, parentId, sectionData) {
       properties: {
         title: { title: plainText(item.title || sectionData.title) },
         url: { url: item.url || null },
+        height: { number: item.height || null },
+        full_width: { checkbox: item.full_width || false },
         section_type: { select: { name: "iframe_section" } },
         enabled: { checkbox: sectionData.enabled === "true" },
       },
@@ -751,13 +795,63 @@ async function createVideoEmbedSection(notion, parentId, sectionData) {
   }
 }
 
-async function createMailBasedCommentSection(notion, parentId, sectionData) {
-  console.log(
-    `     - Creating Mail Based Comment Section: ${sectionData.title}`,
-  );
+async function createMediaSection(notion, parentId, sectionData) {
+  console.log(`     - Creating Media Section: ${sectionData.title}`);
   const properties = {
-    topic_title: { title: {} },
-    author_email: { rich_text: {} },
+    title: { title: {} },
+    media: { files: {} },
+    height: { number: {} },
+    height_on_mobile: { number: {} },
+    height_on_desktop: { number: {} },
+    full_width: { checkbox: {} },
+    section_type: {
+      select: { options: sectionTypeOptions },
+    },
+    enabled: { checkbox: {} },
+  };
+
+  const db = await notion.databases.create({
+    parent: { type: "page_id", page_id: parentId },
+    title: plainText(sectionData.title),
+    is_inline: true,
+    initial_data_source: { properties },
+  });
+
+  if (sectionData.data && sectionData.data.length > 0) {
+    const item = sectionData.data[0];
+    const props = {
+      title: { title: plainText(item.title || sectionData.title) },
+      height: { number: item.height || 400 },
+      height_on_mobile: { number: item.height_on_mobile || null },
+      height_on_desktop: { number: item.height_on_desktop || null },
+      full_width: { checkbox: item.full_width || false },
+      section_type: { select: { name: "media_section" } },
+      enabled: { checkbox: sectionData.enabled === "true" },
+    };
+
+    if (item.media) {
+      props.media = {
+        files: [
+          { type: "external", name: "Media", external: { url: item.media } },
+        ],
+      };
+    }
+
+    await notion.pages.create({
+      parent: { database_id: db.id },
+      properties: props,
+    });
+  }
+}
+
+async function createMailtoSection(notion, parentId, sectionData) {
+  console.log(`     - Creating Mailto Section: ${sectionData.title}`);
+  const properties = {
+    title: { title: {} },
+    subject: { rich_text: {} },
+    receiver: { rich_text: {} },
+    placeholder_text: { rich_text: {} },
+    button_text: { rich_text: {} },
     section_type: {
       select: { options: sectionTypeOptions },
     },
@@ -776,11 +870,12 @@ async function createMailBasedCommentSection(notion, parentId, sectionData) {
     await notion.pages.create({
       parent: { database_id: db.id },
       properties: {
-        topic_title: {
-          title: plainText(item.topic_title || sectionData.title),
-        },
-        author_email: { rich_text: plainText(item.author_email || "") },
-        section_type: { select: { name: "mail_based_comment_section" } },
+        title: { title: plainText(item.title || sectionData.title) },
+        subject: { rich_text: plainText(item.subject || "") },
+        receiver: { rich_text: plainText(item.receiver || "") },
+        placeholder_text: { rich_text: plainText(item.placeholder_text || "") },
+        button_text: { rich_text: plainText(item.button_text || "") },
+        section_type: { select: { name: "mailto_section" } },
         enabled: { checkbox: sectionData.enabled === "true" },
       },
     });
@@ -931,7 +1026,7 @@ async function createCollectionSettingsPage(parentId, notion) {
         collection_name: { title: {} },
         enable_rss: { checkbox: {} },
         show_newsletter_section: { checkbox: {} },
-        show_mail_based_comment_section: { checkbox: {} },
+        show_mailto_section: { checkbox: {} },
       },
     },
   });
@@ -956,12 +1051,66 @@ async function createCollectionSettingsPage(parentId, notion) {
         show_newsletter_section: {
           checkbox: settings.show_newsletter_section === "true",
         },
-        show_mail_based_comment_section: {
-          checkbox: settings.show_mail_based_comment_section === "true",
+        show_mailto_section: {
+          checkbox: settings.show_mailto_section === "true",
         },
       },
     });
   }
+}
+
+// --- Advanced Configuration ---
+
+async function createAdvancedConfigDB(parentId, notion) {
+  console.log("\nCreating Database: Advanced Configuration...");
+
+  const themeOptions = [
+    { name: "light", color: "default" },
+    { name: "cream", color: "yellow" },
+    { name: "pink", color: "pink" },
+    { name: "dark", color: "gray" },
+    { name: "blue", color: "blue" },
+    { name: "purple", color: "purple" },
+    { name: "red", color: "red" },
+    { name: "green", color: "green" },
+  ];
+
+  const db = await notion.databases.create({
+    parent: { type: "page_id", page_id: parentId },
+    title: plainText("Advanced Configuration"),
+    initial_data_source: {
+      properties: {
+        label: { title: {} },
+        limit_theme_selection: {
+          multi_select: { options: themeOptions },
+        },
+        primary_font: { rich_text: {} },
+        secondary_font: { rich_text: {} },
+      },
+    },
+  });
+
+  await notion.databases.update({
+    database_id: db.id,
+    icon: { type: "emoji", emoji: "⚙️" },
+  });
+
+  console.log(`   Advanced Configuration Database created (ID: ${db.id})`);
+  console.log("   > Seeding Advanced Configuration data...");
+
+  await notion.pages.create({
+    parent: { database_id: db.id },
+    properties: {
+      label: { title: plainText("Advanced Settings") },
+      limit_theme_selection: {
+        multi_select: dummyAdvancedConfig.limit_theme_selection.map((t) => ({
+          name: t,
+        })),
+      },
+      primary_font: { rich_text: plainText(dummyAdvancedConfig.primary_font || "Inter") },
+      secondary_font: { rich_text: plainText(dummyAdvancedConfig.secondary_font || "Inter") },
+    },
+  });
 }
 
 // --- 10. Code Injection Page ---
