@@ -171,7 +171,10 @@ export function GenericList({ items, viewType, itemsPerPage }: GenericListProps)
                         return (
                             <div
                                 key={item.slug}
+                                role="link"
+                                tabIndex={0}
                                 onClick={() => router.push(getItemHref(item))}
+                                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(getItemHref(item)); } }}
                                 className={css({
                                     display: 'flex',
                                     flexDirection: 'column',
@@ -182,6 +185,7 @@ export function GenericList({ items, viewType, itemsPerPage }: GenericListProps)
                                     transition: 'all 0.2s ease',
                                     cursor: 'pointer',
                                     _hover: { borderColor: 'color-mix(in srgb, token(colors.primary) 45%, transparent)', transform: 'translateY(-2px)' },
+                                    _focus: { outline: '2px solid token(colors.primary)', outlineOffset: '2px' },
                                 })}
                             >
                                 {image ? (

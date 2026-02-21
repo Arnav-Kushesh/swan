@@ -1,5 +1,14 @@
 import { getPosts, getCollectionSettings, getCollectionNames, getHomeData } from '@/lib/data';
 
+function escapeXml(str: string): string {
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+}
+
 export const dynamic = 'force-static';
 
 export function generateStaticParams() {
@@ -26,33 +35,34 @@ export async function GET(
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
     const rssItems = posts.map((post) => {
-        const link = `${baseUrl}/${collection}/${post.slug}`;
+        const link = `${escapeXml(baseUrl)}/${escapeXml(collection)}/${escapeXml(post.slug)}`;
         const pubDate = post.date ? new Date(post.date).toUTCString() : new Date().toUTCString();
         const image = post.cover?.image || post.image || post.thumbnail;
         const tags = post.tags || [];
+        const tagNames = tags.map(t => typeof t === 'string' ? t : (t as { name: string }).name);
 
         return `
     <item>
-      <title><![CDATA[${post.title}]]></title>
+      <title><![CDATA[${escapeXml(post.title)}]]></title>
       <link>${link}</link>
       <guid>${link}</guid>
       <pubDate>${pubDate}</pubDate>
-      <description><![CDATA[${post.description || ''}]]></description>${post.author_username ? `
-      <author>${post.author_username}</author>` : ''}${image ? `
-      <enclosure url="${image}" type="image/jpeg"/>` : ''}${tags.map(tag => `
-      <category><![CDATA[${tag}]]></category>`).join('')}
+      <description><![CDATA[${escapeXml(post.description || '')}]]></description>${post.author_username ? `
+      <author>${escapeXml(post.author_username)}</author>` : ''}${image ? `
+      <enclosure url="${escapeXml(image)}" type="image/jpeg"/>` : ''}${tagNames.map(tag => `
+      <category><![CDATA[${escapeXml(tag)}]]></category>`).join('')}
     </item>`;
     }).join('');
 
     const rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>${siteTitle} — ${collection}</title>
-    <link>${baseUrl}</link>
-    <description>${siteDescription}</description>
+    <title>${escapeXml(siteTitle)} — ${escapeXml(collection)}</title>
+    <link>${escapeXml(baseUrl)}</link>
+    <description>${escapeXml(siteDescription)}</description>
     <language>en</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <atom:link href="${baseUrl}/rss/${collection}" rel="self" type="application/rss+xml"/>
+    <atom:link href="${escapeXml(baseUrl)}/rss/${escapeXml(collection)}" rel="self" type="application/rss+xml"/>
     ${rssItems}
   </channel>
 </rss>`;
