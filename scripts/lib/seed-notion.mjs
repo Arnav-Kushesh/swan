@@ -231,37 +231,35 @@ async function createBasicConfigDB(parentId, notion) {
   const db = await notion.databases.create({
     parent: { type: "page_id", page_id: parentId },
     title: plainText("Main Configuration"),
-    initial_data_source: {
-      properties: {
-        title: { title: {} },
-        description: { rich_text: {} },
-        tagline: { rich_text: {} },
-        keywords: { rich_text: {} },
-        logo: { files: {} },
-        favicon: { files: {} },
-        og_image: { files: {} },
-        default_color_mode: {
-          select: {
-            options: [
-              { name: "light", color: "default" },
-              { name: "dark", color: "gray" },
-              { name: "cream", color: "yellow" },
-              { name: "pink", color: "pink" },
-              { name: "blue", color: "blue" },
-              { name: "purple", color: "purple" },
-              { name: "red", color: "red" },
-              { name: "green", color: "green" },
-            ],
-          },
+    properties: {
+      title: { title: {} },
+      description: { rich_text: {} },
+      tagline: { rich_text: {} },
+      keywords: { rich_text: {} },
+      logo: { files: {} },
+      favicon: { files: {} },
+      og_image: { files: {} },
+      default_color_mode: {
+        select: {
+          options: [
+            { name: "light", color: "default" },
+            { name: "dark", color: "gray" },
+            { name: "cream", color: "yellow" },
+            { name: "pink", color: "pink" },
+            { name: "blue", color: "blue" },
+            { name: "purple", color: "purple" },
+            { name: "red", color: "red" },
+            { name: "green", color: "green" },
+          ],
         },
-        sidebar_navigation: { checkbox: {} },
       },
+      sidebar_navigation: { checkbox: {} },
     },
   });
 
   await notion.databases.update({
     database_id: db.id,
-    icon: { type: "emoji", emoji: "🛠️" },
+    icon: { type: "emoji", emoji: "⚙️" },
   });
 
   console.log(`   Main Configuration Database created (ID: ${db.id})`);
@@ -328,16 +326,14 @@ async function createConfigDB(parentId, notion) {
   const db = await notion.databases.create({
     parent: { type: "page_id", page_id: parentId },
     title: plainText("General Configuration"),
-    initial_data_source: {
-      properties: {
-        label: { title: {} },
-        disable_logo_in_topbar: { checkbox: {} },
-        disable_logo_in_sidebar: { checkbox: {} },
-        enable_newsletter: { checkbox: {} },
-        mailchimp_form_link: { url: {} },
-        mention_this_tool_in_footer: { checkbox: {} },
-        show_newsletter_section_on_home: { checkbox: {} },
-      },
+    properties: {
+      label: { title: {} },
+      disable_logo_in_topbar: { checkbox: {} },
+      disable_logo_in_sidebar: { checkbox: {} },
+      enable_newsletter: { checkbox: {} },
+      mailchimp_form_link: { url: {} },
+      mention_this_tool_in_footer: { checkbox: {} },
+      show_newsletter_section_on_home: { checkbox: {} },
     },
   });
 
@@ -377,11 +373,9 @@ async function createSocialLinksDB(parentId, notion) {
   const db = await notion.databases.create({
     parent: { type: "page_id", page_id: parentId },
     title: plainText("Social Links"),
-    initial_data_source: {
-      properties: {
-        name: { title: {} },
-        data: { rich_text: {} },
-      },
+    properties: {
+      name: { title: {} },
+      data: { rich_text: {} },
     },
   });
 
@@ -439,7 +433,7 @@ async function createCollections(parentId, notion) {
       parent: { type: "page_id", page_id: parentId },
       title: plainText(name),
       is_inline: false, // Full page databases for collections
-      initial_data_source: { properties: sharedSchema },
+      properties: sharedSchema,
     });
 
     await notion.databases.update({
@@ -592,7 +586,7 @@ async function createInfoSection(notion, parentId, sectionData) {
     parent: { type: "page_id", page_id: parentId },
     title: plainText(sectionData.title),
     is_inline: true,
-    initial_data_source: { properties },
+    properties,
   });
 
   // Seed Data
@@ -663,7 +657,7 @@ async function createDynamicSection(notion, parentId, sectionData) {
     parent: { type: "page_id", page_id: parentId },
     title: plainText(sectionData.title),
     is_inline: true,
-    initial_data_source: { properties },
+    properties,
   });
 
   // Seed Data
@@ -707,7 +701,7 @@ async function createHtmlSection(notion, parentId, sectionData) {
     parent: { type: "page_id", page_id: parentId },
     title: plainText(sectionData.title),
     is_inline: true,
-    initial_data_source: { properties },
+    properties,
   });
 
   if (sectionData.data && sectionData.data.length > 0) {
@@ -744,7 +738,7 @@ async function createIframeSection(notion, parentId, sectionData) {
     parent: { type: "page_id", page_id: parentId },
     title: plainText(sectionData.title),
     is_inline: true,
-    initial_data_source: { properties },
+    properties,
   });
 
   if (sectionData.data && sectionData.data.length > 0) {
@@ -778,7 +772,7 @@ async function createVideoEmbedSection(notion, parentId, sectionData) {
     parent: { type: "page_id", page_id: parentId },
     title: plainText(sectionData.title),
     is_inline: true,
-    initial_data_source: { properties },
+    properties,
   });
 
   if (sectionData.data && sectionData.data.length > 0) {
@@ -814,7 +808,7 @@ async function createMediaSection(notion, parentId, sectionData) {
     parent: { type: "page_id", page_id: parentId },
     title: plainText(sectionData.title),
     is_inline: true,
-    initial_data_source: { properties },
+    properties,
   });
 
   if (sectionData.data && sectionData.data.length > 0) {
@@ -862,7 +856,7 @@ async function createMailtoSection(notion, parentId, sectionData) {
     parent: { type: "page_id", page_id: parentId },
     title: plainText(sectionData.title),
     is_inline: true,
-    initial_data_source: { properties },
+    properties,
   });
 
   if (sectionData.data && sectionData.data.length > 0) {
@@ -896,7 +890,7 @@ async function createNewsletterSection(notion, parentId, sectionData) {
     parent: { type: "page_id", page_id: parentId },
     title: plainText(sectionData.title),
     is_inline: true,
-    initial_data_source: { properties },
+    properties,
   });
 
   if (sectionData.data && sectionData.data.length > 0) {
@@ -951,17 +945,15 @@ async function createAuthorDB(rootPageId, notion) {
   const db = await notion.databases.create({
     parent: { type: "page_id", page_id: rootPageId },
     title: plainText("Authors"),
-    initial_data_source: {
-      properties: {
-        name: { title: {} },
-        username: { rich_text: {} },
-        email: { email: {} },
-        description: { rich_text: {} },
-        picture: { files: {} },
-        instagram_handle: { rich_text: {} },
-        x_handle: { rich_text: {} },
-        github_handle: { rich_text: {} },
-      },
+    properties: {
+      name: { title: {} },
+      username: { rich_text: {} },
+      email: { email: {} },
+      description: { rich_text: {} },
+      picture: { files: {} },
+      instagram_handle: { rich_text: {} },
+      x_handle: { rich_text: {} },
+      github_handle: { rich_text: {} },
     },
   });
 
@@ -1021,13 +1013,11 @@ async function createCollectionSettingsPage(parentId, notion) {
   const db = await notion.databases.create({
     parent: { type: "page_id", page_id: parentId },
     title: plainText("Configure Collections"),
-    initial_data_source: {
-      properties: {
-        collection_name: { title: {} },
-        enable_rss: { checkbox: {} },
-        show_newsletter_section: { checkbox: {} },
-        show_mailto_section: { checkbox: {} },
-      },
+    properties: {
+      collection_name: { title: {} },
+      enable_rss: { checkbox: {} },
+      show_newsletter_section: { checkbox: {} },
+      show_mailto_section: { checkbox: {} },
     },
   });
 
@@ -1078,15 +1068,13 @@ async function createAdvancedConfigDB(parentId, notion) {
   const db = await notion.databases.create({
     parent: { type: "page_id", page_id: parentId },
     title: plainText("Advanced Configuration"),
-    initial_data_source: {
-      properties: {
-        label: { title: {} },
-        limit_theme_selection: {
-          multi_select: { options: themeOptions },
-        },
-        primary_font: { rich_text: {} },
-        secondary_font: { rich_text: {} },
+    properties: {
+      label: { title: {} },
+      limit_theme_selection: {
+        multi_select: { options: themeOptions },
       },
+      primary_font: { rich_text: {} },
+      secondary_font: { rich_text: {} },
     },
   });
 
@@ -1107,8 +1095,12 @@ async function createAdvancedConfigDB(parentId, notion) {
           name: t,
         })),
       },
-      primary_font: { rich_text: plainText(dummyAdvancedConfig.primary_font || "Inter") },
-      secondary_font: { rich_text: plainText(dummyAdvancedConfig.secondary_font || "Inter") },
+      primary_font: {
+        rich_text: plainText(dummyAdvancedConfig.primary_font || "Inter"),
+      },
+      secondary_font: {
+        rich_text: plainText(dummyAdvancedConfig.secondary_font || "Inter"),
+      },
     },
   });
 }
