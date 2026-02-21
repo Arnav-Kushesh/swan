@@ -90,17 +90,19 @@ export default async function RootLayout({
     const codeInjectionHtml = codeInjectionBlocks.join('\n');
 
     return (
-        <html lang="en" data-theme={defaultTheme}>
+        <html lang="en" suppressHydrationWarning>
             <head>
-                <script dangerouslySetInnerHTML={{ __html: `
+                <script dangerouslySetInnerHTML={{
+                    __html: `
                     (function() {
                         try {
                             var saved = localStorage.getItem('swan-color-mode');
                             var themes = ['light','cream','pink','dark','blue','purple','red','green'];
-                            if (saved && themes.indexOf(saved) !== -1) {
-                                document.documentElement.setAttribute('data-theme', saved);
-                            }
-                        } catch(e) {}
+                            var theme = (saved && themes.indexOf(saved) !== -1) ? saved : ${JSON.stringify(defaultTheme)};
+                            document.documentElement.setAttribute('data-theme', theme);
+                        } catch(e) {
+                            document.documentElement.setAttribute('data-theme', ${JSON.stringify(defaultTheme)});
+                        }
                     })();
                 `}} />
                 {homeData.info?.favicon && <link rel="icon" href={homeData.info.favicon} sizes="any" />}
