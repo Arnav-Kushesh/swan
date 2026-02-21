@@ -64,8 +64,8 @@ export default async function RootLayout({
     // Advanced config (theme filtering + fonts)
     const advancedConfig = getAdvancedConfig();
     const allowedThemes = advancedConfig.limit_theme_selection;
-    const primaryFont = advancedConfig.primary_font || 'Inter';
-    const secondaryFont = advancedConfig.secondary_font || primaryFont;
+    const primaryFont = homeData.info?.primary_font || 'Inter';
+    const secondaryFont = homeData.info?.secondary_font || primaryFont;
     const googleFontsUrl = buildGoogleFontsUrl(primaryFont, secondaryFont);
 
     // Build search index from all posts

@@ -259,7 +259,7 @@ async function createBasicConfigDB(parentId, notion) {
 
   await notion.databases.update({
     database_id: db.id,
-    icon: { type: "emoji", emoji: "⚙️" },
+    icon: { type: "emoji", emoji: "🔩" },
   });
 
   console.log(`   Main Configuration Database created (ID: ${db.id})`);
@@ -334,12 +334,14 @@ async function createConfigDB(parentId, notion) {
       mailchimp_form_link: { url: {} },
       mention_this_tool_in_footer: { checkbox: {} },
       show_newsletter_section_on_home: { checkbox: {} },
+      primary_font: { rich_text: {} },
+      secondary_font: { rich_text: {} },
     },
   });
 
   await notion.databases.update({
     database_id: db.id,
-    icon: { type: "emoji", emoji: "⚙️" },
+    icon: { type: "emoji", emoji: "🗜️" },
   });
 
   console.log(`   General Configuration Database created (ID: ${db.id})`);
@@ -360,6 +362,12 @@ async function createConfigDB(parentId, notion) {
       },
       show_newsletter_section_on_home: {
         checkbox: dummyConfig.show_newsletter_section_on_home,
+      },
+      primary_font: {
+        rich_text: plainText(dummyConfig.primary_font || "Inter"),
+      },
+      secondary_font: {
+        rich_text: plainText(dummyConfig.secondary_font || "Inter"),
       },
     },
   });
@@ -915,7 +923,7 @@ async function createExtraSectionsPage(settingsPageId, notion) {
     properties: {
       title: { title: plainText("Collection Page Extra Sections") },
     },
-    icon: { type: "emoji", emoji: "🧩" },
+    icon: { type: "emoji", emoji: "🗂️" },
   });
   console.log(`   Collection Page Extra Sections created (ID: ${page.id})`);
 
@@ -1023,7 +1031,7 @@ async function createCollectionSettingsPage(parentId, notion) {
 
   await notion.databases.update({
     database_id: db.id,
-    icon: { type: "emoji", emoji: "🔧" },
+    icon: { type: "emoji", emoji: "🗃️" },
   });
 
   console.log(`   Configure Collections Database created (ID: ${db.id})`);
@@ -1073,14 +1081,12 @@ async function createAdvancedConfigDB(parentId, notion) {
       limit_theme_selection: {
         multi_select: { options: themeOptions },
       },
-      primary_font: { rich_text: {} },
-      secondary_font: { rich_text: {} },
     },
   });
 
   await notion.databases.update({
     database_id: db.id,
-    icon: { type: "emoji", emoji: "⚙️" },
+    icon: { type: "emoji", emoji: "🛠️" },
   });
 
   console.log(`   Advanced Configuration Database created (ID: ${db.id})`);
@@ -1094,12 +1100,6 @@ async function createAdvancedConfigDB(parentId, notion) {
         multi_select: dummyAdvancedConfig.limit_theme_selection.map((t) => ({
           name: t,
         })),
-      },
-      primary_font: {
-        rich_text: plainText(dummyAdvancedConfig.primary_font || "Inter"),
-      },
-      secondary_font: {
-        rich_text: plainText(dummyAdvancedConfig.secondary_font || "Inter"),
       },
     },
   });

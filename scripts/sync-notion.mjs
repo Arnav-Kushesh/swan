@@ -185,6 +185,10 @@ async function fetchGeneralConfig(dbId) {
     // URL fields
     data.mailchimp_form_link = props.mailchimp_form_link?.url || '';
 
+    // Font fields
+    data.primary_font = props.primary_font?.rich_text?.[0]?.plain_text || '';
+    data.secondary_font = props.secondary_font?.rich_text?.[0]?.plain_text || '';
+
     return data;
 }
 
@@ -821,8 +825,6 @@ async function syncAdvancedConfig() {
     if (pages.length > 0) {
         const props = pages[0].properties;
         config.limit_theme_selection = props.limit_theme_selection?.multi_select?.map(o => o.name) || [];
-        config.primary_font = props.primary_font?.rich_text?.[0]?.plain_text || '';
-        config.secondary_font = props.secondary_font?.rich_text?.[0]?.plain_text || '';
     }
 
     await ensureDir('notion_state/data');

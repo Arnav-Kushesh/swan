@@ -44,6 +44,8 @@ export const dummyConfig = {
   mailchimp_form_link: '',
   mention_this_tool_in_footer: true,
   show_newsletter_section_on_home: false,
+  primary_font: 'Inter',
+  secondary_font: 'Inter',
 };
 
 /**
@@ -542,8 +544,6 @@ export const dummyCssInjection = [
 
 export const dummyAdvancedConfig = {
   limit_theme_selection: ['light', 'dark', 'blue', 'purple', 'pink', 'red', 'green', 'cream'],
-  primary_font: 'Inter',
-  secondary_font: 'Inter',
 };
 
 export const dummyNavbarPages = [

@@ -29,6 +29,8 @@ export interface InfoConfig {
     mailchimp_form_link?: string;
     mention_this_tool_in_footer?: string;
     show_newsletter_section_on_home?: string;
+    primary_font?: string;
+    secondary_font?: string;
 }
 
 export interface InfoSectionData {
@@ -376,8 +378,6 @@ export function getCssInjection(): string[] {
 
 export interface AdvancedConfig {
     limit_theme_selection?: string[];
-    primary_font?: string;
-    secondary_font?: string;
 }
 
 export function getAdvancedConfig(): AdvancedConfig {
