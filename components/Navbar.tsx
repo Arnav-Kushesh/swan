@@ -43,38 +43,34 @@ export async function Navbar() {
     const pages = getNavbarPages();
     const title = homeData.info?.title || 'Home';
     const logo = homeData.info?.logo;
-    const showLogo = homeData.info?.disable_logo_in_topbar !== 'true';
+    const hideLogo = homeData.info?.disable_logo_in_topbar === 'true';
 
     return (
         <nav className={navbarStyle}>
             <div className={navbarContainerStyle}>
-                {showLogo ? (
-                    <Link
-                        href="/"
-                        className={css({ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' })}
-                    >
-                        {logo ? (
-                            <div className={css({
-                                width: '28px',
-                                height: '28px',
-                                position: 'relative',
-                                borderRadius: 'full',
-                                overflow: 'hidden',
-                                flexShrink: 0,
-                            })}>
-                                <Image
-                                    src={logo}
-                                    alt={title}
-                                    fill
-                                    className={css({ objectFit: 'cover' })}
-                                />
-                            </div>
-                        ) : null}
-                        <span className={logoStyle}>{title}</span>
-                    </Link>
-                ) : (
-                    <div />
-                )}
+                <Link
+                    href="/"
+                    className={css({ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' })}
+                >
+                    {!hideLogo && logo ? (
+                        <div className={css({
+                            width: '28px',
+                            height: '28px',
+                            position: 'relative',
+                            borderRadius: 'full',
+                            overflow: 'hidden',
+                            flexShrink: 0,
+                        })}>
+                            <Image
+                                src={logo}
+                                alt={title}
+                                fill
+                                className={css({ objectFit: 'cover' })}
+                            />
+                        </div>
+                    ) : null}
+                    <span className={logoStyle}>{title}</span>
+                </Link>
 
                 <div className={navLinksContainerStyle}>
                     <NavLinks pages={pages} mobileExtra={<SocialIcons config={homeData.info} />} />

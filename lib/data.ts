@@ -28,7 +28,6 @@ export interface InfoConfig {
     enable_newsletter?: string;
     mailchimp_form_link?: string;
     mention_this_tool_in_footer?: string;
-    show_newsletter_section_on_home?: string;
     primary_font?: string;
     secondary_font?: string;
 }

@@ -333,7 +333,6 @@ async function createConfigDB(parentId, notion) {
       enable_newsletter: { checkbox: {} },
       mailchimp_form_link: { url: {} },
       mention_this_tool_in_footer: { checkbox: {} },
-      show_newsletter_section_on_home: { checkbox: {} },
       primary_font: { rich_text: {} },
       secondary_font: { rich_text: {} },
     },
@@ -359,9 +358,6 @@ async function createConfigDB(parentId, notion) {
       mailchimp_form_link: { url: dummyConfig.mailchimp_form_link || null },
       mention_this_tool_in_footer: {
         checkbox: dummyConfig.mention_this_tool_in_footer,
-      },
-      show_newsletter_section_on_home: {
-        checkbox: dummyConfig.show_newsletter_section_on_home,
       },
       primary_font: {
         rich_text: plainText(dummyConfig.primary_font || "Inter"),

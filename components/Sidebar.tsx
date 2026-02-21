@@ -67,13 +67,13 @@ export async function Sidebar() {
     const title = homeData.info?.title || 'Home';
     const logo = homeData.info?.logo;
     const tagline = homeData.info?.tagline;
-    const showLogo = homeData.info?.disable_logo_in_sidebar !== 'true';
+    const hideLogo = homeData.info?.disable_logo_in_sidebar === 'true';
 
     return (
         <aside className={sidebarStyle}>
             <div className={contentStackStyle}>
                 <div className={profileSectionStyle}>
-                    {showLogo && logo && (
+                    {!hideLogo && logo && (
                         <div className={profileImageContainerStyle}>
                             <Image
                                 src={logo}

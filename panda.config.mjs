@@ -41,8 +41,8 @@ export default defineConfig({
       },
       tokens: {
         fonts: {
-          body: { value: "var(--font-primary), sans-serif" },
-          heading: { value: "var(--font-secondary), sans-serif" },
+          body: { value: "var(--font-secondary), sans-serif" },
+          heading: { value: "var(--font-primary), sans-serif" },
         },
       },
       keyframes: {

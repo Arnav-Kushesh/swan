@@ -43,7 +43,6 @@ export const dummyConfig = {
   enable_newsletter: false,
   mailchimp_form_link: '',
   mention_this_tool_in_footer: true,
-  show_newsletter_section_on_home: false,
   primary_font: 'Inter',
   secondary_font: 'Inter',
 };

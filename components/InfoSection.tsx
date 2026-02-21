@@ -37,19 +37,30 @@ export function InfoSection({ data }: { data: InfoSectionData }) {
             })}>
                 {/* Image Side */}
                 {data.image && (
-                    <div className={css({
-                        flex: isRow ? '0 0 auto' : 'initial',
-                        width: { base: mobileWidth, md: desktopWidth },
-                        maxWidth: isRow ? 'none' : (isCentered ? desktopWidth : 'none'),
-                        mx: isCentered ? 'auto' : '0',
-                    })}>
+                    <div
+                        className={css({
+                            flex: isRow ? '0 0 auto' : 'initial',
+                            width: 'var(--info-media-w)',
+                            maxWidth: isRow ? 'none' : (isCentered ? 'var(--info-media-w)' : 'none'),
+                            mx: isCentered ? 'auto' : '0',
+                        })}
+                        style={{
+                            '--info-media-w': mobileWidth,
+                        } as React.CSSProperties}
+                    >
+                        <style>{`
+                            @media (min-width: 768px) {
+                                [style*="--info-media-w"] {
+                                    --info-media-w: ${desktopWidth} !important;
+                                }
+                            }
+                        `}</style>
                         <div className={css({
                             position: 'relative',
                             width: '100%',
                             height: 'auto',
                             borderRadius: '12px',
                             overflow: 'hidden',
-                            border: '1px solid token(colors.border.default)',
                         })} style={{ aspectRatio }}>
                             {isVideoUrl(data.image) ? (
                                 <video

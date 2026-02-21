@@ -174,7 +174,6 @@ async function fetchGeneralConfig(dbId) {
         'disable_logo_in_sidebar',
         'enable_newsletter',
         'mention_this_tool_in_footer',
-        'show_newsletter_section_on_home',
     ];
 
     for (const field of checkboxFields) {
