@@ -45,7 +45,7 @@ const profileImageStyle = css({
 
 const textStackStyle = stack({ gap: '4px', align: 'center', textAlign: 'center', mb: 3 });
 
-const titleStyle = css({ fontSize: '1rem', fontWeight: '600', color: 'text.primary', letterSpacing: '-0.01em' });
+const titleStyle = css({ fontSize: '1rem', fontWeight: '600', fontFamily: 'heading', color: 'text.primary', letterSpacing: '-0.01em' });
 
 const taglineStyle = css({ fontSize: '0.8rem', color: 'text.secondary', lineHeight: '1.5' });
 

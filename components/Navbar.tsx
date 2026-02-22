@@ -30,6 +30,7 @@ const navbarContainerStyle = container({
 const logoStyle = css({
     fontSize: '1rem',
     fontWeight: '600',
+    fontFamily: 'heading',
     color: 'text.primary',
     truncate: true,
     maxWidth: '200px',
