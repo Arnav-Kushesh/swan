@@ -15,8 +15,8 @@ export interface InfoConfig {
     sidebar_navigation?: string;
     tagline?: string;
     default_color_mode?: string;
-    disable_logo_in_sidebar?: string;
-    disable_logo_in_topbar?: string;
+    hide_sidebar_logo?: string;
+    hide_topbar_logo?: string;
     social_github?: string;
     social_twitter?: string;
     social_linkedin?: string;
@@ -26,7 +26,7 @@ export interface InfoConfig {
     social_facebook?: string;
     social_twitch?: string;
     enable_newsletter?: string;
-    mailchimp_form_link?: string;
+    newsletter_form_url?: string;
     mention_this_tool_in_footer?: string;
     primary_font?: string;
     secondary_font?: string;
@@ -42,8 +42,8 @@ export interface InfoSectionData {
     image?: string;
     view_type?: 'col_centered_view' | 'col_left_view' | 'row_reverse_view' | 'row_view';
     media_aspect_ratio?: string;
-    media_mobile_width?: string;
-    media_desktop_width?: string;
+    media_height?: string;
+    media_mobile_height?: string;
     enabled?: boolean;
 }
 
@@ -54,7 +54,7 @@ export interface DynamicSectionData {
     description?: string;
     collection_name: string;
     view_type?: 'list_view' | 'card_view' | 'grid_view' | 'minimal_list_view' | 'tiny_card_view' | 'big_card_view';
-    items_shown_at_once?: number;
+    items_in_view?: number;
     top_section_centered?: boolean;
     enabled?: boolean;
 }
@@ -64,7 +64,8 @@ export interface HtmlSectionData {
     id: string;
     title: string;
     html_code: string;
-    height?: number;
+    height?: string;
+    mobile_height?: string;
     full_width?: boolean;
     enabled?: boolean;
 }
@@ -74,7 +75,8 @@ export interface IframeSectionData {
     id: string;
     title: string;
     url: string;
-    height?: number;
+    height?: string;
+    mobile_height?: string;
     full_width?: boolean;
     enabled?: boolean;
 }
@@ -92,9 +94,8 @@ export interface MediaSectionData {
     id: string;
     title: string;
     media?: string;
-    height?: number;
-    height_on_mobile?: number;
-    height_on_desktop?: number;
+    height?: string;
+    mobile_height?: string;
     full_width?: boolean;
     enabled?: boolean;
 }
@@ -143,7 +144,7 @@ export interface Post {
     order_priority?: number;
     tags?: string[];
     author_username?: string;
-    video_embed_link?: string;
+    video_embed_url?: string;
 }
 
 export interface GalleryItem {
@@ -224,7 +225,7 @@ export function getPosts(section: string): Post[] {
                 collection: section,
                 order_priority: data.order_priority ?? data.order ?? 0,
                 author_username: data.author_username || '',
-                video_embed_link: data.video_embed_link || '',
+                video_embed_url: data.video_embed_url || '',
                 tags: data.tags || [],
                 ...data,
             } as Post;
@@ -268,7 +269,7 @@ export function getPost(slug: string, section: string): Post | null {
         collection: section,
         order_priority: data.order_priority ?? data.order ?? 0,
         author_username: data.author_username || '',
-        video_embed_link: data.video_embed_link || '',
+        video_embed_url: data.video_embed_url || '',
         tags: data.tags || [],
         ...data,
     } as Post;

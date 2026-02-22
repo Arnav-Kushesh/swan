@@ -67,7 +67,7 @@ export async function Sidebar() {
     const title = homeData.info?.title || 'Home';
     const logo = homeData.info?.logo;
     const tagline = homeData.info?.tagline;
-    const hideLogo = homeData.info?.disable_logo_in_sidebar === 'true';
+    const hideLogo = homeData.info?.hide_sidebar_logo === 'true';
 
     return (
         <aside className={sidebarStyle}>

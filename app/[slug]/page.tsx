@@ -57,7 +57,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             {sections.length > 0 && (
                 <div className={css({ mt: '40px', display: 'flex', flexDirection: 'column', gap: '0' })}>
                     {sections.map((section) => (
-                        <SectionRenderer key={section.id} section={section} mailchimpFormLink={homeData.info?.mailchimp_form_link} />
+                        <SectionRenderer key={section.id} section={section} newsletterFormUrl={homeData.info?.newsletter_form_url} />
                     ))}
                 </div>
             )}

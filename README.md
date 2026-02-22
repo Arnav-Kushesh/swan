@@ -49,7 +49,7 @@ Showcase your work using Swan's collections and multiple view types (grid, card,
 
 ### Your Own YouTube Alternative
 
-Host your videos on any platform (Vimeo, Bunny Stream, your own server) and embed them on your Swan site using the `video_embed_section` feature, `media_section` for looping background videos, or the `video_embed_link` property on collection items. Unlike YouTube, **no one can censor or demonetize your content**. You control the entire experience — the page layout, the branding, the ads. Monetize freely by placing Google AdSense or any ad network script via `html_section` blocks right alongside your videos, or inject ad scripts globally via the HTML Head Code page. Your content, your platform, your revenue — without a middleman taking a cut or deciding what's allowed.
+Host your videos on any platform (Vimeo, Bunny Stream, your own server) and embed them on your Swan site using the `video_embed_section` feature, `media_section` for looping background videos, or the `video_embed_url` property on collection items. Unlike YouTube, **no one can censor or demonetize your content**. You control the entire experience — the page layout, the branding, the ads. Monetize freely by placing Google AdSense or any ad network script via `html_section` blocks right alongside your videos, or inject ad scripts globally via the HTML Head Code page. Your content, your platform, your revenue — without a middleman taking a cut or deciding what's allowed.
 
 ---
 
@@ -170,7 +170,7 @@ Each item in a collection has:
 | `button_text`      | Rich Text    | Custom button label                   |
 | `order_priority`   | Number       | Sort order (higher = first)           |
 | `author_username`  | Rich Text    | Author username (links to Authors DB) |
-| `video_embed_link` | URL          | Optional video embed URL              |
+| `video_embed_url` | URL          | Optional video embed URL              |
 
 The page content (body) of each item becomes the full article content, rendered as markdown. You can write rich content using all of Notion's block types — headings, paragraphs, images, code blocks, callouts, quotes, bullet lists, numbered lists, toggle blocks, and more.
 
@@ -226,7 +226,7 @@ Displays items from a collection (blogs, projects, gallery) in various view type
 | `section_title` | Rich Text | Display title for the section |
 | `description` | Rich Text | Optional description shown below the title |
 | `view_type` | Select | Layout: `list_view`, `card_view`, `grid_view`, `minimal_list_view`, `tiny_card_view`, `big_card_view` |
-| `items_shown_at_once` | Number | Number of items per page (default: 6) |
+| `items_in_view` | Number | Number of items per page (default: 6) |
 | `top_section_centered` | Checkbox | Center the title and description |
 | `section_type` | Select | Must be `dynamic_section` |
 | `enabled` | Checkbox | Show/hide the section |
@@ -336,7 +336,16 @@ An email-based contact form. When a reader submits the form, their email client 
 
 ### 8. `newsletter_section`
 
-Renders a Mailchimp-powered newsletter signup form. This section reads the `mailchimp_form_link` from your General Configuration. Add it to the homepage, navbar pages, or collection extra sections.
+Renders a newsletter signup button that links visitors to your signup form. This section reads the `newsletter_form_url` from your General Configuration. Add it to the homepage, navbar pages, or collection extra sections.
+
+**How to set up the newsletter:**
+
+1. Go to an email marketing platform like [Brevo](https://www.brevo.com/) (recommended — clean interface and works smoothly), [Mailchimp](https://mailchimp.com/), [ConvertKit](https://convertkit.com/), [Buttondown](https://buttondown.com/), or any other service
+2. Create an account and set up an audience/mailing list
+3. Generate a signup form or landing page — most platforms have a "Signup Forms" or "Landing Pages" section where you can create one
+4. Copy the URL of that form or landing page
+5. In your Notion workspace, go to **Settings > General Configuration** and paste the URL into the `newsletter_form_url` field
+6. Make sure `enable_newsletter` is checked in the same configuration
 
 **Database Properties:**
 | Property | Type | Description |
@@ -372,12 +381,11 @@ The "General Configuration" database stores feature flags and toggles. All boole
 
 | Column                            | Type     | Description                               |
 | --------------------------------- | -------- | ----------------------------------------- |
-| `disable_logo_in_topbar`          | Checkbox | Hide logo from the top navbar             |
-| `disable_logo_in_sidebar`         | Checkbox | Hide logo from the sidebar                |
+| `hide_topbar_logo`          | Checkbox | Hide logo from the top navbar             |
+| `hide_sidebar_logo`         | Checkbox | Hide logo from the sidebar                |
 | `enable_newsletter`               | Checkbox | Enable newsletter functionality site-wide |
-| `mailchimp_form_link`             | URL      | Mailchimp form URL                        |
+| `newsletter_form_url`             | URL      | Newsletter signup form URL (e.g., Mailchimp) |
 | `mention_this_tool_in_footer`     | Checkbox | Show "Built with Swan" in the footer      |
-| `show_newsletter_section_on_home` | Checkbox | Show a newsletter section on the homepage |
 | `primary_font`                    | Rich Text | Primary font family name                 |
 | `secondary_font`                  | Rich Text | Secondary font family name               |
 

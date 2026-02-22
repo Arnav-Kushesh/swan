@@ -41,7 +41,7 @@ The sync script reads three separate databases under Settings and merges them in
 
 ```
 Main Configuration  →  { title, description, tagline, keywords, logo, favicon, og_image, default_color_mode, sidebar_navigation }
-General Configuration  →  { disable_logo_in_topbar, disable_logo_in_sidebar, enable_newsletter, mailchimp_form_link, ... }
+General Configuration  →  { hide_topbar_logo, hide_sidebar_logo, enable_newsletter, newsletter_form_url, ... }
 Social Links  →  { social_github, social_twitter, social_linkedin, social_instagram, ... }
 
 Merged into: site.json → { info: { ...all fields } }

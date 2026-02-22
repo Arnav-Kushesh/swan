@@ -38,10 +38,10 @@ export const dummySocialLinks = [
  * Individual columns with checkboxes for boolean fields
  */
 export const dummyConfig = {
-  disable_logo_in_topbar: false,
-  disable_logo_in_sidebar: false,
+  hide_topbar_logo: false,
+  hide_sidebar_logo: false,
   enable_newsletter: false,
-  mailchimp_form_link: '',
+  newsletter_form_url: '',
   mention_this_tool_in_footer: true,
   primary_font: 'Inter',
   secondary_font: 'Inter',
@@ -65,8 +65,8 @@ export const dummyHeroSection = {
       image: 'https://picsum.photos/id/1025/500/500',
       view_type: 'col_centered_view',
       media_aspect_ratio: '16/9',
-      media_mobile_width: '100%',
-      media_desktop_width: '600px',
+      media_height: '400px',
+      media_mobile_height: '250px',
     }
   ]
 };
@@ -82,7 +82,7 @@ export const dummyDynamicGallery = {
       section_title: 'My Gallery',
       description: '',
       view_type: 'grid_view',
-      items_shown_at_once: 9,
+      items_in_view: 9,
       top_section_centered: false,
     }
   ]
@@ -98,7 +98,7 @@ export const dummyDynamicProjects = {
       section_title: 'Selected Projects',
       description: 'A selection of my favorite projects',
       view_type: 'card_view',
-      items_shown_at_once: 6,
+      items_in_view: 6,
       top_section_centered: false,
     }
   ]
@@ -114,7 +114,7 @@ export const dummyDynamicBlog = {
       section_title: 'Recent Writing',
       description: '',
       view_type: 'minimal_list_view', // Text only
-      items_shown_at_once: 6,
+      items_in_view: 6,
       top_section_centered: false,
     }
   ]
@@ -128,7 +128,8 @@ export const dummyHtmlSection = {
   data: [
     {
       title: 'Custom HTML',
-      height: 300,
+      height: '300px',
+      mobile_height: '200px',
       full_width: false,
       html_code: `<div style="font-family: system-ui; padding: 16px;">
   <h2>Hello from user HTML</h2>
@@ -159,7 +160,8 @@ export const dummyIframeSection = {
     {
       title: 'Example Website',
       url: 'https://example.com',
-      height: 500,
+      height: '500px',
+      mobile_height: '300px',
       full_width: false,
     }
   ]
@@ -203,9 +205,8 @@ export const dummyMediaSection = {
     {
       title: 'Media',
       media: 'https://picsum.photos/id/1035/1200/600',
-      height: 400,
-      height_on_mobile: 250,
-      height_on_desktop: 400,
+      height: '400px',
+      mobile_height: '250px',
       full_width: false,
     }
   ]
@@ -327,7 +328,7 @@ export const dummyCollections = {
       link: 'https://github.com',
       order_priority: 6,
       author_username: 'johndoe',
-      video_embed_link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      video_embed_url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
       rich_content: [
         { type: 'heading_2', content: 'About This Project' },
         { type: 'paragraph', content: 'This project transforms a Notion workspace into a fully functional portfolio website. It uses the Notion API to fetch content and Next.js for static site generation.' },
@@ -424,7 +425,7 @@ export const dummyCollections = {
       link: '',
       order_priority: 5,
       author_username: 'janedoe',
-      video_embed_link: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      video_embed_url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
       rich_content: [
         { type: 'paragraph', content: 'The web development landscape is evolving rapidly. With the rise of AI-powered tools and new JavaScript frameworks, developers need to stay adaptable.' },
         { type: 'paragraph', content: 'In this post, I explore some of the trends I see shaping the future of our industry and what skills will be most valuable going forward.' },

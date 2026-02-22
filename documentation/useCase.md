@@ -27,7 +27,7 @@ Build a professional portfolio with project cards, descriptions, links, and cove
 
 Embed videos from YouTube, Vimeo, or any platform directly into your content pages.
 
-- **Video embed support**: Add a `video_embed_link` to any collection item
+- **Video embed support**: Add a `video_embed_url` to any collection item
 - **Dedicated video sections**: Use `video_embed_section` to feature videos on any page
 - **Inline playback**: Videos play directly on your site, not redirecting to external platforms
 - **Thumbnail fallback**: If no video is provided, displays the cover image
@@ -46,8 +46,7 @@ Integrate newsletter signups directly into your site.
 
 - **Newsletter sections**: Add `newsletter_section` to any page (homepage, navbar pages, collection extra sections)
 - **Per-collection control**: Toggle `show_newsletter_section` per collection in Configure Collections
-- **Mailchimp integration**: Set `mailchimp_form_link` in General Configuration
-- **Homepage toggle**: Control with `show_newsletter_section_on_home` in General Configuration
+- **Easy setup**: Go to Mailchimp (or any email service), create a signup form, and paste the URL into `newsletter_form_url` in General Configuration
 
 ## 6. Ad & Monetization Support
 

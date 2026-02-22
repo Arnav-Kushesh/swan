@@ -73,7 +73,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
             </header>
 
             {/* Video Embed or Cover Image */}
-            {post.video_embed_link ? (
+            {post.video_embed_url ? (
                 <div className={css({
                     mb: '32px',
                     borderRadius: '12px',
@@ -82,7 +82,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
                     border: '1px solid token(colors.border.default)',
                 })}>
                     <iframe
-                        src={post.video_embed_link}
+                        src={post.video_embed_url}
                         title={post.title}
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
@@ -162,7 +162,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
             {extraSections.length > 0 && (
                 <div className={css({ mt: '40px', display: 'flex', flexDirection: 'column', gap: '0' })}>
                     {extraSections.map((section) => (
-                        <SectionRenderer key={section.id} section={section} mailchimpFormLink={homeData.info?.mailchimp_form_link} />
+                        <SectionRenderer key={section.id} section={section} newsletterFormUrl={homeData.info?.newsletter_form_url} />
                     ))}
                 </div>
             )}

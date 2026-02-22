@@ -10,7 +10,7 @@ export default function Home() {
         <main className={css({ pb: '60px' })}>
             <div className={css({ display: 'flex', flexDirection: 'column', gap: '0' })}>
                 {sections.map((section) => (
-                    <SectionRenderer key={section.id} section={section} mailchimpFormLink={homeData.info?.mailchimp_form_link} />
+                    <SectionRenderer key={section.id} section={section} newsletterFormUrl={homeData.info?.newsletter_form_url} />
                 ))}
             </div>
         </main>

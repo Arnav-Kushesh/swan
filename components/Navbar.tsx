@@ -44,7 +44,7 @@ export async function Navbar() {
     const pages = getNavbarPages();
     const title = homeData.info?.title || 'Home';
     const logo = homeData.info?.logo;
-    const hideLogo = homeData.info?.disable_logo_in_topbar === 'true';
+    const hideLogo = homeData.info?.hide_topbar_logo === 'true';
 
     return (
         <nav className={navbarStyle}>

@@ -10,10 +10,10 @@ import { Newsletter } from './Newsletter';
 
 interface SectionRendererProps {
     section: SectionData;
-    mailchimpFormLink?: string;
+    newsletterFormUrl?: string;
 }
 
-export function SectionRenderer({ section, mailchimpFormLink }: SectionRendererProps) {
+export function SectionRenderer({ section, newsletterFormUrl }: SectionRendererProps) {
     // Safety guard: never render disabled sections
     if (section.enabled === false) return null;
 
@@ -33,7 +33,7 @@ export function SectionRenderer({ section, mailchimpFormLink }: SectionRendererP
         case 'mailto_section':
             return <MailtoSection data={section} />;
         case 'newsletter_section':
-            return <Newsletter mailchimpFormLink={mailchimpFormLink} />;
+            return <Newsletter newsletterFormUrl={newsletterFormUrl} />;
         default:
             return null;
     }

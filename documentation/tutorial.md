@@ -90,9 +90,9 @@ Go to your Notion workspace > Settings > Main Configuration. Edit the single row
 
 Go to Settings > General Configuration. Toggle the checkboxes:
 
-- `enable_newsletter` — enable Mailchimp newsletter
-- `mailchimp_form_link` — set your Mailchimp form URL
-- `disable_logo_in_topbar` / `disable_logo_in_sidebar` — control logo visibility
+- `enable_newsletter` — enable newsletter functionality
+- `newsletter_form_url` — set your newsletter signup form URL (e.g., from Mailchimp)
+- `hide_topbar_logo` / `hide_sidebar_logo` — control logo visibility
 
 ### Edit Advanced Configuration
 
@@ -144,13 +144,13 @@ Go to Collections > [Your Collection]. Add new pages to the database:
 
 ### Add a Dynamic Section
 
-1. Create an inline database with properties: `collection_name` (Title), `section_title` (Rich Text), `description` (Rich Text), `view_type` (Select), `items_shown_at_once` (Number), `top_section_centered` (Checkbox), `section_type` (Select), `enabled` (Checkbox)
+1. Create an inline database with properties: `collection_name` (Title), `section_title` (Rich Text), `description` (Rich Text), `view_type` (Select), `items_in_view` (Number), `top_section_centered` (Checkbox), `section_type` (Select), `enabled` (Checkbox)
 2. Set `view_type` options: `list_view`, `card_view`, `grid_view`, `minimal_list_view`, `tiny_card_view`, `big_card_view`
 3. Add a row, set `section_type` to `dynamic_section`
 4. Set `collection_name` to the name of the collection to display (e.g., "Blogs")
 5. Optionally add a `description` — it will only render if provided
 6. Check `top_section_centered` to center the title and description
-7. Set `items_shown_at_once` to control pagination (default: 6)
+7. Set `items_in_view` to control pagination (default: 6)
 8. Check `enabled` to show it
 
 ### Add an HTML Section
@@ -202,8 +202,9 @@ Go to Collections > [Your Collection]. Add new pages to the database:
 
 1. Create an inline database with: `section_type` (Select), `enabled` (Checkbox)
 2. Add a row, set `section_type` to `newsletter_section`
-3. Make sure `enable_newsletter` is checked and `mailchimp_form_link` is set in General Configuration
-4. Check `enabled` to show it
+3. Go to [Mailchimp](https://mailchimp.com/) (or any email marketing service), create a signup form, and copy the form URL
+4. In General Configuration, paste the URL into `newsletter_form_url` and check `enable_newsletter`
+5. Check `enabled` to show it
 
 ---
 

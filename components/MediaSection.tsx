@@ -5,12 +5,15 @@ function isVideo(url: string): boolean {
     return /\.(mp4|webm|mov|ogg)$/i.test(url);
 }
 
+function normalizeUnit(value: string): string {
+    return /^\d+(\.\d+)?$/.test(value.trim()) ? `${value.trim()}px` : value.trim();
+}
+
 export function MediaSection({ data }: { data: MediaSectionData }) {
     if (!data.media) return null;
 
-    const fallbackHeight = data.height || 400;
-    const mobileHeight = data.height_on_mobile || fallbackHeight;
-    const desktopHeight = data.height_on_desktop || fallbackHeight;
+    const desktopHeight = data.height ? normalizeUnit(data.height) : '400px';
+    const mobileHeight = data.mobile_height ? normalizeUnit(data.mobile_height) : desktopHeight;
     const fullWidth = data.full_width ?? false;
 
     const containerStyles = fullWidth
@@ -28,8 +31,8 @@ export function MediaSection({ data }: { data: MediaSectionData }) {
         <div
             className={containerStyles}
             style={{
-                '--media-h-mobile': `${mobileHeight}px`,
-                '--media-h-desktop': `${desktopHeight}px`,
+                '--media-h-mobile': mobileHeight,
+                '--media-h-desktop': desktopHeight,
             } as React.CSSProperties}
         >
             <style>{`

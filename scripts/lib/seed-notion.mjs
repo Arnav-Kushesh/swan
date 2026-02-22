@@ -328,10 +328,10 @@ async function createConfigDB(parentId, notion) {
     title: plainText("General Configuration"),
     properties: {
       label: { title: {} },
-      disable_logo_in_topbar: { checkbox: {} },
-      disable_logo_in_sidebar: { checkbox: {} },
+      hide_topbar_logo: { checkbox: {} },
+      hide_sidebar_logo: { checkbox: {} },
       enable_newsletter: { checkbox: {} },
-      mailchimp_form_link: { url: {} },
+      newsletter_form_url: { url: {} },
       mention_this_tool_in_footer: { checkbox: {} },
       primary_font: { rich_text: {} },
       secondary_font: { rich_text: {} },
@@ -350,12 +350,12 @@ async function createConfigDB(parentId, notion) {
     parent: { database_id: db.id },
     properties: {
       label: { title: plainText("Site Settings") },
-      disable_logo_in_topbar: { checkbox: dummyConfig.disable_logo_in_topbar },
-      disable_logo_in_sidebar: {
-        checkbox: dummyConfig.disable_logo_in_sidebar,
+      hide_topbar_logo: { checkbox: dummyConfig.hide_topbar_logo },
+      hide_sidebar_logo: {
+        checkbox: dummyConfig.hide_sidebar_logo,
       },
       enable_newsletter: { checkbox: dummyConfig.enable_newsletter },
-      mailchimp_form_link: { url: dummyConfig.mailchimp_form_link || null },
+      newsletter_form_url: { url: dummyConfig.newsletter_form_url || null },
       mention_this_tool_in_footer: {
         checkbox: dummyConfig.mention_this_tool_in_footer,
       },
@@ -428,7 +428,7 @@ async function createCollections(parentId, notion) {
     button_text: { rich_text: {} },
     order_priority: { number: { format: "number" } },
     author_username: { rich_text: {} },
-    video_embed_link: { url: {} },
+    video_embed_url: { url: {} },
   };
 
   for (const [name, items] of Object.entries(dummyCollections)) {
@@ -462,7 +462,7 @@ async function createCollections(parentId, notion) {
         button_text: { rich_text: plainText(item.button_text || "") },
         order_priority: { number: item.order_priority || 0 },
         author_username: { rich_text: plainText(item.author_username || "") },
-        video_embed_link: { url: item.video_embed_link || null },
+        video_embed_url: { url: item.video_embed_url || null },
       };
 
       if (item.image) {
@@ -578,8 +578,8 @@ async function createInfoSection(notion, parentId, sectionData) {
       },
     },
     media_aspect_ratio: { rich_text: {} },
-    media_mobile_width: { rich_text: {} },
-    media_desktop_width: { rich_text: {} },
+    media_height: { rich_text: {} },
+    media_mobile_height: { rich_text: {} },
     section_type: {
       select: { options: sectionTypeOptions },
     },
@@ -605,12 +605,8 @@ async function createInfoSection(notion, parentId, sectionData) {
       media_aspect_ratio: {
         rich_text: plainText(item.media_aspect_ratio || ""),
       },
-      media_mobile_width: {
-        rich_text: plainText(item.media_mobile_width || ""),
-      },
-      media_desktop_width: {
-        rich_text: plainText(item.media_desktop_width || ""),
-      },
+      media_height: { rich_text: plainText(item.media_height || "") },
+      media_mobile_height: { rich_text: plainText(item.media_mobile_height || "") },
       section_type: { select: { name: "info_section" } },
       enabled: { checkbox: sectionData.enabled === "true" },
     };
@@ -649,7 +645,7 @@ async function createDynamicSection(notion, parentId, sectionData) {
         ],
       },
     },
-    items_shown_at_once: { number: {} },
+    items_in_view: { number: {} },
     top_section_centered: { checkbox: {} },
     section_type: {
       select: { options: sectionTypeOptions },
@@ -674,7 +670,7 @@ async function createDynamicSection(notion, parentId, sectionData) {
       },
       description: { rich_text: plainText(item.description || "") },
       view_type: { select: { name: item.view_type } },
-      items_shown_at_once: { number: item.items_shown_at_once || 6 },
+      items_in_view: { number: item.items_in_view || 6 },
       top_section_centered: { checkbox: item.top_section_centered || false },
       section_type: { select: { name: "dynamic_section" } },
       enabled: { checkbox: sectionData.enabled === "true" },
@@ -693,7 +689,8 @@ async function createHtmlSection(notion, parentId, sectionData) {
   console.log(`     - Creating HTML Section: ${sectionData.title}`);
   const properties = {
     title: { title: {} },
-    height: { number: { format: "number" } },
+    height: { rich_text: {} },
+    mobile_height: { rich_text: {} },
     full_width: { checkbox: {} },
     section_type: {
       select: { options: sectionTypeOptions },
@@ -714,7 +711,8 @@ async function createHtmlSection(notion, parentId, sectionData) {
       parent: { database_id: db.id },
       properties: {
         title: { title: plainText(item.title || sectionData.title) },
-        height: { number: item.height || null },
+        height: { rich_text: plainText(item.height || "") },
+        mobile_height: { rich_text: plainText(item.mobile_height || "") },
         full_width: { checkbox: item.full_width || false },
         section_type: { select: { name: "html_section" } },
         enabled: { checkbox: sectionData.enabled === "true" },
@@ -730,7 +728,8 @@ async function createIframeSection(notion, parentId, sectionData) {
   const properties = {
     title: { title: {} },
     url: { url: {} },
-    height: { number: {} },
+    height: { rich_text: {} },
+    mobile_height: { rich_text: {} },
     full_width: { checkbox: {} },
     section_type: {
       select: { options: sectionTypeOptions },
@@ -752,7 +751,8 @@ async function createIframeSection(notion, parentId, sectionData) {
       properties: {
         title: { title: plainText(item.title || sectionData.title) },
         url: { url: item.url || null },
-        height: { number: item.height || null },
+        height: { rich_text: plainText(item.height || "") },
+        mobile_height: { rich_text: plainText(item.mobile_height || "") },
         full_width: { checkbox: item.full_width || false },
         section_type: { select: { name: "iframe_section" } },
         enabled: { checkbox: sectionData.enabled === "true" },
@@ -798,9 +798,8 @@ async function createMediaSection(notion, parentId, sectionData) {
   const properties = {
     title: { title: {} },
     media: { files: {} },
-    height: { number: {} },
-    height_on_mobile: { number: {} },
-    height_on_desktop: { number: {} },
+    height: { rich_text: {} },
+    mobile_height: { rich_text: {} },
     full_width: { checkbox: {} },
     section_type: {
       select: { options: sectionTypeOptions },
@@ -819,9 +818,8 @@ async function createMediaSection(notion, parentId, sectionData) {
     const item = sectionData.data[0];
     const props = {
       title: { title: plainText(item.title || sectionData.title) },
-      height: { number: item.height || 400 },
-      height_on_mobile: { number: item.height_on_mobile || null },
-      height_on_desktop: { number: item.height_on_desktop || null },
+      height: { rich_text: plainText(item.height || "400px") },
+      mobile_height: { rich_text: plainText(item.mobile_height || "") },
       full_width: { checkbox: item.full_width || false },
       section_type: { select: { name: "media_section" } },
       enabled: { checkbox: sectionData.enabled === "true" },

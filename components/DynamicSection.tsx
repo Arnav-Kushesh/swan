@@ -7,7 +7,7 @@ import { DynamicSectionData, getPosts } from '@/lib/data';
 import { InteractiveSection } from './InteractiveSection';
 
 export function DynamicSection({ data }: { data: DynamicSectionData }) {
-    const { collection_name, view_type, title, description, items_shown_at_once, top_section_centered } = data;
+    const { collection_name, view_type, title, description, items_in_view, top_section_centered } = data;
     const collectionSlug = collection_name.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
 
     // Generic fetch
@@ -24,7 +24,7 @@ export function DynamicSection({ data }: { data: DynamicSectionData }) {
                 description={description}
                 items={items}
                 initialViewType={view_type || 'list_view'}
-                itemsPerPage={items_shown_at_once || 6}
+                itemsPerPage={items_in_view || 6}
                 centered={top_section_centered}
             />
         </section>

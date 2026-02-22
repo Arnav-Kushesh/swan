@@ -170,8 +170,8 @@ async function fetchGeneralConfig(dbId) {
 
     // Checkbox fields -> stored as 'true'/'false' strings for backward compatibility
     const checkboxFields = [
-        'disable_logo_in_topbar',
-        'disable_logo_in_sidebar',
+        'hide_topbar_logo',
+        'hide_sidebar_logo',
         'enable_newsletter',
         'mention_this_tool_in_footer',
     ];
@@ -182,7 +182,7 @@ async function fetchGeneralConfig(dbId) {
     }
 
     // URL fields
-    data.mailchimp_form_link = props.mailchimp_form_link?.url || '';
+    data.newsletter_form_url = props.newsletter_form_url?.url || '';
 
     // Font fields
     data.primary_font = props.primary_font?.rich_text?.[0]?.plain_text || '';
@@ -266,8 +266,8 @@ async function fetchInfoSectionData(dbId) {
         button_text: props.button_text?.rich_text?.[0]?.plain_text || '',
         view_type: props.view_type?.select?.name || props['View Type']?.select?.name || 'col_centered_view',
         media_aspect_ratio: props.media_aspect_ratio?.rich_text?.[0]?.plain_text || '',
-        media_mobile_width: props.media_mobile_width?.rich_text?.[0]?.plain_text || '',
-        media_desktop_width: props.media_desktop_width?.rich_text?.[0]?.plain_text || '',
+        media_height: props.media_height?.number || undefined,
+        media_mobile_height: props.media_mobile_height?.number || undefined,
         enabled: props.enabled?.checkbox ?? props.visibility?.checkbox ?? true,
     };
 
@@ -297,7 +297,7 @@ async function fetchDynamicSectionData(dbId) {
         section_title: props.section_title?.rich_text?.[0]?.plain_text || '',
         description: props.description?.rich_text?.[0]?.plain_text || '',
         view_type: props.view_type?.select?.name || 'list_view',
-        items_shown_at_once: props.items_shown_at_once?.number || 6,
+        items_in_view: props.items_in_view?.number || 6,
         top_section_centered: props.top_section_centered?.checkbox ?? false,
         enabled: props.enabled?.checkbox ?? props.visibility?.checkbox ?? true,
     };
@@ -321,11 +321,12 @@ async function fetchHtmlSectionData(dbId) {
         .map(b => b.code.rich_text.map(t => t.plain_text).join(''));
     const html_code = codeBlocks.join('\n');
 
-    const height = props.height?.number || null;
+    const height = props.height?.rich_text?.[0]?.plain_text || '';
+    const mobile_height = props.mobile_height?.rich_text?.[0]?.plain_text || '';
 
     const full_width = props.full_width?.checkbox ?? false;
 
-    return { title, html_code, height, full_width, enabled };
+    return { title, html_code, height, mobile_height, full_width, enabled };
 }
 
 // New Helper to fetch Iframe Section Data
@@ -339,7 +340,8 @@ async function fetchIframeSectionData(dbId) {
     return {
         title: props.title?.title?.[0]?.plain_text || props.Title?.title?.[0]?.plain_text || '',
         url: props.url?.url || props.URL?.url || '',
-        height: props.height?.number || undefined,
+        height: props.height?.rich_text?.[0]?.plain_text || '',
+        mobile_height: props.mobile_height?.rich_text?.[0]?.plain_text || '',
         full_width: props.full_width?.checkbox ?? false,
         enabled: props.enabled?.checkbox ?? props.visibility?.checkbox ?? true,
     };
@@ -383,9 +385,8 @@ async function fetchMediaSectionData(dbId) {
     return {
         title: props.title?.title?.[0]?.plain_text || props.Title?.title?.[0]?.plain_text || '',
         media,
-        height: props.height?.number || undefined,
-        height_on_mobile: props.height_on_mobile?.number || undefined,
-        height_on_desktop: props.height_on_desktop?.number || undefined,
+        height: props.height?.rich_text?.[0]?.plain_text || '',
+        mobile_height: props.mobile_height?.rich_text?.[0]?.plain_text || '',
         full_width: props.full_width?.checkbox ?? false,
         enabled: props.enabled?.checkbox ?? props.visibility?.checkbox ?? true,
     };
@@ -568,7 +569,7 @@ async function syncAllCollections() {
             const description = props.Description?.rich_text?.[0]?.plain_text || '';
             const order_priority = props.order_priority?.number || props.Order?.number || 0;
             const author_username = props.author_username?.rich_text?.[0]?.plain_text || '';
-            const video_embed_link = props.video_embed_link?.url || '';
+            const video_embed_url = props.video_embed_url?.url || '';
             const button_text = props.button_text?.rich_text?.[0]?.plain_text || '';
 
             const frontmatter = {
@@ -586,7 +587,7 @@ async function syncAllCollections() {
                 tools: tags.join(', '),
                 order_priority,
                 author_username,
-                video_embed_link,
+                video_embed_url,
             };
 
             const body = mdString?.parent || '';

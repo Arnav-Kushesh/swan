@@ -11,6 +11,10 @@ function isVideoUrl(url: string): boolean {
     return /\.(mp4|webm|mov|ogg)$/i.test(url);
 }
 
+function normalizeUnit(value: string): string {
+    return /^\d+(\.\d+)?$/.test(value.trim()) ? `${value.trim()}px` : value.trim();
+}
+
 export function InfoSection({ data }: { data: InfoSectionData }) {
     const { sectionViewOverrides } = useGlobalConfig();
     const viewType = sectionViewOverrides[data.id] || data.view_type || 'col_centered_view';
@@ -19,8 +23,9 @@ export function InfoSection({ data }: { data: InfoSectionData }) {
     const isCentered = viewType === 'col_centered_view';
 
     const aspectRatio = data.media_aspect_ratio || '16/9';
-    const mobileWidth = data.media_mobile_width || '100%';
-    const desktopWidth = data.media_desktop_width || (isRow ? '50%' : '600px');
+    const desktopHeight = data.media_height ? normalizeUnit(data.media_height) : '';
+    const mobileHeight = data.media_mobile_height ? normalizeUnit(data.media_mobile_height) : desktopHeight;
+    const useFixedHeight = !!desktopHeight;
 
     return (
         <section className={container({ py: '60px', maxWidth: '1200px' })}>
@@ -40,28 +45,32 @@ export function InfoSection({ data }: { data: InfoSectionData }) {
                     <div
                         className={css({
                             flex: isRow ? '0 0 auto' : 'initial',
-                            width: 'var(--info-media-w)',
-                            maxWidth: isRow ? 'none' : (isCentered ? 'var(--info-media-w)' : 'none'),
+                            width: isRow ? '50%' : (isCentered ? '600px' : '100%'),
+                            maxWidth: '100%',
                             mx: isCentered ? 'auto' : '0',
                         })}
-                        style={{
-                            '--info-media-w': mobileWidth,
-                        } as React.CSSProperties}
+                        style={useFixedHeight ? {
+                            '--info-media-h-mobile': mobileHeight,
+                            '--info-media-h-desktop': desktopHeight,
+                        } as React.CSSProperties : undefined}
                     >
-                        <style>{`
-                            @media (min-width: 768px) {
-                                [style*="--info-media-w"] {
-                                    --info-media-w: ${desktopWidth} !important;
+                        {useFixedHeight && (
+                            <style>{`
+                                .info-media-inner { height: var(--info-media-h-mobile); }
+                                @media (min-width: 768px) {
+                                    .info-media-inner { height: var(--info-media-h-desktop); }
                                 }
-                            }
-                        `}</style>
-                        <div className={css({
-                            position: 'relative',
-                            width: '100%',
-                            height: 'auto',
-                            borderRadius: '12px',
-                            overflow: 'hidden',
-                        })} style={{ aspectRatio }}>
+                            `}</style>
+                        )}
+                        <div
+                            className={`${useFixedHeight ? 'info-media-inner' : ''} ${css({
+                                position: 'relative',
+                                width: '100%',
+                                borderRadius: '12px',
+                                overflow: 'hidden',
+                            })}`}
+                            style={!useFixedHeight ? { aspectRatio } : undefined}
+                        >
                             {isVideoUrl(data.image) ? (
                                 <video
                                     src={data.image}
@@ -96,7 +105,7 @@ export function InfoSection({ data }: { data: InfoSectionData }) {
                     opacity: 0,
                 })}>
                     <h2 className={css({
-                        fontSize: { base: '2.2rem', md: '2.8rem', lg: '3.2rem' },
+                        fontSize: { base: '1.8rem', md: '2.2rem', lg: '2.6rem' },
                         fontWeight: '800',
                         lineHeight: '1.1',
                         mb: '16px',

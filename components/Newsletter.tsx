@@ -5,10 +5,10 @@ import { css } from '@/styled-system/css';
 import { Mail } from 'lucide-react';
 
 interface NewsletterProps {
-    mailchimpFormLink?: string;
+    newsletterFormUrl?: string;
 }
 
-export function Newsletter({ mailchimpFormLink }: NewsletterProps) {
+export function Newsletter({ newsletterFormUrl }: NewsletterProps) {
     return (
         <section className={css({
             py: '60px',
@@ -51,9 +51,9 @@ export function Newsletter({ mailchimpFormLink }: NewsletterProps) {
                 })}>
                     Subscribe to get notified about new posts and updates. No spam, unsubscribe anytime.
                 </p>
-                {mailchimpFormLink ? (
+                {newsletterFormUrl ? (
                     <a
-                        href={mailchimpFormLink}
+                        href={newsletterFormUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className={css({

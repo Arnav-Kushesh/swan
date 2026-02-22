@@ -80,7 +80,7 @@ export function GenericList({ items, viewType, itemsPerPage }: GenericListProps)
                 })}>
                     {visibleItems.map((item) => {
                         const post = item as Post;
-                        const hasVideo = post.video_embed_link;
+                        const hasVideo = post.video_embed_url;
                         const title = getItemTitle(item);
 
                         return (
@@ -164,7 +164,7 @@ export function GenericList({ items, viewType, itemsPerPage }: GenericListProps)
                 })}>
                     {visibleItems.map((item) => {
                         const post = item as Post;
-                        const hasVideo = post.video_embed_link;
+                        const hasVideo = post.video_embed_url;
                         const title = getItemTitle(item);
                         const image = getItemImage(item);
 
@@ -302,7 +302,7 @@ export function GenericList({ items, viewType, itemsPerPage }: GenericListProps)
                                             alt={getItemTitle(item)}
                                             className={css({ width: '100%', height: '100%', objectFit: 'cover' })}
                                         />
-                                        {(item as Post).video_embed_link && (
+                                        {(item as Post).video_embed_url && (
                                             <div className={css({
                                                 position: 'absolute',
                                                 top: '50%',
@@ -375,7 +375,7 @@ export function GenericList({ items, viewType, itemsPerPage }: GenericListProps)
                                                 objectFit: 'cover',
                                             })}
                                         />
-                                        {post.video_embed_link && (
+                                        {post.video_embed_url && (
                                             <div className={css({
                                                 position: 'absolute',
                                                 top: '50%',
@@ -462,7 +462,7 @@ export function GenericList({ items, viewType, itemsPerPage }: GenericListProps)
                                         alt={title}
                                         className={css({ width: '100%', height: '100%', objectFit: 'cover' })}
                                     />
-                                    {post.video_embed_link && (
+                                    {post.video_embed_url && (
                                         <div className={css({
                                             position: 'absolute',
                                             top: '50%',
