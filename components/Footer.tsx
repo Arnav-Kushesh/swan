@@ -26,7 +26,7 @@ export function Footer() {
       <span>Copyright © {new Date().getFullYear()} {config.info?.title || 'My Website'}</span>
       {showSwanLink && (
         <Link
-          href="https://github.com/arnav-kushesh/swan"
+          href="https://github.com/arnav-kushesh/notion-zero"
           target="_blank"
           className={css({
             color: "text.tertiary",
@@ -34,7 +34,7 @@ export function Footer() {
             _hover: { color: "text.secondary" },
           })}
         >
-          Made With Swan
+          Made With Notion Zero
         </Link>
       )}
     </footer>

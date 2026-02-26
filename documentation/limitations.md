@@ -1,4 +1,4 @@
-# Swan Project Limitations & Roadmap
+# Notion Zero Project Limitations & Roadmap
 
 ## 1. Image Optimization (Critical)
 -   **Current State**: The project uses standard `<img>` tags throughout (`GenericList.tsx`, `page.tsx`). Images are downloaded from Notion "as-is".

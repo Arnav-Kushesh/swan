@@ -79,15 +79,14 @@ export async function fetchHtmlSectionData(dbId) {
         .map(b => b.code.rich_text.map(t => t.plain_text).join(''));
     const html_code = codeBlocks.join('\n');
 
-    const height = props.height?.rich_text?.[0]?.plain_text || '';
-    const mobile_height = props.mobile_height?.rich_text?.[0]?.plain_text || '';
+    const aspect_ratio = props.aspect_ratio?.rich_text?.[0]?.plain_text || '';
 
     const full_width = props.full_width?.checkbox ?? false;
 
     const description = props.description?.rich_text?.[0]?.plain_text || '';
     const top_part_centered = props.top_part_centered?.checkbox ?? false;
 
-    return { title, description, html_code, height, mobile_height, full_width, top_part_centered, enabled };
+    return { title, description, html_code, aspect_ratio, full_width, top_part_centered, enabled };
 }
 
 export async function fetchIframeSectionData(dbId) {
@@ -101,8 +100,7 @@ export async function fetchIframeSectionData(dbId) {
         title: props.title?.title?.[0]?.plain_text || props.Title?.title?.[0]?.plain_text || '',
         description: props.description?.rich_text?.[0]?.plain_text || '',
         url: props.url?.url || props.URL?.url || '',
-        height: props.height?.rich_text?.[0]?.plain_text || '',
-        mobile_height: props.mobile_height?.rich_text?.[0]?.plain_text || '',
+        aspect_ratio: props.aspect_ratio?.rich_text?.[0]?.plain_text || '',
         full_width: props.full_width?.checkbox ?? false,
         top_part_centered: props.top_part_centered?.checkbox ?? false,
         enabled: props.enabled?.checkbox ?? props.visibility?.checkbox ?? true,
@@ -148,8 +146,7 @@ export async function fetchMediaSectionData(dbId) {
         title: props.title?.title?.[0]?.plain_text || props.Title?.title?.[0]?.plain_text || '',
         description: props.description?.rich_text?.[0]?.plain_text || '',
         media,
-        height: props.height?.rich_text?.[0]?.plain_text || '',
-        mobile_height: props.mobile_height?.rich_text?.[0]?.plain_text || '',
+        aspect_ratio: props.aspect_ratio?.rich_text?.[0]?.plain_text || '',
         full_width: props.full_width?.checkbox ?? false,
         top_part_centered: props.top_part_centered?.checkbox ?? false,
         enabled: props.enabled?.checkbox ?? props.visibility?.checkbox ?? true,

@@ -1,6 +1,6 @@
-# Swan — System Architecture & Mechanism
+# Notion Zero — System Architecture & Mechanism
 
-This document describes the technical architecture, data flow, and update mechanisms of Swan.
+This document describes the technical architecture, data flow, and update mechanisms of Notion Zero.
 
 ---
 

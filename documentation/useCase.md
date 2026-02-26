@@ -1,6 +1,6 @@
-# Swan — Use Cases
+# Notion Zero — Use Cases
 
-Swan is a powerful, open-source static website generator that uses **Notion as a headless CMS**. Below are the key use cases it enables.
+Notion Zero is a powerful, open-source static website generator that uses **Notion as a headless CMS**. Below are the key use cases it enables.
 
 ---
 
@@ -57,7 +57,7 @@ Inject custom scripts (Google Ads, analytics, tracking pixels) via the **HTML He
 - **Analytics**: Google Analytics, Plausible, Fathom, etc.
 - **Ad networks**: Google AdSense or any ad script
 - **Custom styling**: Override or extend the site's design via CSS code blocks in Settings > CSS Styling
-- **No revenue sharing**: Unlike Medium or Substack, Swan doesn't take a cut
+- **No revenue sharing**: Unlike Medium or Substack, Notion Zero doesn't take a cut
 
 ## 7. Content Ownership & Independence
 
@@ -71,7 +71,7 @@ Unlike platforms like Medium, Substack, or WordPress.com:
 
 ## 8. Custom Embeds & Interactive Content
 
-Swan's `html_section` and `iframe_section` give you the flexibility to embed anything:
+Notion Zero's `html_section` and `iframe_section` give you the flexibility to embed anything:
 
 - **HTML sections**: Embed custom HTML/CSS/JS — forms, widgets, interactive demos, maps, social feeds
 - **Iframe sections**: Embed external websites, Figma files, Google Maps, Calendly, or any URL
@@ -80,7 +80,7 @@ Swan's `html_section` and `iframe_section` give you the flexibility to embed any
 
 ## 9. SEO-Optimized Static Sites
 
-Swan generates fully static HTML pages optimized for search engines:
+Notion Zero generates fully static HTML pages optimized for search engines:
 
 - **Pre-rendered pages**: Every page is static HTML — fast to load and easy to crawl
 - **Auto-generated sitemap**: `sitemap.xml` covers all pages, collections, and author profiles

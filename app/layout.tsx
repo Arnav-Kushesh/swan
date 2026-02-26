@@ -96,7 +96,7 @@ export default async function RootLayout({
                     __html: `
                     (function() {
                         try {
-                            var saved = localStorage.getItem('swan-color-mode');
+                            var saved = localStorage.getItem('notion-zero-color-mode');
                             var themes = ['light','cream','pink','dark','blue','purple','red','green'];
                             var theme = (saved && themes.indexOf(saved) !== -1) ? saved : ${JSON.stringify(defaultTheme)};
                             document.documentElement.setAttribute('data-theme', theme);

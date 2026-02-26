@@ -65,11 +65,11 @@ export function GlobalConfigProvider({
     const setColorModeTemporary = (mode: string) => {
         setColorMode(mode);
         // Remove from localStorage so it won't persist after refresh
-        localStorage.removeItem('swan-color-mode');
+        localStorage.removeItem('notion-zero-color-mode');
     };
 
     useEffect(() => {
-        const saved = localStorage.getItem('swan-color-mode');
+        const saved = localStorage.getItem('notion-zero-color-mode');
         if (saved && effectiveThemes.includes(saved)) {
             setColorMode(saved);
         }
@@ -77,7 +77,7 @@ export function GlobalConfigProvider({
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', colorMode);
-        localStorage.setItem('swan-color-mode', colorMode);
+        localStorage.setItem('notion-zero-color-mode', colorMode);
     }, [colorMode]);
 
     // Global Cmd+K / Ctrl+K shortcut for search

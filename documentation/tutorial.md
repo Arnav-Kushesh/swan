@@ -1,6 +1,6 @@
-# Swan Tutorial
+# Notion Zero Tutorial
 
-A step-by-step guide to setting up and customizing your Swan-powered website.
+A step-by-step guide to setting up and customizing your Notion Zero-powered website.
 
 ---
 
@@ -16,8 +16,8 @@ A step-by-step guide to setting up and customizing your Swan-powered website.
 
 1. Clone the repository:
    ```bash
-   git clone <repo-url> swan
-   cd swan
+   git clone <repo-url> notion-zero
+   cd notion-zero
    ```
 
 2. Install dependencies:
@@ -239,7 +239,7 @@ All 8 section types are supported: info, dynamic, html, iframe, video_embed, med
 
 ## Step 8: Customize Themes
 
-Swan ships with 8 color themes: light, cream, pink, dark, blue, purple, red, green.
+Notion Zero ships with 8 color themes: light, cream, pink, dark, blue, purple, red, green.
 
 **To set the default theme:**
 1. Go to Settings > Main Configuration

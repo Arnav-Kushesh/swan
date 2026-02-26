@@ -1,12 +1,12 @@
-# Swan Documentation
+# Notion Zero Documentation
 
-Swan is a Notion-powered static site generator built with Next.js. It turns a Notion workspace into a fully functional portfolio/blog website with zero code changes required.
+Notion Zero is a Notion-powered static site generator built with Next.js. It turns a Notion workspace into a fully functional portfolio/blog website with zero code changes required.
 
 ---
 
 ## Notion Page Structure
 
-Swan expects the following structure in your Notion workspace:
+Notion Zero expects the following structure in your Notion workspace:
 
 ```
 Root Page
@@ -250,7 +250,7 @@ Stores feature flags and toggles as individual checkbox/URL columns with a singl
 | `hide_sidebar_logo` | Checkbox | Hide logo from the sidebar |
 | `enable_newsletter` | Checkbox | Enable newsletter functionality site-wide |
 | `newsletter_form_url` | URL | Newsletter signup form URL (e.g., Mailchimp) |
-| `mention_this_tool_in_footer` | Checkbox | Show "Built with Swan" in the footer |
+| `mention_this_tool_in_footer` | Checkbox | Show "Made With Notion Zero" in the footer |
 
 ### Advanced Configuration
 
@@ -277,7 +277,7 @@ Supported: github, twitter, linkedin, instagram, youtube, facebook, twitch, emai
 
 ## Color Modes
 
-Swan supports 8 color themes:
+Notion Zero supports 8 color themes:
 
 | Theme | Type | Description |
 |-------|------|-------------|
@@ -298,7 +298,7 @@ To restrict which themes are available to users, edit the `limit_theme_selection
 
 ## Navigation Modes
 
-Swan supports two navigation layouts:
+Notion Zero supports two navigation layouts:
 
 - **Navbar (Top Bar):** Default. Shows logo, navigation links, social icons, settings, and search.
 - **Sidebar (Left Panel):** Fixed left sidebar with profile, navigation, social icons, and settings.
@@ -371,7 +371,7 @@ RSS feeds are auto-generated for collections with `enable_rss` checked in their 
 
 ## Search
 
-Swan includes a built-in search (Cmd+K / Ctrl+K) that searches across all collection items by title, description, collection name, and tags. Uses fuzzy matching with relevance scoring.
+Notion Zero includes a built-in search (Cmd+K / Ctrl+K) that searches across all collection items by title, description, collection name, and tags. Uses fuzzy matching with relevance scoring.
 
 ---
 

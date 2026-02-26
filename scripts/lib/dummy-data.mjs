@@ -554,7 +554,7 @@ export const dummyAuthors = [
  * Content blocks to inject into <head>
  */
 export const dummyCodeInjection = [
-  '<!-- Swan Code Injection: Add your analytics, meta tags, or custom scripts here -->',
+  '<!-- Notion Zero Code Injection: Add your analytics, meta tags, or custom scripts here -->',
 ];
 
 /**
@@ -562,7 +562,7 @@ export const dummyCodeInjection = [
  * CSS code blocks to inject as <style> tags in <head>
  */
 export const dummyCssInjection = [
-  '/* Swan CSS Injection: Add your custom styles here */',
+  '/* Notion Zero CSS Injection: Add your custom styles here */',
 ];
 
 export const dummyAdvancedConfig = {
