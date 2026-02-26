@@ -9,6 +9,8 @@
 
 </div>
 
+**Build a website from Notion with zero code, zero setup, zero stress & Zero learning curve**
+
 Notion Zero is a powerful **Notion-to-Website** engine that turns your Notion workspace into a high-performance, static website. Built with **Next.js**, **PandaCSS**, and the **Notion API**, it offers the simplicity of a CMS with the speed of a static site.
 
 **Why "Notion Zero"?** Because the technical knowledge required to use it is practically zero. Connect it to Netlify (or any static host), provide your Notion API key, and you have a live website — no coding, no frameworks to learn, no servers to manage.
