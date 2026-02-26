@@ -1,7 +1,7 @@
 <div align="center">
 <br/><br/>
 <img alt="start-simple-logo" src="https://raw.githubusercontent.com/arnav-kushesh/swan/master/assets/swan.png" height="128"/>
-<h3 style="margin-top: 9px;">Swanotion - Notion Website Generator</h3>
+<h3 style="margin-top: 9px;">Swan - Notion Website Generator</h3>
 
 <br/>
 
@@ -9,7 +9,7 @@
 
 </div>
 
-Swanotion is a powerful **Notion-to-Website** engine that turns your Notion workspace into a high-performance, static website. Built with **Next.js**, **PandaCSS**, and the **Notion API**, it offers the simplicity of a CMS with the speed of a static site.
+Swan is a powerful **Notion-to-Website** engine that turns your Notion workspace into a high-performance, static website. Built with **Next.js**, **PandaCSS**, and the **Notion API**, it offers the simplicity of a CMS with the speed of a static site.
 
 ## Features
 
