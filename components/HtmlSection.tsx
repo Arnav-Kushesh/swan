@@ -12,6 +12,10 @@ export function HtmlSection({ data }: { data: HtmlSectionData }) {
 
     const hasTopPart = !!(data.title || data.description);
 
+    const desktopWidth = data.width ? normalizeUnit(data.width) : '100%';
+    const mobileWidth = data.width_mobile ? normalizeUnit(data.width_mobile) : desktopWidth;
+    const htmlId = `html-section-${data.id.replace(/[^a-zA-Z0-9]/g, '')}`;
+
     return (
         <section className={css({ mb: '40px' })}>
             {hasTopPart && (
@@ -41,7 +45,14 @@ export function HtmlSection({ data }: { data: HtmlSectionData }) {
                     )}
                 </div>
             )}
+            <style>{`
+                #${htmlId} { width: ${mobileWidth}; }
+                @media (min-width: 768px) {
+                    #${htmlId} { width: ${desktopWidth}; }
+                }
+            `}</style>
             <div
+                id={htmlId}
                 className={fullWidth
                     ? css({
                         width: '100vw',
@@ -52,6 +63,7 @@ export function HtmlSection({ data }: { data: HtmlSectionData }) {
                         borderRadius: '12px',
                         overflow: 'hidden',
                         border: '1px solid token(colors.border.default)',
+                        margin: '0 auto',
                     })
                 }
             >

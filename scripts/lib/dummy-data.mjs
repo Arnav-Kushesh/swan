@@ -420,7 +420,7 @@ export const dummyCollections = {
   ],
   Blogs: [
     {
-      title: 'Hello World',
+      title: 'Hello World: My Journey Into Software Engineering and Why I Started This Blog',
       description: 'Welcome to my first blog post! In this post, I will share my journey.',
       image: 'https://picsum.photos/seed/hello/1000/600',
       tags: ['Personal', 'Update'],
@@ -436,7 +436,7 @@ export const dummyCollections = {
       ],
     },
     {
-      title: 'The Future of Web Dev',
+      title: 'The Future of Web Development: How AI and Modern Frameworks Are Reshaping the Industry',
       description: 'Thoughts on where the industry is heading with AI and new frameworks.',
       image: 'https://picsum.photos/seed/webdev/1000/600',
       tags: ['Tech', 'Opinion'],
@@ -451,7 +451,7 @@ export const dummyCollections = {
       ],
     },
     {
-      title: 'Mastering CSS Grid',
+      title: 'Mastering CSS Grid: A Comprehensive Guide to Building Complex Responsive Layouts',
       description: 'A comprehensive guide to building complex layouts with CSS Grid.',
       image: 'https://picsum.photos/seed/css/1000/600',
       tags: ['CSS', 'Tutorial'],
@@ -466,7 +466,7 @@ export const dummyCollections = {
       ],
     },
     {
-      title: 'Why I Use Next.js',
+      title: 'Why I Use Next.js for Every Project: Server-Side Rendering and Static Site Generation',
       description: 'The benefits of server-side rendering and static site generation.',
       image: 'https://picsum.photos/seed/nextjs/1000/600',
       tags: ['Next.js', 'React'],
@@ -480,7 +480,7 @@ export const dummyCollections = {
       ],
     },
     {
-      title: 'Remote Work Tips',
+      title: 'Remote Work Tips: How to Stay Productive and Maintain a Healthy Work-Life Balance',
       description: 'How to stay productive and maintain a healthy work-life balance.',
       image: 'https://picsum.photos/seed/remote/1000/600',
       tags: ['Productivity', 'Lifestyle'],
@@ -496,7 +496,7 @@ export const dummyCollections = {
       ],
     },
     {
-      title: 'Learning Rust',
+      title: 'Learning Rust as a JavaScript Developer: My Experience with Systems Programming',
       description: 'My experience diving into systems programming with Rust.',
       image: 'https://picsum.photos/seed/rust/1000/600',
       tags: ['Rust', 'Programming'],

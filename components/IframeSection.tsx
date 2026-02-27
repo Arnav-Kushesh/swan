@@ -10,6 +10,10 @@ export function IframeSection({ data }: { data: IframeSectionData }) {
 
     const hasTopPart = !!(data.title || data.description);
 
+    const desktopWidth = data.width ? normalizeUnit(data.width) : '100%';
+    const mobileWidth = data.width_mobile ? normalizeUnit(data.width_mobile) : desktopWidth;
+    const iframeId = `iframe-section-${data.id.replace(/[^a-zA-Z0-9]/g, '')}`;
+
     return (
         <section className={css({ mb: '40px' })}>
             {hasTopPart && (
@@ -39,7 +43,14 @@ export function IframeSection({ data }: { data: IframeSectionData }) {
                     )}
                 </div>
             )}
+            <style>{`
+                #${iframeId} { width: ${mobileWidth}; }
+                @media (min-width: 768px) {
+                    #${iframeId} { width: ${desktopWidth}; }
+                }
+            `}</style>
             <div
+                id={iframeId}
                 className={fullWidth
                     ? css({
                         width: '100vw',
@@ -50,6 +61,7 @@ export function IframeSection({ data }: { data: IframeSectionData }) {
                         borderRadius: '12px',
                         overflow: 'hidden',
                         border: '1px solid token(colors.border.default)',
+                        margin: '0 auto',
                     })
                 }
             >

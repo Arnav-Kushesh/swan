@@ -1,6 +1,5 @@
 
 import { css } from '@/styled-system/css';
-import { container } from '@/styled-system/patterns';
 import { DynamicSectionData, getPosts } from '@/lib/data';
 
 // Server Component (can fetch data)
@@ -17,7 +16,7 @@ export function DynamicSection({ data }: { data: DynamicSectionData }) {
     if (!items || items.length === 0) return null;
 
     return (
-        <section className={container({ py: '60px', maxWidth: '1200px' })}>
+        <section className={css({ mb: '40px' })}>
             <InteractiveSection
                 sectionId={data.id}
                 title={title}

@@ -65,6 +65,7 @@ export function MediaSection({ data }: { data: MediaSectionData }) {
                         borderRadius: '12px',
                         overflow: 'hidden',
                         aspectRatio: data.aspect_ratio || '16/9',
+                        margin: '0 auto',
                     })
                 }
             >

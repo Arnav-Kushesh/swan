@@ -61,6 +61,8 @@ export interface HtmlSectionData {
     description?: string;
     html_code: string;
     aspect_ratio?: string;
+    width?: string;
+    width_mobile?: string;
     full_width?: boolean;
     top_part_centered?: boolean;
     enabled?: boolean;
@@ -73,6 +75,8 @@ export interface IframeSectionData {
     description?: string;
     url: string;
     aspect_ratio?: string;
+    width?: string;
+    width_mobile?: string;
     full_width?: boolean;
     top_part_centered?: boolean;
     enabled?: boolean;
