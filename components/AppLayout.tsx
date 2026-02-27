@@ -48,7 +48,7 @@ export function AppLayout({ sidebar, navbar, children }: { sidebar: ReactNode, n
                 // On mobile, always use navbar layout (no left margin)
                 // On desktop, shift content when sidebar is visible
                 marginLeft: { base: '0', lg: showSidebar ? '292px' : '0' },
-                paddingTop: { base: '72px', lg: showSidebar ? '32px' : '72px' },
+                paddingTop: { base: '96px', lg: showSidebar ? '48px' : '96px' },
                 minHeight: '100vh',
                 display: 'flex',
                 justifyContent: 'center',

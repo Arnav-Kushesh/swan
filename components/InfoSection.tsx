@@ -1,7 +1,7 @@
 'use client';
 
 import { css } from '@/styled-system/css';
-import { container, flex } from '@/styled-system/patterns';
+import { flex } from '@/styled-system/patterns';
 import { InfoSectionData } from '@/lib/data';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
@@ -28,7 +28,7 @@ export function InfoSection({ data }: { data: InfoSectionData }) {
     const mediaId = `info-media-${data.id.replace(/[^a-zA-Z0-9]/g, '')}`;
 
     return (
-        <section className={container({ py: '60px', maxWidth: '1200px' })}>
+        <section className={css({ mb: '40px' })}>
             <div className={flex({
                 direction: {
                     base: 'column',

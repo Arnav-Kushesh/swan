@@ -7,8 +7,8 @@ export default function Home() {
     const sections = (homeData.sections || []).filter(section => section.enabled !== false);
 
     return (
-        <main className={css({ pb: '60px' })}>
-            <div className={css({ display: 'flex', flexDirection: 'column', gap: '0' })}>
+        <main className={css({ pb: '60px', pt: '32px' })}>
+            <div className={css({ display: 'flex', flexDirection: 'column', gap: '24px' })}>
                 {sections.map((section) => (
                     <SectionRenderer key={section.id} section={section} newsletterFormUrl={homeData.info?.newsletter_form_url} />
                 ))}
