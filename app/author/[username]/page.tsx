@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { AuthorPostList } from './AuthorPostList';
+import { FaGithub, FaEnvelope } from 'react-icons/fa';
+import { RiInstagramFill } from 'react-icons/ri';
+import { FaXTwitter } from 'react-icons/fa6';
 
 export const dynamicParams = false;
 
@@ -71,29 +74,29 @@ export default async function AuthorPage({ params }: { params: Promise<{ usernam
                 )}
 
                 {/* Social Links */}
-                <div className={css({ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' })}>
-                    {author.github_handle && (
-                        <a href={`https://github.com/${author.github_handle}`} target="_blank" rel="noopener noreferrer"
-                            className={css({ color: 'text.tertiary', fontSize: '0.85rem', fontWeight: '500', _hover: { color: 'text.primary' }, transition: 'color 0.2s' })}>
-                            GitHub
+                <div className={css({ display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' })}>
+                    {author.github_handle_link && (
+                        <a href={author.github_handle_link} target="_blank" rel="noopener noreferrer"
+                            className={css({ color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center', p: '5px', borderRadius: '6px', transition: 'all 0.15s ease', _hover: { opacity: 0.7 } })}>
+                            <FaGithub size={18} />
                         </a>
                     )}
-                    {author.x_handle && (
-                        <a href={`https://x.com/${author.x_handle}`} target="_blank" rel="noopener noreferrer"
-                            className={css({ color: 'text.tertiary', fontSize: '0.85rem', fontWeight: '500', _hover: { color: 'text.primary' }, transition: 'color 0.2s' })}>
-                            X
+                    {author.x_handle_link && (
+                        <a href={author.x_handle_link} target="_blank" rel="noopener noreferrer"
+                            className={css({ color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center', p: '5px', borderRadius: '6px', transition: 'all 0.15s ease', _hover: { opacity: 0.7 } })}>
+                            <FaXTwitter size={18} />
                         </a>
                     )}
-                    {author.instagram_handle && (
-                        <a href={`https://instagram.com/${author.instagram_handle}`} target="_blank" rel="noopener noreferrer"
-                            className={css({ color: 'text.tertiary', fontSize: '0.85rem', fontWeight: '500', _hover: { color: 'text.primary' }, transition: 'color 0.2s' })}>
-                            Instagram
+                    {author.instagram_handle_link && (
+                        <a href={author.instagram_handle_link} target="_blank" rel="noopener noreferrer"
+                            className={css({ color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center', p: '5px', borderRadius: '6px', transition: 'all 0.15s ease', _hover: { opacity: 0.7 } })}>
+                            <RiInstagramFill size={18} />
                         </a>
                     )}
                     {author.email && (
                         <a href={`mailto:${author.email}`}
-                            className={css({ color: 'text.tertiary', fontSize: '0.85rem', fontWeight: '500', _hover: { color: 'text.primary' }, transition: 'color 0.2s' })}>
-                            Email
+                            className={css({ color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center', p: '5px', borderRadius: '6px', transition: 'all 0.15s ease', _hover: { opacity: 0.7 } })}>
+                            <FaEnvelope size={18} />
                         </a>
                     )}
                 </div>

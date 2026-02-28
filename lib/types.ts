@@ -194,9 +194,9 @@ export interface Author {
     email: string;
     description: string;
     picture: string;
-    instagram_handle: string;
-    x_handle: string;
-    github_handle: string;
+    instagram_handle_link: string;
+    x_handle_link: string;
+    github_handle_link: string;
 }
 
 export interface CollectionSettings {

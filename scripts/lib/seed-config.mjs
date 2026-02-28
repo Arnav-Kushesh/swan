@@ -4,6 +4,15 @@
 import { plainText, textBlock, codeBlock } from "./notion-blocks.mjs";
 import { createAnySection } from "./seed-sections.mjs";
 import {
+    buildPropertiesFromSchema,
+    MAIN_CONFIG_SCHEMA,
+    GENERAL_CONFIG_SCHEMA,
+    SOCIAL_SCHEMA,
+    AUTHOR_SCHEMA,
+    COLLECTION_SETTINGS_SCHEMA,
+    ADVANCED_CONFIG_SCHEMA,
+} from "./section-schema.mjs";
+import {
     dummyConfig,
     dummyBasicConfig,
     dummySocialLinks,
@@ -23,30 +32,7 @@ export async function createBasicConfigDB(parentId, notion) {
     const db = await notion.databases.create({
         parent: { type: "page_id", page_id: parentId },
         title: plainText("Main Configuration"),
-        properties: {
-            title: { title: {} },
-            description: { rich_text: {} },
-            tagline: { rich_text: {} },
-            keywords: { rich_text: {} },
-            logo: { files: {} },
-            favicon: { files: {} },
-            og_image: { files: {} },
-            default_color_mode: {
-                select: {
-                    options: [
-                        { name: "light", color: "default" },
-                        { name: "dark", color: "gray" },
-                        { name: "cream", color: "yellow" },
-                        { name: "pink", color: "pink" },
-                        { name: "blue", color: "blue" },
-                        { name: "purple", color: "purple" },
-                        { name: "red", color: "red" },
-                        { name: "green", color: "green" },
-                    ],
-                },
-            },
-            sidebar_navigation: { checkbox: {} },
-        },
+        properties: buildPropertiesFromSchema(MAIN_CONFIG_SCHEMA),
     });
 
     await notion.databases.update({
@@ -118,16 +104,7 @@ export async function createConfigDB(parentId, notion) {
     const db = await notion.databases.create({
         parent: { type: "page_id", page_id: parentId },
         title: plainText("General Configuration"),
-        properties: {
-            label: { title: {} },
-            hide_topbar_logo: { checkbox: {} },
-            hide_sidebar_logo: { checkbox: {} },
-            enable_newsletter: { checkbox: {} },
-            newsletter_form_url: { url: {} },
-            mention_this_tool_in_footer: { checkbox: {} },
-            primary_font: { rich_text: {} },
-            secondary_font: { rich_text: {} },
-        },
+        properties: buildPropertiesFromSchema(GENERAL_CONFIG_SCHEMA),
     });
 
     await notion.databases.update({
@@ -169,10 +146,7 @@ export async function createSocialLinksDB(parentId, notion) {
     const db = await notion.databases.create({
         parent: { type: "page_id", page_id: parentId },
         title: plainText("Social"),
-        properties: {
-            name: { title: {} },
-            data: { rich_text: {} },
-        },
+        properties: buildPropertiesFromSchema(SOCIAL_SCHEMA),
     });
 
     await notion.databases.update({
@@ -204,16 +178,7 @@ export async function createAuthorDB(rootPageId, notion) {
     const db = await notion.databases.create({
         parent: { type: "page_id", page_id: rootPageId },
         title: plainText("Authors"),
-        properties: {
-            name: { title: {} },
-            username: { rich_text: {} },
-            email: { email: {} },
-            description: { rich_text: {} },
-            picture: { files: {} },
-            instagram_handle: { rich_text: {} },
-            x_handle: { rich_text: {} },
-            github_handle: { rich_text: {} },
-        },
+        properties: buildPropertiesFromSchema(AUTHOR_SCHEMA),
     });
 
     await notion.databases.update({
@@ -240,9 +205,9 @@ export async function createAuthorDB(rootPageId, notion) {
             username: { rich_text: plainText(author.username) },
             email: { email: author.email },
             description: { rich_text: plainText(author.description) },
-            instagram_handle: { rich_text: plainText(author.instagram_handle || "") },
-            x_handle: { rich_text: plainText(author.x_handle || "") },
-            github_handle: { rich_text: plainText(author.github_handle || "") },
+            instagram_handle_link: { rich_text: plainText(author.instagram_handle_link || "") },
+            x_handle_link: { rich_text: plainText(author.x_handle_link || "") },
+            github_handle_link: { rich_text: plainText(author.github_handle_link || "") },
         };
 
         if (author.picture) {
@@ -272,12 +237,7 @@ export async function createCollectionSettingsPage(parentId, notion) {
     const db = await notion.databases.create({
         parent: { type: "page_id", page_id: parentId },
         title: plainText("Configure Collections"),
-        properties: {
-            collection_name: { title: {} },
-            enable_rss: { checkbox: {} },
-            show_newsletter_section: { checkbox: {} },
-            show_mailto_comment_section: { checkbox: {} },
-        },
+        properties: buildPropertiesFromSchema(COLLECTION_SETTINGS_SCHEMA),
     });
 
     await notion.databases.update({
@@ -313,26 +273,10 @@ export async function createCollectionSettingsPage(parentId, notion) {
 export async function createAdvancedConfigDB(parentId, notion) {
     console.log("\nCreating Database: Advanced Configuration...");
 
-    const themeOptions = [
-        { name: "light", color: "default" },
-        { name: "cream", color: "yellow" },
-        { name: "pink", color: "pink" },
-        { name: "dark", color: "gray" },
-        { name: "blue", color: "blue" },
-        { name: "purple", color: "purple" },
-        { name: "red", color: "red" },
-        { name: "green", color: "green" },
-    ];
-
     const db = await notion.databases.create({
         parent: { type: "page_id", page_id: parentId },
         title: plainText("Advanced Configuration"),
-        properties: {
-            label: { title: {} },
-            limit_theme_selection: {
-                multi_select: { options: themeOptions },
-            },
-        },
+        properties: buildPropertiesFromSchema(ADVANCED_CONFIG_SCHEMA),
     });
 
     await notion.databases.update({

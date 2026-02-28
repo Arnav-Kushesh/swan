@@ -264,6 +264,12 @@ export function readNotionProperty(props, propDef) {
             case 'number':
                 value = p.number;
                 break;
+            case 'email':
+                value = p.email;
+                break;
+            case 'multi_select':
+                value = p.multi_select?.map(o => o.name);
+                break;
             case 'files':
                 value = p.files; // raw array; caller handles download
                 break;
@@ -319,13 +325,101 @@ export function getCodeBlockProperties(sectionType) {
     return schema.properties.filter(p => p.notionType === 'code_block');
 }
 
-// --- Collection Item Helpers ---
+// --- Theme Options (shared by Main Config and Advanced Config) ---
+
+export const THEME_OPTIONS = [
+    { name: 'light', color: 'default' },
+    { name: 'dark', color: 'gray' },
+    { name: 'cream', color: 'yellow' },
+    { name: 'pink', color: 'pink' },
+    { name: 'blue', color: 'blue' },
+    { name: 'purple', color: 'purple' },
+    { name: 'red', color: 'red' },
+    { name: 'green', color: 'green' },
+];
+
+// --- Author Schema ---
+
+export const AUTHOR_SCHEMA = {
+    properties: [
+        { name: 'name', notionType: 'title', tsType: 'string', required: true },
+        { name: 'username', notionType: 'rich_text', tsType: 'string', default: '' },
+        { name: 'email', notionType: 'email', tsType: 'string', default: '' },
+        { name: 'description', notionType: 'rich_text', tsType: 'string', default: '' },
+        { name: 'picture', notionType: 'files', tsType: 'string', download: true },
+        { name: 'instagram_handle_link', notionType: 'rich_text', tsType: 'string', default: '' },
+        { name: 'x_handle_link', notionType: 'rich_text', tsType: 'string', default: '' },
+        { name: 'github_handle_link', notionType: 'rich_text', tsType: 'string', default: '' },
+    ],
+};
+
+// --- Main Configuration Schema ---
+
+export const MAIN_CONFIG_SCHEMA = {
+    properties: [
+        { name: 'title', notionType: 'title', tsType: 'string', required: true },
+        { name: 'description', notionType: 'rich_text', tsType: 'string', default: '' },
+        { name: 'tagline', notionType: 'rich_text', tsType: 'string', default: '' },
+        { name: 'keywords', notionType: 'rich_text', tsType: 'string', default: '' },
+        { name: 'logo', notionType: 'files', tsType: 'string', download: true },
+        { name: 'favicon', notionType: 'files', tsType: 'string', download: true },
+        { name: 'og_image', notionType: 'files', tsType: 'string', download: true },
+        { name: 'default_color_mode', notionType: 'select', tsType: 'string', default: 'light', options: THEME_OPTIONS },
+        { name: 'sidebar_navigation', notionType: 'checkbox', tsType: 'boolean', default: false },
+    ],
+};
+
+// --- General Configuration Schema ---
+
+export const GENERAL_CONFIG_SCHEMA = {
+    properties: [
+        { name: 'label', notionType: 'title', tsType: 'string', required: true },
+        { name: 'hide_topbar_logo', notionType: 'checkbox', tsType: 'boolean', default: false },
+        { name: 'hide_sidebar_logo', notionType: 'checkbox', tsType: 'boolean', default: false },
+        { name: 'enable_newsletter', notionType: 'checkbox', tsType: 'boolean', default: false },
+        { name: 'newsletter_form_url', notionType: 'url', tsType: 'string', default: '' },
+        { name: 'mention_this_tool_in_footer', notionType: 'checkbox', tsType: 'boolean', default: false },
+        { name: 'primary_font', notionType: 'rich_text', tsType: 'string', default: '' },
+        { name: 'secondary_font', notionType: 'rich_text', tsType: 'string', default: '' },
+    ],
+};
+
+// --- Social Schema ---
+
+export const SOCIAL_SCHEMA = {
+    properties: [
+        { name: 'name', notionType: 'title', tsType: 'string', required: true },
+        { name: 'data', notionType: 'rich_text', tsType: 'string', default: '' },
+    ],
+};
+
+// --- Advanced Configuration Schema ---
+
+export const ADVANCED_CONFIG_SCHEMA = {
+    properties: [
+        { name: 'label', notionType: 'title', tsType: 'string', required: true },
+        { name: 'limit_theme_selection', notionType: 'multi_select', tsType: 'string[]', default: [], options: THEME_OPTIONS },
+    ],
+};
+
+// --- Collection Settings Schema ---
+
+export const COLLECTION_SETTINGS_SCHEMA = {
+    properties: [
+        { name: 'collection_name', notionType: 'title', tsType: 'string', required: true },
+        { name: 'enable_rss', notionType: 'checkbox', tsType: 'boolean', default: false },
+        { name: 'show_newsletter_section', notionType: 'checkbox', tsType: 'boolean', default: false },
+        { name: 'show_mailto_comment_section', notionType: 'checkbox', tsType: 'boolean', default: false },
+    ],
+};
+
+// --- Generic Schema Helpers ---
 
 /**
- * Generate Notion database properties object for collection items.
- * Used by seed-notion.mjs to create collection databases.
+ * Generate Notion database properties object from any schema definition.
+ * Used by seed scripts to create databases.
  */
-export function buildCollectionProperties() {
+export function buildPropertiesFromSchema(schema) {
     const notionTypeMap = {
         title: { title: {} },
         rich_text: { rich_text: {} },
@@ -334,12 +428,17 @@ export function buildCollectionProperties() {
         number: { number: { format: 'number' } },
         files: { files: {} },
         multi_select: { multi_select: {} },
+        email: { email: {} },
     };
 
     const properties = {};
-    for (const prop of COLLECTION_ITEM_SCHEMA.properties) {
+    for (const prop of schema.properties) {
+        if (prop.notionType === 'code_block') continue;
+
         if (prop.notionType === 'select' && prop.options) {
             properties[prop.name] = { select: { options: prop.options } };
+        } else if (prop.notionType === 'multi_select' && prop.options) {
+            properties[prop.name] = { multi_select: { options: prop.options } };
         } else {
             properties[prop.name] = notionTypeMap[prop.notionType];
         }
@@ -348,35 +447,36 @@ export function buildCollectionProperties() {
 }
 
 /**
- * Read all simple properties (non-files) for a collection item from Notion page properties.
+ * Read all simple properties (non-files, non-code_block) from a Notion page using a schema.
  * Returns an object with snake_case keys.
  */
-export function readCollectionItemProperties(props) {
+export function readPropertiesFromSchema(schema, props) {
     const result = {};
-    for (const propDef of COLLECTION_ITEM_SCHEMA.properties) {
-        if (propDef.notionType === 'files') continue; // handled separately (download)
-        if (propDef.notionType === 'multi_select') {
-            // Special handling for multi_select
-            const namesToTry = [propDef.name, ...(propDef.aliases || [])];
-            let value;
-            for (const n of namesToTry) {
-                const p = props[n];
-                if (p?.multi_select) {
-                    value = p.multi_select.map(o => o.name);
-                    break;
-                }
-            }
-            result[propDef.name] = value || propDef.default || [];
-        } else {
-            result[propDef.name] = readNotionProperty(props, propDef);
-        }
+    for (const propDef of schema.properties) {
+        if (propDef.notionType === 'code_block') continue;
+        if (propDef.notionType === 'files') continue;
+        result[propDef.name] = readNotionProperty(props, propDef);
     }
     return result;
 }
 
 /**
- * Get file-type property definitions for collection items.
+ * Get file-type property definitions from any schema.
  */
+export function getFilePropertiesFromSchema(schema) {
+    return schema.properties.filter(p => p.notionType === 'files');
+}
+
+// --- Collection Item Helpers (convenience wrappers) ---
+
+export function buildCollectionProperties() {
+    return buildPropertiesFromSchema(COLLECTION_ITEM_SCHEMA);
+}
+
+export function readCollectionItemProperties(props) {
+    return readPropertiesFromSchema(COLLECTION_ITEM_SCHEMA, props);
+}
+
 export function getCollectionFileProperties() {
-    return COLLECTION_ITEM_SCHEMA.properties.filter(p => p.notionType === 'files');
+    return getFilePropertiesFromSchema(COLLECTION_ITEM_SCHEMA);
 }

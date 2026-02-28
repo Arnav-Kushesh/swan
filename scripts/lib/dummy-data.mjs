@@ -547,9 +547,9 @@ export const dummyAuthors = [
     email: 'john@example.com',
     description: 'Full-stack developer, open source enthusiast, and coffee addict.',
     picture: 'https://picsum.photos/seed/johndoe/200/200',
-    instagram_handle: 'johndoe',
-    x_handle: 'johndoe',
-    github_handle: 'johndoe',
+    instagram_handle_link: 'https://instagram.com/johndoe',
+    x_handle_link: 'https://x.com/johndoe',
+    github_handle_link: 'https://github.com/johndoe',
   },
   {
     name: 'Jane Doe',
@@ -557,9 +557,9 @@ export const dummyAuthors = [
     email: 'jane@example.com',
     description: 'Designer and frontend developer with a passion for beautiful interfaces.',
     picture: 'https://picsum.photos/seed/janedoe/200/200',
-    instagram_handle: 'janedoe',
-    x_handle: 'janedoe',
-    github_handle: 'janedoe',
+    instagram_handle_link: 'https://instagram.com/janedoe',
+    x_handle_link: 'https://x.com/janedoe',
+    github_handle_link: 'https://github.com/janedoe',
   }
 ];
 

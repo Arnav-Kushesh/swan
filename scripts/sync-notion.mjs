@@ -16,7 +16,13 @@ import {
 } from './lib/sync-helpers.mjs';
 
 import { processSectionsFromPage } from './lib/sync-sections.mjs';
-import { readCollectionItemProperties, getCollectionFileProperties } from './lib/section-schema.mjs';
+import {
+    readCollectionItemProperties,
+    getCollectionFileProperties,
+    readPropertiesFromSchema,
+    getFilePropertiesFromSchema,
+    AUTHOR_SCHEMA,
+} from './lib/section-schema.mjs';
 
 import {
     syncConfig,
@@ -185,35 +191,23 @@ async function syncAuthors() {
 
     for (const page of pages) {
         const props = page.properties;
+        const data = readPropertiesFromSchema(AUTHOR_SCHEMA, props);
 
-        const name = props.name?.title?.[0]?.plain_text || '';
-        const username = props.username?.rich_text?.[0]?.plain_text || '';
-        const email = props.email?.email || '';
-        const description = props.description?.rich_text?.[0]?.plain_text || '';
-        const instagram_handle = props.instagram_handle?.rich_text?.[0]?.plain_text || '';
-        const x_handle = props.x_handle?.rich_text?.[0]?.plain_text || '';
-        const github_handle = props.github_handle?.rich_text?.[0]?.plain_text || '';
-
-        let picture = '';
-        const picFile = props.picture?.files?.[0];
-        if (picFile) {
-            const rawUrl = picFile.file?.url || picFile.external?.url;
-            if (rawUrl) {
-                const ext = path.extname(picFile.name || '') || path.extname(rawUrl.split('?')[0]) || '.jpg';
-                picture = await downloadImage(rawUrl, `author-${slugify(username)}${ext}`);
+        // Download file fields (e.g. picture)
+        for (const fileProp of getFilePropertiesFromSchema(AUTHOR_SCHEMA)) {
+            const files = props[fileProp.name]?.files;
+            if (files?.length > 0) {
+                const rawUrl = files[0].file?.url || files[0].external?.url;
+                if (rawUrl) {
+                    const ext = path.extname(files[0].name || '') || path.extname(rawUrl.split('?')[0]) || '.jpg';
+                    data[fileProp.name] = await downloadImage(rawUrl, `author-${slugify(data.username)}${ext}`);
+                }
+            } else {
+                data[fileProp.name] = '';
             }
         }
 
-        authors.push({
-            name,
-            username,
-            email,
-            description,
-            picture,
-            instagram_handle,
-            x_handle,
-            github_handle,
-        });
+        authors.push(data);
     }
 
     await ensureDir('notion_state/data');

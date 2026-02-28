@@ -13,6 +13,15 @@ import {
     findFullPageDb,
     ROOT_PAGE_ID,
 } from './sync-helpers.mjs';
+import {
+    readPropertiesFromSchema,
+    getFilePropertiesFromSchema,
+    MAIN_CONFIG_SCHEMA,
+    GENERAL_CONFIG_SCHEMA,
+    SOCIAL_SCHEMA,
+    ADVANCED_CONFIG_SCHEMA,
+    COLLECTION_SETTINGS_SCHEMA,
+} from './section-schema.mjs';
 
 // --- Fetch Main Config ---
 
@@ -22,34 +31,25 @@ async function fetchBasicConfig(dbId) {
     if (pages.length === 0) return {};
 
     const props = pages[0].properties;
-    const data = {};
+    const data = readPropertiesFromSchema(MAIN_CONFIG_SCHEMA, props);
 
-    // Text fields
-    data.title = props.title?.title?.[0]?.plain_text || '';
-    data.description = props.description?.rich_text?.[0]?.plain_text || '';
-    data.tagline = props.tagline?.rich_text?.[0]?.plain_text || '';
-    data.keywords = props.keywords?.rich_text?.[0]?.plain_text || '';
-
-    // File fields - download images
-    for (const field of ['logo', 'favicon', 'og_image']) {
-        const files = props[field]?.files;
+    // Download file fields
+    for (const fileProp of getFilePropertiesFromSchema(MAIN_CONFIG_SCHEMA)) {
+        const files = props[fileProp.name]?.files;
         if (files?.length > 0) {
             const rawUrl = files[0].file?.url || files[0].external?.url;
             if (rawUrl) {
                 const ext = path.extname(rawUrl.split('?')[0]) || '.jpg';
-                const filename = `site-${slugify(field)}${ext}`;
-                data[field] = await downloadImage(rawUrl, filename);
+                const filename = `site-${slugify(fileProp.name)}${ext}`;
+                data[fileProp.name] = await downloadImage(rawUrl, filename);
             }
         } else {
-            data[field] = '';
+            data[fileProp.name] = '';
         }
     }
 
-    // Select fields
-    data.default_color_mode = props.default_color_mode?.select?.name || 'light';
-
-    // Checkbox fields in basic config
-    data.sidebar_navigation = props.sidebar_navigation?.checkbox ? 'true' : 'false';
+    // Convert checkbox to string for backward compatibility
+    data.sidebar_navigation = data.sidebar_navigation ? 'true' : 'false';
 
     return data;
 }
@@ -62,27 +62,14 @@ async function fetchGeneralConfig(dbId) {
     if (pages.length === 0) return {};
 
     const props = pages[0].properties;
-    const data = {};
+    const data = readPropertiesFromSchema(GENERAL_CONFIG_SCHEMA, props);
 
-    // Checkbox fields -> stored as 'true'/'false' strings for backward compatibility
-    const checkboxFields = [
-        'hide_topbar_logo',
-        'hide_sidebar_logo',
-        'enable_newsletter',
-        'mention_this_tool_in_footer',
-    ];
-
-    for (const field of checkboxFields) {
-        const val = props[field]?.checkbox;
-        data[field] = val ? 'true' : 'false';
+    // Convert checkbox fields to 'true'/'false' strings for backward compatibility
+    for (const propDef of GENERAL_CONFIG_SCHEMA.properties) {
+        if (propDef.notionType === 'checkbox') {
+            data[propDef.name] = data[propDef.name] ? 'true' : 'false';
+        }
     }
-
-    // URL fields
-    data.newsletter_form_url = props.newsletter_form_url?.url || '';
-
-    // Font fields
-    data.primary_font = props.primary_font?.rich_text?.[0]?.plain_text || '';
-    data.secondary_font = props.secondary_font?.rich_text?.[0]?.plain_text || '';
 
     return data;
 }
@@ -97,13 +84,10 @@ async function fetchSocialLinks(dbId) {
     const data = {};
 
     for (const page of pages) {
-        const props = page.properties;
-        const name = props.name?.title?.[0]?.plain_text || '';
-        const linkValue = props.data?.rich_text?.[0]?.plain_text || '';
-
-        if (name) {
+        const row = readPropertiesFromSchema(SOCIAL_SCHEMA, page.properties);
+        if (row.name) {
             // Store as social_<name> for backward compatibility with SocialIcons component
-            data[`social_${name.toLowerCase()}`] = linkValue;
+            data[`social_${row.name.toLowerCase()}`] = row.data;
         }
     }
 
@@ -162,16 +146,17 @@ export async function syncCollectionSettings() {
     const settings = {};
 
     for (const page of pages) {
-        const props = page.properties;
-        const collectionName = props.collection_name?.title?.[0]?.plain_text || '';
-        if (!collectionName) continue;
+        const row = readPropertiesFromSchema(COLLECTION_SETTINGS_SCHEMA, page.properties);
+        if (!row.collection_name) continue;
 
-        settings[collectionName.toLowerCase()] = {
-            collection_name: collectionName,
-            enable_rss: props.enable_rss?.checkbox ? 'true' : 'false',
-            show_newsletter_section: props.show_newsletter_section?.checkbox ? 'true' : 'false',
-            show_mailto_comment_section: props.show_mailto_comment_section?.checkbox ? 'true' : 'false',
-        };
+        // Convert checkbox fields to 'true'/'false' strings for backward compatibility
+        for (const propDef of COLLECTION_SETTINGS_SCHEMA.properties) {
+            if (propDef.notionType === 'checkbox') {
+                row[propDef.name] = row[propDef.name] ? 'true' : 'false';
+            }
+        }
+
+        settings[row.collection_name.toLowerCase()] = row;
     }
 
     await ensureDir('notion_state/data');
@@ -239,11 +224,10 @@ export async function syncAdvancedConfig() {
     }
 
     const pages = await fetchAllDatabasePages(advancedConfigDbId);
-    const config = {};
+    let config = {};
 
     if (pages.length > 0) {
-        const props = pages[0].properties;
-        config.limit_theme_selection = props.limit_theme_selection?.multi_select?.map(o => o.name) || [];
+        config = readPropertiesFromSchema(ADVANCED_CONFIG_SCHEMA, pages[0].properties);
     }
 
     await ensureDir('notion_state/data');

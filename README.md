@@ -577,9 +577,9 @@ The Authors database stores author profiles:
 | `email`            | Email     | Contact email                                   |
 | `description`      | Rich Text | Bio                                             |
 | `picture`          | Files     | Profile picture                                 |
-| `instagram_handle` | Rich Text | Instagram username                              |
-| `x_handle`         | Rich Text | X/Twitter username                              |
-| `github_handle`    | Rich Text | GitHub username                                 |
+| `instagram_handle_link` | Rich Text | Instagram profile URL                      |
+| `x_handle_link`         | Rich Text | X/Twitter profile URL                      |
+| `github_handle_link`    | Rich Text | GitHub profile URL                         |
 
 Each author gets a profile page at `/author/{username}` that lists all their published work.
 
