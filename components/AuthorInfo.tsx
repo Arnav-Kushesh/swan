@@ -16,6 +16,7 @@ export function AuthorInfo({ author }: AuthorInfoProps) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
+                width: 'fit-content',
                 mt: '12px',
                 p: '8px 12px',
                 borderRadius: '10px',
