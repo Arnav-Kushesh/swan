@@ -16,7 +16,7 @@ export function DynamicSection({ data }: { data: DynamicSectionData }) {
     if (!items || items.length === 0) return null;
 
     return (
-        <section className={`${css({ mb: '40px' })}${data.class_name ? ` ${data.class_name}` : ''}`}>
+        <section id={data.html_id || undefined} className={`${css({ mb: '40px' })}${data.html_class ? ` ${data.html_class}` : ''}`}>
             <InteractiveSection
                 sectionId={data.id}
                 title={title}

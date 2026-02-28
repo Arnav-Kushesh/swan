@@ -14,7 +14,7 @@ interface ListViewProps extends ViewProps {
 export function ListView({ visibleItems, paginationButton, isMinimal }: ListViewProps) {
     return (
         <>
-            <div className={css({ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' })}>
+            <div className={css({ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', maxWidth: '860px' })}>
                 {visibleItems.map((item) => {
                     const post = item as Post;
                     const title = getItemTitle(item);

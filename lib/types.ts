@@ -39,7 +39,8 @@ export interface InfoSectionData {
     media_aspect_ratio?: string;
     media_width?: string;
     media_width_mobile?: string;
-    class_name?: string;
+    html_id?: string;
+    html_class?: string;
     enabled?: boolean;
 }
 
@@ -52,7 +53,8 @@ export interface DynamicSectionData {
     view_type?: 'list_view' | 'card_view' | 'grid_view' | 'minimal_list_view' | 'tiny_card_view' | 'big_card_view';
     items_in_view?: number;
     top_part_centered?: boolean;
-    class_name?: string;
+    html_id?: string;
+    html_class?: string;
     enabled?: boolean;
 }
 
@@ -67,7 +69,8 @@ export interface HtmlSectionData {
     width_mobile?: string;
     full_width?: boolean;
     top_part_centered?: boolean;
-    class_name?: string;
+    html_id?: string;
+    html_class?: string;
     enabled?: boolean;
 }
 
@@ -82,7 +85,8 @@ export interface IframeSectionData {
     width_mobile?: string;
     full_width?: boolean;
     top_part_centered?: boolean;
-    class_name?: string;
+    html_id?: string;
+    html_class?: string;
     enabled?: boolean;
 }
 
@@ -93,7 +97,8 @@ export interface VideoEmbedSectionData {
     description?: string;
     url: string;
     top_part_centered?: boolean;
-    class_name?: string;
+    html_id?: string;
+    html_class?: string;
     enabled?: boolean;
 }
 
@@ -108,7 +113,8 @@ export interface MediaSectionData {
     width_mobile?: string;
     full_width?: boolean;
     top_part_centered?: boolean;
-    class_name?: string;
+    html_id?: string;
+    html_class?: string;
     enabled?: boolean;
 }
 
@@ -120,7 +126,8 @@ export interface MailtoSectionData {
     receiver_email: string;
     placeholder_text?: string;
     button_text?: string;
-    class_name?: string;
+    html_id?: string;
+    html_class?: string;
     enabled?: boolean;
 }
 
@@ -128,7 +135,8 @@ export interface NewsletterSectionData {
     type: 'newsletter_section';
     id: string;
     title: string;
-    class_name?: string;
+    html_id?: string;
+    html_class?: string;
     enabled?: boolean;
 }
 
@@ -138,7 +146,8 @@ export interface GapSectionData {
     title: string;
     height?: string;
     mobile_height?: string;
-    class_name?: string;
+    html_id?: string;
+    html_class?: string;
     enabled?: boolean;
 }
 

@@ -26,7 +26,7 @@ Notion Site Generator is a powerful **Notion-to-Website** engine that turns your
 - **10 Section Types**: Info, Dynamic, HTML, Iframe, Video Embed, Media, Mailto, Newsletter, and Gap sections.
 - **6 View Types for Dynamic Sections**: List, Card, Grid, Minimal List, Tiny Card, and Big Card views.
 - **Newsletter Ready**: Native Mailchimp integration form with per-collection and per-page control.
-- **Code & CSS Injection**: Add Analytics, Ads, or custom styles directly from Notion. Use `class_name` on any section to target it with custom CSS.
+- **Code & CSS Injection**: Add Analytics, Ads, or custom styles directly from Notion. Use `html_id` and `html_class` on any section to target it with custom CSS.
 - **8 Color Themes**: Light, Dark, Blue, Purple, Pink, Red, Green, and Cream — with optional theme restriction via Advanced Configuration.
 - **Two Navigation Modes**: Top navbar or left sidebar — configurable from Notion.
 - **RSS Feeds**: Auto-generated feeds for every content collection.
@@ -167,11 +167,12 @@ Each item in a collection has:
 
 | Property          | Type         | Description                                                                      |
 | ----------------- | ------------ | -------------------------------------------------------------------------------- |
-| `Title`           | Title        | Item title                                                                       |
-| `Description`     | Rich Text    | Short description                                                                |
-| `Image`           | Files        | Cover/thumbnail image                                                            |
-| `Tags`            | Multi-select | Categorization tags                                                              |
-| `Link`            | URL          | External link                                                                    |
+| `title`           | Title        | Item title                                                                       |
+| `slug`            | Rich Text    | URL slug (auto-generated from title if empty)                                    |
+| `description`     | Rich Text    | Short description                                                                |
+| `thumbnail`       | Files        | Cover/thumbnail image                                                            |
+| `tags`            | Multi-select | Categorization tags                                                              |
+| `link`            | URL          | External link                                                                    |
 | `button_text`     | Rich Text    | Custom button label                                                              |
 | `order_priority`  | Number       | Sort order (higher = first)                                                      |
 | `author_username` | Rich Text    | Author username (links to Authors DB)                                            |
@@ -197,7 +198,7 @@ Per-collection configuration is managed in **Settings > Configure Collections**,
 
 Extra sections can be added to every entry page of a collection via **Settings > Collection Page Extra Sections > [Collection Name]**. Each collection has a dedicated page where you place inline database sections. These are rendered on every entry page of that collection, giving you the ability to add related content, CTAs, or ads to all posts.
 
-All 9 section types are supported.
+All 10 section types are supported.
 
 ---
 
@@ -223,7 +224,8 @@ A static content section with text, image/video, and optional CTA button. Use it
 | `media_aspect_ratio` | Rich Text | Aspect ratio for the media (e.g., `16:9` or `16/9`; default: `16:9`) |
 | `media_width` | Rich Text | Desktop width for the media (e.g., `400px`, `50%`; default: `100%`). Centered when less than 100% |
 | `media_width_mobile` | Rich Text | Mobile width for the media (defaults to `media_width`) |
-| `class_name` | Rich Text | Custom CSS class name(s) for the section container |
+| `html_id` | Rich Text | Custom HTML `id` applied to the section container. Target with `#your-id` in CSS |
+| `html_class` | Rich Text | Custom CSS class name(s) for the section container |
 | `section_type` | Select | Must be `info_section` |
 | `enabled` | Checkbox | Show/hide the section |
 
@@ -240,7 +242,8 @@ Displays items from a collection (blogs, projects, gallery) in various view type
 | `view_type` | Select | Layout: `list_view`, `card_view`, `grid_view`, `minimal_list_view`, `tiny_card_view`, `big_card_view` |
 | `items_in_view` | Number | Number of items per page (default: 6) |
 | `top_part_centered` | Checkbox | Center the title and description |
-| `class_name` | Rich Text | Custom CSS class name(s) for the section container |
+| `html_id` | Rich Text | Custom HTML `id` applied to the section container. Target with `#your-id` in CSS |
+| `html_class` | Rich Text | Custom CSS class name(s) for the section container |
 | `section_type` | Select | Must be `dynamic_section` |
 | `enabled` | Checkbox | Show/hide the section |
 
@@ -274,7 +277,8 @@ Renders custom HTML inside a sandboxed iframe. This is one of Notion Site Genera
 | `width_mobile` | Rich Text | Mobile width (defaults to `width`) |
 | `full_width` | Checkbox | Edge-to-edge display (removes border radius and border) |
 | `top_part_centered` | Checkbox | Center-align the title and description |
-| `class_name` | Rich Text | Custom CSS class name(s) for the section container |
+| `html_id` | Rich Text | Custom HTML `id` applied to the section container. Target with `#your-id` in CSS |
+| `html_class` | Rich Text | Custom CSS class name(s) for the section container |
 | `section_type` | Select | Must be `html_section` |
 | `enabled` | Checkbox | Show/hide the section |
 
@@ -301,7 +305,8 @@ Embeds an external webpage in an iframe. Use this to embed any website, tool, or
 | `width_mobile` | Rich Text | Mobile width (defaults to `width`) |
 | `full_width` | Checkbox | Edge-to-edge display (removes border radius and border) |
 | `top_part_centered` | Checkbox | Center-align the title and description |
-| `class_name` | Rich Text | Custom CSS class name(s) for the section container |
+| `html_id` | Rich Text | Custom HTML `id` applied to the section container. Target with `#your-id` in CSS |
+| `html_class` | Rich Text | Custom CSS class name(s) for the section container |
 | `section_type` | Select | Must be `iframe_section` |
 | `enabled` | Checkbox | Show/hide the section |
 
@@ -322,7 +327,8 @@ Embeds a video (YouTube, Vimeo, etc.) using the embed URL. Videos play inline on
 | `description` | Rich Text | Section description (shown below the title) |
 | `url` | URL | Video embed URL (e.g., `https://www.youtube.com/embed/VIDEO_ID`) |
 | `top_part_centered` | Checkbox | Center-align the title and description |
-| `class_name` | Rich Text | Custom CSS class name(s) for the section container |
+| `html_id` | Rich Text | Custom HTML `id` applied to the section container. Target with `#your-id` in CSS |
+| `html_class` | Rich Text | Custom CSS class name(s) for the section container |
 | `section_type` | Select | Must be `video_embed_section` |
 | `enabled` | Checkbox | Show/hide the section |
 
@@ -347,7 +353,8 @@ Displays an image or a looping video. If the media file is a video (`.mp4`, `.we
 | `width_mobile` | Rich Text | Mobile width (defaults to `width`) |
 | `full_width` | Checkbox | Edge-to-edge display (removes border radius and border) |
 | `top_part_centered` | Checkbox | Center-align the title and description |
-| `class_name` | Rich Text | Custom CSS class name(s) for the section container |
+| `html_id` | Rich Text | Custom HTML `id` applied to the section container. Target with `#your-id` in CSS |
+| `html_class` | Rich Text | Custom CSS class name(s) for the section container |
 | `section_type` | Select | Must be `media_section` |
 | `enabled` | Checkbox | Show/hide the section |
 
@@ -359,10 +366,12 @@ An email-based contact form. When a reader submits the form, their email client 
 | Property | Type | Description |
 |----------|------|-------------|
 | `title` | Title | Section heading |
-| `subject` | Rich Text | Email subject line |
+| `subject` | Rich Text | Email subject line (used in the mailto link, not displayed in the UI) |
 | `receiver_email` | Rich Text | Recipient email address |
 | `placeholder_text` | Rich Text | Textarea placeholder (defaults to "Share your thoughts...") |
 | `button_text` | Rich Text | Submit button label (defaults to "Send") |
+| `html_id` | Rich Text | Custom HTML `id` applied to the section container. Target with `#your-id` in CSS |
+| `html_class` | Rich Text | Custom CSS class name(s) for the section container |
 | `section_type` | Select | Must be `mailto_section` |
 | `enabled` | Checkbox | Show/hide the section |
 
@@ -382,7 +391,25 @@ Renders a newsletter signup button that links visitors to your signup form. This
 **Database Properties:**
 | Property | Type | Description |
 |----------|------|-------------|
+| `title` | Title | Section title |
+| `html_id` | Rich Text | Custom HTML `id` applied to the section container. Target with `#your-id` in CSS |
+| `html_class` | Rich Text | Custom CSS class name(s) for the section container |
 | `section_type` | Select | Must be `newsletter_section` |
+| `enabled` | Checkbox | Show/hide the section |
+
+### 9. `gap_section`
+
+Adds vertical spacing between sections. Use this to control the gap between specific sections without affecting the global spacing.
+
+**Database Properties:**
+| Property | Type | Description |
+|----------|------|-------------|
+| `title` | Title | Section label (not displayed, for organization only) |
+| `height` | Rich Text | Desktop height (e.g., `60`, `60px`, `4rem`; bare numbers treated as pixels) |
+| `mobile_height` | Rich Text | Mobile height (defaults to `height`) |
+| `html_id` | Rich Text | Custom HTML `id` applied to the section container. Target with `#your-id` in CSS |
+| `html_class` | Rich Text | Custom CSS class name(s) for the section container |
+| `section_type` | Select | Must be `gap_section` |
 | `enabled` | Checkbox | Show/hide the section |
 
 ---

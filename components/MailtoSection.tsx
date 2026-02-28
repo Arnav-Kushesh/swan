@@ -18,7 +18,7 @@ export function MailtoSection({ data }: { data: MailtoSectionData }) {
     };
 
     return (
-        <section className={`${css({ mb: '40px' })}${data.class_name ? ` ${data.class_name}` : ''}`}>
+        <section id={data.html_id || undefined} className={`${css({ mb: '40px' })}${data.html_class ? ` ${data.html_class}` : ''}`}>
             {data.title && (
                 <h2 className={css({
                     fontSize: '1.5rem',

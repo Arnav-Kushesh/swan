@@ -9,6 +9,7 @@ import {
 
 import { plainText, textBlock, buildBlocks } from "./notion-blocks.mjs";
 import { createAnySection } from "./seed-sections.mjs";
+import { buildCollectionProperties } from "./section-schema.mjs";
 import {
   createBasicConfigDB,
   createConfigDB,
@@ -133,28 +134,7 @@ async function createCollectionsPage(rootPageId, notion) {
 }
 
 async function createCollections(parentId, notion) {
-  const sharedSchema = {
-    Title: { title: {} },
-    Slug: { rich_text: {} },
-    Description: { rich_text: {} },
-    Thumbnail: { files: {} },
-    Tags: { multi_select: {} },
-    Link: { url: {} },
-    button_text: { rich_text: {} },
-    order_priority: { number: { format: "number" } },
-    author_username: { rich_text: {} },
-    video_embed_url: { url: {} },
-    status: {
-      select: {
-        options: [
-          { name: "draft", color: "gray" },
-          { name: "in_review", color: "brown" },
-          { name: "published", color: "green" },
-          { name: "archived", color: "red" },
-        ],
-      },
-    },
-  };
+  const collectionSchema = buildCollectionProperties();
 
   for (const [name, items] of Object.entries(dummyCollections)) {
     console.log(`\n   > Creating Collection Database: ${name}...`);
@@ -162,7 +142,7 @@ async function createCollections(parentId, notion) {
       parent: { type: "page_id", page_id: parentId },
       title: plainText(name),
       is_inline: false, // Full page databases for collections
-      properties: sharedSchema,
+      properties: collectionSchema,
     });
 
     await notion.databases.update({
@@ -179,11 +159,11 @@ async function createCollections(parentId, notion) {
         .replace(/[\s_-]+/g, "-")
         .replace(/^-+|-+$/g, "");
       const props = {
-        Title: { title: plainText(item.title) },
-        Slug: { rich_text: plainText(itemSlug) },
-        Description: { rich_text: plainText(item.description) },
-        Tags: { multi_select: (item.tags || []).map((t) => ({ name: t })) },
-        Link: { url: item.link || null },
+        title: { title: plainText(item.title) },
+        slug: { rich_text: plainText(itemSlug) },
+        description: { rich_text: plainText(item.description) },
+        tags: { multi_select: (item.tags || []).map((t) => ({ name: t })) },
+        link: { url: item.link || null },
         button_text: { rich_text: plainText(item.button_text || "") },
         order_priority: { number: item.order_priority || 0 },
         author_username: { rich_text: plainText(item.author_username || "") },
@@ -192,9 +172,9 @@ async function createCollections(parentId, notion) {
       };
 
       if (item.image) {
-        props.Thumbnail = {
+        props.thumbnail = {
           files: [
-            { type: "external", name: "Thumbnail", external: { url: item.image } },
+            { type: "external", name: "thumbnail", external: { url: item.image } },
           ],
         };
       }

@@ -34,7 +34,7 @@ export function SectionRenderer({ section, newsletterFormUrl }: SectionRendererP
         case 'mailto_section':
             return <MailtoSection data={section} />;
         case 'newsletter_section':
-            return <Newsletter newsletterFormUrl={newsletterFormUrl} className={section.class_name} />;
+            return <Newsletter newsletterFormUrl={newsletterFormUrl} htmlClass={section.html_class} htmlId={section.html_id} />;
         case 'gap_section':
             return <GapSection data={section} />;
         default:

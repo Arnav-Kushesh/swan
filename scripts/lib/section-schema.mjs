@@ -27,7 +27,8 @@ export const SECTION_SCHEMA = {
             { name: 'media_aspect_ratio', notionType: 'rich_text', tsType: 'string', default: '', normalizeAspectRatio: true },
             { name: 'media_width', notionType: 'rich_text', tsType: 'string', default: '' },
             { name: 'media_width_mobile', notionType: 'rich_text', tsType: 'string', default: '' },
-            { name: 'class_name', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_id', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_class', notionType: 'rich_text', tsType: 'string', default: '' },
             { name: 'enabled', notionType: 'checkbox', tsType: 'boolean', default: true, aliases: ['visibility'] },
         ],
     },
@@ -50,7 +51,8 @@ export const SECTION_SCHEMA = {
             },
             { name: 'items_in_view', notionType: 'number', tsType: 'number', default: 6 },
             { name: 'top_part_centered', notionType: 'checkbox', tsType: 'boolean', default: false },
-            { name: 'class_name', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_id', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_class', notionType: 'rich_text', tsType: 'string', default: '' },
             { name: 'enabled', notionType: 'checkbox', tsType: 'boolean', default: true, aliases: ['visibility'] },
         ],
     },
@@ -65,7 +67,8 @@ export const SECTION_SCHEMA = {
             { name: 'width_mobile', notionType: 'rich_text', tsType: 'string', default: '' },
             { name: 'full_width', notionType: 'checkbox', tsType: 'boolean', default: false },
             { name: 'top_part_centered', notionType: 'checkbox', tsType: 'boolean', default: false },
-            { name: 'class_name', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_id', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_class', notionType: 'rich_text', tsType: 'string', default: '' },
             { name: 'enabled', notionType: 'checkbox', tsType: 'boolean', default: true, aliases: ['visibility'] },
         ],
     },
@@ -80,7 +83,8 @@ export const SECTION_SCHEMA = {
             { name: 'width_mobile', notionType: 'rich_text', tsType: 'string', default: '' },
             { name: 'full_width', notionType: 'checkbox', tsType: 'boolean', default: false },
             { name: 'top_part_centered', notionType: 'checkbox', tsType: 'boolean', default: false },
-            { name: 'class_name', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_id', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_class', notionType: 'rich_text', tsType: 'string', default: '' },
             { name: 'enabled', notionType: 'checkbox', tsType: 'boolean', default: true, aliases: ['visibility'] },
         ],
     },
@@ -91,7 +95,8 @@ export const SECTION_SCHEMA = {
             { name: 'description', notionType: 'rich_text', tsType: 'string', default: '', fullText: true },
             { name: 'url', notionType: 'url', tsType: 'string', required: true, aliases: ['URL'] },
             { name: 'top_part_centered', notionType: 'checkbox', tsType: 'boolean', default: false },
-            { name: 'class_name', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_id', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_class', notionType: 'rich_text', tsType: 'string', default: '' },
             { name: 'enabled', notionType: 'checkbox', tsType: 'boolean', default: true, aliases: ['visibility'] },
         ],
     },
@@ -106,7 +111,8 @@ export const SECTION_SCHEMA = {
             { name: 'width_mobile', notionType: 'rich_text', tsType: 'string', default: '' },
             { name: 'full_width', notionType: 'checkbox', tsType: 'boolean', default: false },
             { name: 'top_part_centered', notionType: 'checkbox', tsType: 'boolean', default: false },
-            { name: 'class_name', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_id', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_class', notionType: 'rich_text', tsType: 'string', default: '' },
             { name: 'enabled', notionType: 'checkbox', tsType: 'boolean', default: true, aliases: ['visibility'] },
         ],
     },
@@ -118,7 +124,8 @@ export const SECTION_SCHEMA = {
             { name: 'receiver_email', notionType: 'rich_text', tsType: 'string', default: '' },
             { name: 'placeholder_text', notionType: 'rich_text', tsType: 'string', default: '' },
             { name: 'button_text', notionType: 'rich_text', tsType: 'string', default: '' },
-            { name: 'class_name', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_id', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_class', notionType: 'rich_text', tsType: 'string', default: '' },
             { name: 'enabled', notionType: 'checkbox', tsType: 'boolean', default: true, aliases: ['visibility'] },
         ],
     },
@@ -126,7 +133,8 @@ export const SECTION_SCHEMA = {
     newsletter_section: {
         properties: [
             { name: 'title', notionType: 'title', tsType: 'string', required: true, aliases: ['Title'] },
-            { name: 'class_name', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_id', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_class', notionType: 'rich_text', tsType: 'string', default: '' },
             { name: 'enabled', notionType: 'checkbox', tsType: 'boolean', default: true, aliases: ['visibility'] },
         ],
     },
@@ -136,10 +144,39 @@ export const SECTION_SCHEMA = {
             { name: 'title', notionType: 'title', tsType: 'string', required: true, aliases: ['Title'] },
             { name: 'height', notionType: 'rich_text', tsType: 'string', default: '' },
             { name: 'mobile_height', notionType: 'rich_text', tsType: 'string', default: '' },
-            { name: 'class_name', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_id', notionType: 'rich_text', tsType: 'string', default: '' },
+            { name: 'html_class', notionType: 'rich_text', tsType: 'string', default: '' },
             { name: 'enabled', notionType: 'checkbox', tsType: 'boolean', default: true, aliases: ['visibility'] },
         ],
     },
+};
+
+// --- Collection Item Schema ---
+// Single source of truth for collection item (post/project/gallery) database properties.
+// All field names use snake_case. Aliases provide backward compatibility with old PascalCase names.
+
+export const COLLECTION_ITEM_SCHEMA = {
+    properties: [
+        { name: 'title', notionType: 'title', tsType: 'string', required: true, aliases: ['Title'] },
+        { name: 'slug', notionType: 'rich_text', tsType: 'string', default: '', aliases: ['Slug'] },
+        { name: 'description', notionType: 'rich_text', tsType: 'string', default: '', aliases: ['Description'] },
+        { name: 'thumbnail', notionType: 'files', tsType: 'string', download: true, aliases: ['Thumbnail'] },
+        { name: 'tags', notionType: 'multi_select', tsType: 'string[]', default: [], aliases: ['Tags'] },
+        { name: 'link', notionType: 'url', tsType: 'string', default: '', aliases: ['Link'] },
+        { name: 'button_text', notionType: 'rich_text', tsType: 'string', default: '' },
+        { name: 'order_priority', notionType: 'number', tsType: 'number', default: 0, aliases: ['Order'] },
+        { name: 'author_username', notionType: 'rich_text', tsType: 'string', default: '' },
+        { name: 'video_embed_url', notionType: 'url', tsType: 'string', default: '' },
+        {
+            name: 'status', notionType: 'select', tsType: 'string', default: 'published',
+            options: [
+                { name: 'draft', color: 'gray' },
+                { name: 'in_review', color: 'brown' },
+                { name: 'published', color: 'green' },
+                { name: 'archived', color: 'red' },
+            ],
+        },
+    ],
 };
 
 // --- Helper Functions ---
@@ -280,4 +317,66 @@ export function getCodeBlockProperties(sectionType) {
     const schema = SECTION_SCHEMA[sectionType];
     if (!schema) return [];
     return schema.properties.filter(p => p.notionType === 'code_block');
+}
+
+// --- Collection Item Helpers ---
+
+/**
+ * Generate Notion database properties object for collection items.
+ * Used by seed-notion.mjs to create collection databases.
+ */
+export function buildCollectionProperties() {
+    const notionTypeMap = {
+        title: { title: {} },
+        rich_text: { rich_text: {} },
+        checkbox: { checkbox: {} },
+        url: { url: {} },
+        number: { number: { format: 'number' } },
+        files: { files: {} },
+        multi_select: { multi_select: {} },
+    };
+
+    const properties = {};
+    for (const prop of COLLECTION_ITEM_SCHEMA.properties) {
+        if (prop.notionType === 'select' && prop.options) {
+            properties[prop.name] = { select: { options: prop.options } };
+        } else {
+            properties[prop.name] = notionTypeMap[prop.notionType];
+        }
+    }
+    return properties;
+}
+
+/**
+ * Read all simple properties (non-files) for a collection item from Notion page properties.
+ * Returns an object with snake_case keys.
+ */
+export function readCollectionItemProperties(props) {
+    const result = {};
+    for (const propDef of COLLECTION_ITEM_SCHEMA.properties) {
+        if (propDef.notionType === 'files') continue; // handled separately (download)
+        if (propDef.notionType === 'multi_select') {
+            // Special handling for multi_select
+            const namesToTry = [propDef.name, ...(propDef.aliases || [])];
+            let value;
+            for (const n of namesToTry) {
+                const p = props[n];
+                if (p?.multi_select) {
+                    value = p.multi_select.map(o => o.name);
+                    break;
+                }
+            }
+            result[propDef.name] = value || propDef.default || [];
+        } else {
+            result[propDef.name] = readNotionProperty(props, propDef);
+        }
+    }
+    return result;
+}
+
+/**
+ * Get file-type property definitions for collection items.
+ */
+export function getCollectionFileProperties() {
+    return COLLECTION_ITEM_SCHEMA.properties.filter(p => p.notionType === 'files');
 }

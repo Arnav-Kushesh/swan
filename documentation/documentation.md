@@ -57,7 +57,8 @@ All section types support these properties:
 | Property | Type | Description |
 |----------|------|-------------|
 | `section_type` | Select | Identifies the section type |
-| `class_name` | Rich Text | Custom CSS class name(s) applied to the section container. Use this with CSS injection to style individual sections |
+| `html_id` | Rich Text | Custom HTML `id` attribute applied to the section container. Use this with CSS injection to target individual sections by ID |
+| `html_class` | Rich Text | Custom CSS class name(s) applied to the section container. Use this with CSS injection to style individual sections |
 | `enabled` | Checkbox | Show/hide the section |
 
 ### 1. `info_section`
@@ -210,11 +211,12 @@ Collections are full-page databases stored under the "Collections" page. Each it
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `Title` | Title | Item title |
-| `Description` | Rich Text | Short description |
-| `Image` | Files | Cover/thumbnail image |
-| `Tags` | Multi-select | Categorization tags |
-| `Link` | URL | External link |
+| `title` | Title | Item title |
+| `slug` | Rich Text | URL slug (auto-generated from title if empty) |
+| `description` | Rich Text | Short description |
+| `thumbnail` | Files | Cover/thumbnail image |
+| `tags` | Multi-select | Categorization tags |
+| `link` | URL | External link |
 | `button_text` | Rich Text | Custom button label |
 | `order_priority` | Number | Sort order (higher = first) |
 | `author_username` | Rich Text | Author username (links to Authors DB) |
@@ -326,7 +328,7 @@ Set the default via `sidebar_navigation` in Main Configuration.
 ## Code & CSS Injection
 
 - **HTML Head Code** page (under Settings): Add code blocks containing `<script>` tags or other HTML to inject into `<head>`.
-- **CSS Styling** page (under Settings): Add code blocks containing CSS to inject as `<style>` tags in `<head>`. Use this with the `class_name` property on sections to target individual sections with custom styles.
+- **CSS Styling** page (under Settings): Add code blocks containing CSS to inject as `<style>` tags in `<head>`. Use this with the `html_id` and `html_class` properties on sections to target individual sections with custom styles.
 
 ---
 

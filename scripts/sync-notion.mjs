@@ -16,6 +16,7 @@ import {
 } from './lib/sync-helpers.mjs';
 
 import { processSectionsFromPage } from './lib/sync-sections.mjs';
+import { readCollectionItemProperties, getCollectionFileProperties } from './lib/section-schema.mjs';
 
 import {
     syncConfig,
@@ -71,50 +72,53 @@ async function syncAllCollections() {
 
         await ensureDir(`notion_state/content/${slug}`);
 
+        const fileProps = getCollectionFileProperties();
+
         for (const page of pages) {
             const mdBlocks = await n2m.pageToMarkdown(page.id);
             const mdString = n2m.toMarkdownString(mdBlocks);
 
             const props = page.properties;
-            const itemTitle = props.Title?.title?.[0]?.plain_text || 'Untitled';
-            const itemSlug = props.Slug?.rich_text?.[0]?.plain_text || slugify(itemTitle);
+            const data = readCollectionItemProperties(props);
 
-            // Thumbnail/Cover
-            const thumbnailFile = props.Thumbnail?.files?.[0];
+            const itemTitle = data.title || 'Untitled';
+            const itemSlug = data.slug || slugify(itemTitle);
+
+            // Download file properties (thumbnail)
             let thumbnail = '';
-            if (thumbnailFile) {
-                const rawThumbnail = thumbnailFile.file?.url || thumbnailFile.external?.url;
-                if (rawThumbnail) {
-                    const ext = path.extname(thumbnailFile.name || '') || path.extname(rawThumbnail.split('?')[0]) || '.jpg';
-                    thumbnail = await downloadImage(rawThumbnail, `${slug}-${itemSlug}${ext}`);
+            for (const fileProp of fileProps) {
+                const namesToTry = [fileProp.name, ...(fileProp.aliases || [])];
+                let fileValue;
+                for (const n of namesToTry) {
+                    if (props[n]?.files?.[0]) { fileValue = props[n].files[0]; break; }
+                }
+                if (fileValue) {
+                    const rawUrl = fileValue.file?.url || fileValue.external?.url;
+                    if (rawUrl) {
+                        const ext = path.extname(fileValue.name || '') || path.extname(rawUrl.split('?')[0]) || '.jpg';
+                        thumbnail = await downloadImage(rawUrl, `${slug}-${itemSlug}${ext}`);
+                    }
                 }
             }
 
-            const tags = props.Tags?.multi_select?.map(o => o.name) || [];
-            const link = props.Link?.url || '';
-            const description = props.Description?.rich_text?.[0]?.plain_text || '';
-            const order_priority = props.order_priority?.number || props.Order?.number || 0;
-            const author_username = props.author_username?.rich_text?.[0]?.plain_text || '';
-            const video_embed_url = props.video_embed_url?.url || '';
-            const button_text = props.button_text?.rich_text?.[0]?.plain_text || '';
-            const status = props.status?.select?.name || 'published';
+            const tags = data.tags || [];
 
             const frontmatter = {
                 slug: itemSlug,
                 title: itemTitle,
                 collection: slug,
                 date: page.created_time,
-                description,
+                description: data.description,
                 thumbnail,
                 cover: { image: thumbnail, alt: itemTitle },
                 tags,
-                link,
-                button_text,
+                link: data.link,
+                button_text: data.button_text,
                 tools: tags.join(', '),
-                order_priority,
-                author_username,
-                video_embed_url,
-                status,
+                order_priority: data.order_priority,
+                author_username: data.author_username,
+                video_embed_url: data.video_embed_url,
+                status: data.status,
             };
 
             const body = mdString?.parent || '';
